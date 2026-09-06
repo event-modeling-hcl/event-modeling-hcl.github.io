@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /examples/canvas/
+
+Sitemap: https://event-modeling-hcl.github.io/sitemap.xml
