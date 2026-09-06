@@ -27,7 +27,7 @@
       label: "Tool repository",
     },
     {
-      href: "https://github.com/event-modeling-hcl/eventmodeling-hcl/blob/main/eventmodeling.hclspec.md",
+      href: "https://github.com/event-modeling-hcl/spec",
       label: "Language spec",
     },
   ];

@@ -22,6 +22,12 @@ Fonts (IBM Plex Sans / Sans Condensed / Mono) are self-hosted under
 page — not linked from navigation, but the place to check a design-system
 change in both themes before it ships to a real page.
 
+`assets/img/hero-canvas.png` is a real screenshot of
+`eventmodeling-hcl diagram examples/minimal.em.hcl`, not a mockup — captured
+with `chromium --headless --screenshot` and cropped to the canvas card. If the
+tool's rendered output changes, regenerate it the same way rather than editing
+the PNG by hand.
+
 ## Local preview
 
 ```bash
@@ -43,7 +49,7 @@ Under construction, built stage by stage:
 
 - [x] Stage 0 — scaffold & deploy pipeline
 - [x] Stage 1 — design system & shared page shell
-- [ ] Stage 2 — landing page
+- [x] Stage 2 — landing page
 - [ ] Stage 3 — why HCL / comparison page
 - [ ] Stage 4 — learn section
 - [ ] Stage 5 — examples gallery & canvas pipeline
