@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>Minimal</title>
+<meta name="description" content="The smallest useful .em.hcl model: one bounded context, one Event, one State Change workflow, rendered by the real eventmodeling-hcl diagram command.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Minimal — event-modeling-hcl examples">
+<meta property="og:description" content="The smallest useful .em.hcl model: one bounded context, one Event, one State Change workflow, rendered by the real eventmodeling-hcl diagram command.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px; text-align: left;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0;">
+        <div class="eyebrow">Examples</div>
+        <h1>Minimal</h1>
+        <p class="lede">The smallest useful model: one bounded context, one Event, one State Change workflow. The same file used throughout the Learn section and this site's own hero visual.</p>
+        <div class="pattern-pills-standalone" style="margin-top: 6px;"><code>state_change</code></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>The rendered canvas</h2>
+        <p>The real, live output of <code>eventmodeling-hcl diagram examples/minimal.em.hcl</code>. Click a slice for its scenarios.</p>
+      </div>
+      <div class="canvas-embed tall">
+        <iframe src="/examples/canvas/minimal.html" loading="lazy" title="Minimal interactive canvas"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>The source</h2>
+        <p><code>examples/minimal.em.hcl</code>, straight from the tool repo.</p>
+      </div>
+      <code-block lang="hcl">
+        # Minimal Event Modeling document with context-owned contracts.
+
+        bounded_context "pet_management" {
+          title = "Pet Management"
+
+          aggregate "pet" {
+          }
+
+          field_type "pet_id" {
+            type         = "Int"
+            id_attribute = true
+            example      = 5
+          }
+
+          event "pet_added" {
+            title     = "Pet Added"
+            aggregate = aggregate.pet
+
+            field "pet_id" {
+              type = field_type.pet_id
+            }
+          }
+        }
+
+        state_change "add_pet" {
+          title = "Add Pet"
+
+          screen "add_pet_form" {
+            title = "Add Pet Form"
+            to    = [command.add_pet_command]
+          }
+
+          command "add_pet_command" {
+            title     = "Add Pet"
+            aggregate = aggregate.pet_management.pet
+            to        = [event.pet_management.pet_added]
+
+            field "pet_id" {
+              type = field_type.pet_management.pet_id
+            }
+          }
+        }
+      </code-block>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <nav class="page-path-nav">
+        <a href="/examples/index.html"><small>Examples</small>← Back to the gallery</a>
+        <a class="next" href="/learn/index.html"><small>Learn</small>Learn the method →</a>
+      </nav>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

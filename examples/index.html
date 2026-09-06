@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>Examples</title>
+<meta name="description" content="Five real .em.hcl models, each rendered by the actual eventmodeling-hcl diagram command — from a minimal one-workflow file to a five-workflow golden model.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Examples — event-modeling-hcl">
+<meta property="og:description" content="Five real .em.hcl models, each rendered by the actual diagram command.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+  .example-gallery { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0 auto;">
+        <div class="eyebrow">See it work</div>
+        <h1>Five real models, five real canvases</h1>
+        <p class="lede">
+          Every canvas below is the actual output of
+          <code>eventmodeling-hcl diagram</code> — not a screenshot, not a
+          mockup. Open one, click a slice for its scenarios, and try it on
+          your own model afterward.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="example-gallery">
+
+        <a class="example-card" href="/examples/minimal.html">
+          <div class="canvas-embed preview">
+            <iframe src="/examples/canvas/minimal.html" loading="lazy" title="Minimal example canvas preview" tabindex="-1" scrolling="no"></iframe>
+          </div>
+          <div class="example-card-body">
+            <h3>Minimal</h3>
+            <p>The smallest useful model: one bounded context, one Event, one State Change workflow.</p>
+            <div class="pattern-pills"><code>state_change</code></div>
+          </div>
+        </a>
+
+        <a class="example-card" href="/examples/complete.html">
+          <div class="canvas-embed preview">
+            <iframe src="/examples/canvas/complete.html" loading="lazy" title="Complete reference example canvas preview" tabindex="-1" scrolling="no"></iframe>
+          </div>
+          <div class="example-card-body">
+            <h3>Complete reference</h3>
+            <p>Every supported HCL construct: all four patterns, a team and an external system, a chapter, and an open hotspot.</p>
+            <div class="pattern-pills"><code>state_change</code><code>state_view</code><code>automation</code><code>translation</code></div>
+          </div>
+        </a>
+
+        <a class="example-card" href="/examples/course-subscriptions.html">
+          <div class="canvas-embed preview">
+            <iframe src="/examples/canvas/course_subscriptions.html" loading="lazy" title="Course subscriptions example canvas preview" tabindex="-1" scrolling="no"></iframe>
+          </div>
+          <div class="example-card-body">
+            <h3>Course subscriptions</h3>
+            <p>One set of canonical contracts shared by a State Change that subscribes a student and a State View that lists their subscriptions.</p>
+            <div class="pattern-pills"><code>state_change</code><code>state_view</code></div>
+          </div>
+        </a>
+
+        <a class="example-card" href="/examples/pet-management.html">
+          <div class="canvas-embed preview">
+            <iframe src="/examples/canvas/pet-management-detailed.html" loading="lazy" title="Pet management example canvas preview" tabindex="-1" scrolling="no"></iframe>
+          </div>
+          <div class="example-card-body">
+            <h3>Pet management</h3>
+            <p>The five-workflow golden model: three bounded contexts, a realistically-sized domain — including a real right-chair warning.</p>
+            <div class="pattern-pills"><code>state_change</code><code>state_view</code></div>
+          </div>
+        </a>
+
+        <a class="example-card" href="/examples/appointments-and-weather.html">
+          <div class="canvas-embed preview">
+            <iframe src="/examples/canvas/appointment-weather-patterns.html" loading="lazy" title="Appointments and weather example canvas preview" tabindex="-1" scrolling="no"></iframe>
+          </div>
+          <div class="example-card-body">
+            <h3>Appointments &amp; weather</h3>
+            <p>All four patterns in one domain — the exact running example used throughout the Learn section, now a complete, validated model.</p>
+            <div class="pattern-pills"><code>state_change</code><code>state_view</code><code>automation</code><code>translation</code></div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>
