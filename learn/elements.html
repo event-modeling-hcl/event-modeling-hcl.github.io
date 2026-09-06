@@ -34,7 +34,7 @@
       <div class="prose" style="margin: 0;">
         <div class="eyebrow">Learn · 01 of 5</div>
         <h1>The five elements</h1>
-        <p class="lede">Every Event Modeling slice is built from five recurring pieces. Learn to recognize each one before worrying about the four patterns they combine into.</p>
+        <p class="lede">Five recurring pieces appear across the four workflow patterns.</p>
       </div>
     </div>
   </section>
@@ -57,12 +57,7 @@
           }
         }
       </code-block>
-      <p>
-        The block label is the identity (<code>appointment_added</code>). Obvious
-        human-facing titles are <strong>derived automatically</strong> — the typed
-        model title-cases the label to <code>Appointment Added</code>. Add an
-        explicit <code>title</code> only when you want different wording.
-      </p>
+      <p>The label is the identity. <code>appointment_added</code> gets the derived title <code>Appointment Added</code>; add <code>title</code> only for different wording.</p>
       <callout kind="note"><p><strong>Rule of thumb:</strong> if the thing can still be rejected, it is probably not an Event yet.</p></callout>
 
       <h2>Command — an intent to make something happen</h2>
@@ -94,10 +89,10 @@
           }
         }
       </code-block>
-      <p>A Command needs a reason to exist: an incoming flow, an <code>api_endpoint</code>, or an explicit <code>external_trigger</code>. Without one, the validator warns with <code>EM404</code> — more on that on the <a href="/learn/quality.html">quality page</a>.</p>
+      <p>A Command needs an incoming flow, an <code>api_endpoint</code>, or <code>external_trigger</code>. Otherwise the validator reports <code>EM404</code>.</p>
 
       <h2>Read Model — an answer to a concrete question</h2>
-      <p>A Read Model makes facts usable. It is not just "some projection" or "some DTO" — the discipline is stricter:</p>
+      <p>A Read Model answers one concrete question.</p>
       <callout kind="rule"><p><strong>No question, no Read Model.</strong></p></callout>
       <p>The language makes that discipline explicit by requiring <code>question</code>:</p>
       <code-block lang="hcl">
@@ -117,10 +112,10 @@
           }
         }
       </code-block>
-      <p>A good Read Model is easy to test because you can state exactly what question it answers. <code>"What data do we need?"</code> is too vague; <code>"Which appointments do not yet have a weather forecast?"</code> tells you what belongs in the projection and what does not.</p>
+      <p><code>"What data do we need?"</code> is vague. <code>"Which appointments do not yet have a weather forecast?"</code> defines the projection.</p>
 
       <h2>Screen — where an actor observes or initiates behavior</h2>
-      <p>A Screen is a rough interaction surface: UI, wireframe, or other human-facing interaction point. The cheat sheet emphasizes deliberately rough wireframes — keep the workshop focused on data and behavior, not visual design.</p>
+      <p>A Screen is a UI, rough wireframe, or other human-facing interaction point.</p>
       <code-block lang="hcl">
         bounded_context "appointments" {
           event "appointment_added" {
@@ -143,10 +138,10 @@
           }
         }
       </code-block>
-      <p>Actors are reusable catalog declarations, referenced the same unquoted-traversal way as everything else: <code>actor.calendar_user</code>.</p>
+      <p>Actors are reusable catalog declarations referenced with traversals such as <code>actor.calendar_user</code>.</p>
 
       <h2>Automation / gear — a machine reaction</h2>
-      <p>On the visual cheat sheet, the gear means the computer reacts instead of a human. There's an important mapping to memorize:</p>
+      <p>The gear on the visual cheat sheet means the computer reacts instead of a human.</p>
       <callout kind="note">
         <p><strong>Visual gear concept → <code>processor</code> block.</strong><br>
         <strong>Automation pattern → <code>automation</code> workflow block.</strong></p>
@@ -178,7 +173,7 @@
           }
         }
       </code-block>
-      <p><code>automation</code> is not a nested element inside another workflow — it is one of the four top-level workflow kinds, same rank as <code>state_change</code>.</p>
+      <p><code>automation</code> is a top-level workflow kind. Its machine reaction is a <code>processor</code>.</p>
 
     </div>
   </section>

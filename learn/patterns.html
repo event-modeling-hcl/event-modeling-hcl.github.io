@@ -34,7 +34,7 @@
       <div class="prose" style="margin: 0;">
         <div class="eyebrow">Learn · 02 of 5</div>
         <h1>The four patterns</h1>
-        <p class="lede">Every slice is one of exactly four causal shapes. Learn them by contrast, not in isolation — they look related but encode different things.</p>
+        <p class="lede">Four recurring causal shapes organize Event Modeling workflows.</p>
       </div>
     </div>
   </section>
@@ -54,7 +54,7 @@
           </tbody>
         </table>
       </div>
-      <p class="prose">Cover the table and answer: which pattern converts <strong>intent into fact</strong>? Which converts <strong>facts into an answer</strong>? Which is a <strong>machine reaction to internal facts</strong>? Which is that same reaction but crossing an <strong>external ownership boundary</strong>?</p>
+      <p class="prose"><strong>Quick check:</strong> which pattern turns intent into fact, and which turns facts into an answer?</p>
     </div>
   </section>
 
@@ -90,8 +90,7 @@
           }
         }
       </code-block>
-      <p><strong>What to notice:</strong> the Event is declared once, inside the bounded context that owns it — the workflow only references it. Each edge is written once, as <code>to</code> on its source. References are unquoted traversals, not strings. Matching titles are omitted because the typed model derives them from the labels.</p>
-      <p>An API-triggered Command uses <code>api_endpoint</code> instead of inventing a fake Screen: <code>api_endpoint = "POST /owners/{ownerId}/pets"</code>. A Command always needs a reason — a canonical incoming flow, an <code>api_endpoint</code>, or <code>external_trigger = true</code>.</p>
+      <p>The bounded context owns the Event. The workflow references it. An API-triggered Command can use <code>api_endpoint</code> instead of a Screen.</p>
 
       <h2>State View</h2>
       <p>Facts already exist. A Read Model folds or interprets those facts so a user or API can answer one question.</p>
@@ -118,8 +117,8 @@
           }
         }
       </code-block>
-      <p>The canonical direction matters: catalog Event → Read Model is written as <code>readmodel.from</code>; Read Model → Screen is written as <code>readmodel.to</code>. The reverse, <code>screen.from = [readmodel...]</code>, is invalid.</p>
-      <callout kind="note"><p><strong>Scenario cue:</strong> a State View is specified as GIVEN Event(s) → THEN Read Model. There is no <code>query</code> concept and no <code>when</code> step — see the <a href="/learn/scenarios.html">scenarios page</a>.</p></callout>
+      <p>Catalog Event to Read Model is written as <code>readmodel.from</code>. Read Model to Screen is written as <code>readmodel.to</code>.</p>
+      <callout kind="rule"><p><strong>Scenario:</strong> GIVEN Event(s) → THEN Read Model.</p></callout>
 
       <h2>Automation</h2>
       <p>The system reacts to <strong>its own internal facts</strong> and issues a new Command without a user screen.</p>
@@ -151,7 +150,7 @@
           }
         }
       </code-block>
-      <p>Notice the canonical spelling: <code>readmodel.to → processor</code>, then <code>processor.to → command</code>. An <code>automation</code> must <strong>not</strong> consume an Event from an external bounded context — if it does, the workflow is a Translation.</p>
+      <p>An Automation consumes internal Events. External input belongs in a Translation.</p>
 
       <h2>Translation</h2>
       <p>Another context or external system speaks in its own language. A Translation takes an external fact and turns it into a Command/Event in the receiving context's language.</p>
@@ -190,7 +189,7 @@
           }
         }
       </code-block>
-      <p>A Translation must consume at least one Event from an external bounded context — the validator checks this externality rule directly. When no Read Model is needed, a Processor can also take the external Event straight into <code>from</code>.</p>
+      <p>A Translation consumes an Event from an external bounded context. A Processor may receive that Event directly when no Read Model is needed.</p>
 
     </div>
   </section>

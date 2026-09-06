@@ -35,7 +35,6 @@ BLOCK_RE = re.compile(r'<code-block lang="hcl">(.*?)</code-block>', re.DOTALL)
 # stop checking them. Each must fail, with the documented diagnostic code(s).
 NEGATIVE_MARKERS = [
     ("from = [screen.form]", ["EM201"]),
-    ("when { readmodel = readmodel.pets }", ["EM301", "EM303"]),
 ]
 
 

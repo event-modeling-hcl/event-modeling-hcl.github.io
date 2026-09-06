@@ -1,8 +1,8 @@
 # event-modeling-hcl.github.io
 
-The teaching and marketing site for [`event-modeling-hcl`](https://github.com/event-modeling-hcl/eventmodeling-hcl) —
-a native HCL language for Event Modeling, plus a validator and renderer that
-turns a model into a hosted, interactive diagram right beside your code.
+The documentation site for [`event-modeling-hcl`](https://github.com/event-modeling-hcl/eventmodeling-hcl),
+an HCL language for Event Modeling with a validator, formatter, and HTML
+renderer.
 
 Plain HTML/CSS/JS. No build framework, no bundler. The only generated
 artifacts are the example canvases under `examples/canvas/`, produced at

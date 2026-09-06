@@ -27,7 +27,7 @@
 
   var FOOTER_LINKS = [
     { href: "/", label: "Home" },
-    { href: "/ai.html", label: "Author with AI" },
+    { href: "/ai.html", label: "Coding agents" },
     { href: "/reference.html", label: "Reference" },
     {
       href: "https://github.com/event-modeling-hcl/eventmodeling-hcl",

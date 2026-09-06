@@ -11,10 +11,10 @@
   } catch (e) {}
 </script>
 <title>Learn Event Modeling HCL</title>
-<meta name="description" content="A practice-first path through Event Modeling and .em.hcl: the five elements, the four patterns, the language mechanics, pattern-specific scenarios, and how to read validator warnings.">
+<meta name="description" content="Learn the elements, patterns, scenarios, language, and quality checks used by Event Modeling HCL.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Learn Event Modeling HCL">
-<meta property="og:description" content="A practice-first path through Event Modeling and .em.hcl — five elements, four patterns, the language mechanics, and scenarios.">
+<meta property="og:description" content="Two short paths through Event Modeling and .em.hcl.">
 <meta property="og:image" content="/assets/img/og-default.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -25,10 +25,9 @@
 <style>
   .stat-grid a.stat-tile { text-decoration: none; color: inherit; transition: none; }
   .stat-grid a.stat-tile:hover { border-color: var(--accent); }
-  .loop-list { counter-reset: loop; list-style: none; padding: 0; }
-  .loop-list li { counter-increment: loop; padding: 10px 0 10px 40px; position: relative; border-bottom: 1px solid var(--line-soft); }
-  .loop-list li:last-child { border-bottom: 0; }
-  .loop-list li::before { content: counter(loop); position: absolute; left: 0; top: 8px; width: 26px; height: 26px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-ink); font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+  .learning-route { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 14px 0 0; }
+  .learning-route a { font-weight: 700; }
+  .learning-route span { color: var(--ink-faint); }
 </style>
 </head>
 <body>
@@ -36,166 +35,71 @@
 <site-nav></site-nav>
 
 <main id="main">
-
   <section class="hero" style="padding-bottom: 8px;">
     <div class="wrap">
       <div class="prose">
-        <div class="eyebrow">Learn the method</div>
-        <h1>Learn Event Modeling in <code>.em.hcl</code></h1>
-        <p class="lede">
-          A practice-first path, not a reference dump. After it, you should be
-          able to run an Event Modeling conversation, pick the right one of
-          four patterns, encode it as a valid <code>.em.hcl</code> document,
-          and turn each important slice into precise scenarios. Every
-          <code>.em.hcl</code> example on these pages validates with the real
-          CLI — nothing here is a syntax that only looks right.
-        </p>
+        <div class="eyebrow">Learn</div>
+        <h1>Event Modeling and <code>.em.hcl</code></h1>
+        <p class="lede">Choose a path based on what you already know.</p>
       </div>
     </div>
   </section>
 
   <section class="section">
     <div class="wrap">
-      <div class="section-head">
-        <h2>Use this loop, not a straight read-through</h2>
-        <p>Each idea works best worked through in this order, not read once and filed away:</p>
+      <div class="card-grid">
+        <div class="card">
+          <h2>New to Event Modeling?</h2>
+          <p>Start with the vocabulary and the four recurring workflow shapes.</p>
+          <div class="learning-route">
+            <a href="/learn/elements.html">Elements</a><span>→</span>
+            <a href="/learn/patterns.html">Patterns</a><span>→</span>
+            <a href="/learn/scenarios.html">Scenarios</a><span>→</span>
+            <a href="/learn/language.html">Language</a><span>→</span>
+            <a href="/learn/quality.html">Quality</a>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Already know Event Modeling?</h2>
+          <p>Start with how the concepts map to HCL.</p>
+          <div class="learning-route">
+            <a href="/learn/language.html">Language</a><span>→</span>
+            <a href="/learn/scenarios.html">Scenarios</a><span>→</span>
+            <a href="/reference.html">Reference</a>
+          </div>
+        </div>
       </div>
-      <ol class="loop-list prose">
-        <li><strong>Predict</strong> — answer the prompt before looking at the example.</li>
-        <li><strong>Retrieve</strong> — write the concept or HCL shape from memory.</li>
-        <li><strong>Compare</strong> — inspect the worked example.</li>
-        <li><strong>Explain</strong> — say why each block and reference exists.</li>
-        <li><strong>Produce</strong> — change the example or build a neighboring one.</li>
-        <li><strong>Validate</strong> — run the HCL validator.</li>
-        <li><strong>Revisit later</strong> — repeat after a delay instead of rereading immediately.</li>
-      </ol>
-
-      <callout kind="note">
-        <p><strong>If you learned an earlier draft</strong>, retrieve these before continuing: flows now have <strong>one canonical spelling</strong> per edge (reverse forms are invalid); a <strong>State View scenario is Given → Then</strong>, with no <code>when</code> and no <code>query</code> concept at all; obvious titles are <strong>derived</strong> from the label, so most examples omit them; validation has <strong>profiles</strong> (<code>workshop</code> / <code>valid</code> / <code>strict</code>) and stable <code>EMxxx</code> diagnostics; and a canonical <code>fmt</code> command formats source, while downstream tooling reads the validated typed model, not raw HCL.</p>
-      </callout>
     </div>
   </section>
 
   <section class="section section-alt">
     <div class="wrap">
       <div class="section-head center">
-        <h2>The whole method fits in one shape: 5 · 4 · 6 · 4</h2>
+        <h2>A useful map of the cheat sheet</h2>
+        <p>5 elements · 4 patterns · 6 workshop stages · 4 smells</p>
       </div>
       <div class="stat-grid">
-        <a class="stat-tile" href="/learn/elements.html">
-          <strong>5</strong>
-          <span>Elements</span>
-          <p>Event, Command, Read Model, Screen, Processor.</p>
-        </a>
-        <a class="stat-tile" href="/learn/patterns.html">
-          <strong>4</strong>
-          <span>Patterns</span>
-          <p><code>state_change</code>, <code>state_view</code>, <code>automation</code>, <code>translation</code>.</p>
-        </a>
-        <a class="stat-tile" href="#workshop-stages">
-          <strong>6</strong>
-          <span>Workshop stages</span>
-          <p>From brainstorming Events to pattern-specific scenarios.</p>
-        </a>
-        <a class="stat-tile" href="/learn/quality.html">
-          <strong>4</strong>
-          <span>Smells to watch</span>
-          <p>Bed, left chair, right chair, shelf.</p>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <section id="workshop-stages" class="section">
-    <div class="wrap">
-      <div class="section-head">
-        <h2>The six workshop stages, and where each lands in HCL</h2>
-        <p>The workshop is a progression from discovery to testable rules. Two anchor questions carry you through discovery: <strong>what is the first Event? What is the last Event?</strong> — and, at every step, <strong>what happens next?</strong></p>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Stage</th><th>Goal</th><th>What you discover</th><th>Where it lands in HCL</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>1. Brainstorming</td><td>Collect events</td><td>Facts that happen</td><td><code>event</code> blocks inside <code>bounded_context</code></td></tr>
-            <tr><td>2. The plot</td><td>Find the story</td><td>Business-time order</td><td>Workflow source order; chapters when useful</td></tr>
-            <tr><td>3. Storyboarding</td><td>Common understanding</td><td>Actor-visible screens</td><td><code>actor</code>, <code>screen</code></td></tr>
-            <tr><td>4. Input / Output</td><td>Information flow</td><td>Commands, Read Models, arrows</td><td><code>command</code>, <code>readmodel</code>, <code>processor</code>, <code>from</code>, <code>to</code></td></tr>
-            <tr><td>5. Swimlanes</td><td>Ownership</td><td>Teams/systems/contexts that own data</td><td><code>bounded_context</code>, <code>team</code>, <code>system</code>, <code>owner</code>, <code>external</code></td></tr>
-            <tr><td>6. Scenarios</td><td>Business rules</td><td>Pattern-specific rules: State Change uses Given/When/Then, State View uses Given/Then</td><td><code>scenario</code>, <code>given</code>, <code>when</code>, <code>then</code>, <code>comment</code></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-alt">
-    <div class="wrap">
-      <div class="section-head">
-        <h2>Workshop mode and authoring mode are different</h2>
-        <p>Do not let the precision of HCL pull implementation detail back into the discovery workshop too early.</p>
-      </div>
-      <div class="card-grid">
-        <div class="card">
-          <h3>Workshop mode</h3>
-          <p>Optimize for shared understanding: start with Events, talk about facts and intent rather than frameworks, avoid polishing diagrams, keep slices small, park uncertainty as a hotspot, and avoid implementation arguments unless they affect business behavior.</p>
-        </div>
-        <div class="card">
-          <h3>Authoring mode</h3>
-          <p>Now become precise: identify bounded-context ownership, give contracts stable identities, add fields and reusable field types, add typed references, make every Read Model answer a concrete question, encode scenarios, and validate the file.</p>
-        </div>
+        <a class="stat-tile" href="/learn/elements.html"><strong>5</strong><span>Elements</span><p>Event, Command, Read Model, Screen, Processor.</p></a>
+        <a class="stat-tile" href="/learn/patterns.html"><strong>4</strong><span>Patterns</span><p>State Change, State View, Automation, Translation.</p></a>
+        <div class="stat-tile"><strong>6</strong><span>Workshop stages</span><p>From Events to scenarios.</p></div>
+        <a class="stat-tile" href="/learn/quality.html"><strong>4</strong><span>Smells</span><p>Bed, left chair, right chair, shelf.</p></a>
       </div>
     </div>
   </section>
 
   <section class="section">
     <div class="wrap">
-      <div class="section-head center">
-        <h2>The path</h2>
-        <p>Work through these in order the first time; jump around once the shape is familiar.</p>
-      </div>
+      <div class="section-head"><h2>The pages</h2></div>
       <div class="card-grid">
-        <a class="path-card" href="/learn/elements.html">
-          <span class="path-step">01 · The vocabulary</span>
-          <h3>The five elements</h3>
-          <p>Event, Command, Read Model, Screen, and the automation gear — what each one means and how it's declared.</p>
-          <span class="path-go">Start →</span>
-        </a>
-        <a class="path-card" href="/learn/patterns.html">
-          <span class="path-step">02 · The four shapes</span>
-          <h3>The four patterns</h3>
-          <p>State Change, State View, Automation, and Translation, contrasted side by side with a minimal HCL shape for each.</p>
-          <span class="path-go">Start →</span>
-        </a>
-        <a class="path-card" href="/learn/language.html">
-          <span class="path-step">03 · The mechanics</span>
-          <h3>The language</h3>
-          <p>Identities and derived titles, typed references, bounded-context ownership, field types, and the one-canonical-edge rule.</p>
-          <span class="path-go">Start →</span>
-        </a>
-        <a class="path-card" href="/learn/scenarios.html">
-          <span class="path-step">04 · Make it testable</span>
-          <h3>Scenarios</h3>
-          <p>Pattern-specific Given/When/Then grammar, with a faded exercise to complete yourself.</p>
-          <span class="path-go">Start →</span>
-        </a>
-        <a class="path-card" href="/learn/quality.html">
-          <span class="path-step">05 · Judge the model</span>
-          <h3>Quality: smells, errors, and warnings</h3>
-          <p>The four anti-patterns, what the validator rejects outright, and what it leaves to human judgment — with a validity-spotting drill.</p>
-          <span class="path-go">Start →</span>
-        </a>
-        <a class="path-card" href="https://github.com/event-modeling-hcl/spec/blob/main/guides/learning-event-modeling-hcl.md">
-          <span class="path-step">Beyond this site</span>
-          <h3>The full guide</h3>
-          <p>A capstone build, a closed-book mastery test, facilitation rules, and the learning-science citations behind this path.</p>
-          <span class="path-go">Open on GitHub →</span>
-        </a>
+        <a class="path-card" href="/learn/elements.html"><span class="path-step">01</span><h3>Elements</h3><p>The five things shown on an Event Model.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="/learn/patterns.html"><span class="path-step">02</span><h3>Patterns</h3><p>Four shapes for organizing a workflow.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="/learn/scenarios.html"><span class="path-step">03</span><h3>Scenarios</h3><p>Pattern-specific Given, When, and Then rules.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="/learn/language.html"><span class="path-step">04</span><h3>Language</h3><p>Blocks, references, fields, and canonical flow.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="/learn/quality.html"><span class="path-step">05</span><h3>Quality</h3><p>Errors, warnings, and four modeling smells.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="https://github.com/event-modeling-hcl/spec/blob/main/guides/learning-event-modeling-hcl.md"><span class="path-step">More</span><h3>Full learning guide</h3><p>Exercises, facilitation notes, and a capstone.</p><span class="path-go">Open on GitHub →</span></a>
       </div>
     </div>
   </section>
-
 </main>
 
 <site-footer></site-footer>

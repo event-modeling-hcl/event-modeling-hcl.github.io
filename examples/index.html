@@ -11,10 +11,10 @@
   } catch (e) {}
 </script>
 <title>Examples</title>
-<meta name="description" content="Five real .em.hcl models, each rendered by the actual eventmodeling-hcl diagram command — from a minimal one-workflow file to a five-workflow golden model.">
+<meta name="description" content="Examples generated from the .em.hcl models in the eventmodeling-hcl repository.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Examples — event-modeling-hcl">
-<meta property="og:description" content="Five real .em.hcl models, each rendered by the actual diagram command.">
+<meta property="og:description" content="Generated diagrams and source for five .em.hcl models.">
 <meta property="og:image" content="/assets/img/og-default.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -35,14 +35,9 @@
   <section class="hero" style="padding-bottom: 8px;">
     <div class="wrap">
       <div class="prose" style="margin: 0 auto;">
-        <div class="eyebrow">See it work</div>
-        <h1>Five real models, five real canvases</h1>
-        <p class="lede">
-          Every canvas below is the actual output of
-          <code>eventmodeling-hcl diagram</code> — not a screenshot, not a
-          mockup. Open one, click a slice for its scenarios, and try it on
-          your own model afterward.
-        </p>
+        <div class="eyebrow">Generated from source</div>
+        <h1>Examples</h1>
+        <p class="lede">These diagrams are generated from the <code>.em.hcl</code> files in this repository.</p>
       </div>
     </div>
   </section>
@@ -51,60 +46,65 @@
     <div class="wrap">
       <div class="example-gallery">
 
-        <a class="example-card" href="/examples/minimal.html">
+        <article class="example-card">
           <div class="canvas-embed preview">
             <iframe src="/examples/canvas/minimal.html" loading="lazy" title="Minimal example canvas preview" tabindex="-1" scrolling="no"></iframe>
           </div>
           <div class="example-card-body">
             <h3>Minimal</h3>
-            <p>The smallest useful model: one bounded context, one Event, one State Change workflow.</p>
+            <p>One Event and one State Change.</p>
             <div class="pattern-pills"><code>state_change</code></div>
+            <div class="btn-row"><a href="/examples/models/minimal.em.hcl">View source</a><a href="/examples/canvas/minimal.html">Open diagram</a></div>
           </div>
-        </a>
+        </article>
 
-        <a class="example-card" href="/examples/complete.html">
+        <article class="example-card">
           <div class="canvas-embed preview">
             <iframe src="/examples/canvas/complete.html" loading="lazy" title="Complete reference example canvas preview" tabindex="-1" scrolling="no"></iframe>
           </div>
           <div class="example-card-body">
-            <h3>Complete reference</h3>
-            <p>Every supported HCL construct: all four patterns, a team and an external system, a chapter, and an open hotspot.</p>
+            <h3>Complete</h3>
+            <p>Supported language constructs in one model.</p>
             <div class="pattern-pills"><code>state_change</code><code>state_view</code><code>automation</code><code>translation</code></div>
+            <div class="btn-row"><a href="/examples/models/complete.em.hcl">View source</a><a href="/examples/canvas/complete.html">Open diagram</a></div>
           </div>
-        </a>
+        </article>
 
-        <a class="example-card" href="/examples/course-subscriptions.html">
+        <article class="example-card">
           <div class="canvas-embed preview">
             <iframe src="/examples/canvas/course_subscriptions.html" loading="lazy" title="Course subscriptions example canvas preview" tabindex="-1" scrolling="no"></iframe>
           </div>
           <div class="example-card-body">
             <h3>Course subscriptions</h3>
-            <p>One set of canonical contracts shared by a State Change that subscribes a student and a State View that lists their subscriptions.</p>
+            <p>State Change and State View sharing the same domain contracts.</p>
             <div class="pattern-pills"><code>state_change</code><code>state_view</code></div>
+            <div class="btn-row"><a href="/examples/models/course_subscriptions.em.hcl">View source</a><a href="/examples/canvas/course_subscriptions.html">Open diagram</a></div>
           </div>
-        </a>
+        </article>
 
-        <a class="example-card" href="/examples/pet-management.html">
+        <article class="example-card">
           <div class="canvas-embed preview">
             <iframe src="/examples/canvas/pet-management-detailed.html" loading="lazy" title="Pet management example canvas preview" tabindex="-1" scrolling="no"></iframe>
           </div>
           <div class="example-card-body">
             <h3>Pet management</h3>
-            <p>The five-workflow golden model: three bounded contexts, a realistically-sized domain — including a real right-chair warning.</p>
+            <p>Five workflows across owner, pet, and pet-type contexts.</p>
             <div class="pattern-pills"><code>state_change</code><code>state_view</code></div>
+            <div class="btn-row"><a href="/examples/models/pet-management-detailed.em.hcl">View source</a><a href="/examples/canvas/pet-management-detailed.html">Open diagram</a></div>
           </div>
-        </a>
+        </article>
 
-        <a class="example-card" href="/examples/appointments-and-weather.html">
+        <article class="example-card">
           <div class="canvas-embed preview">
             <iframe src="/examples/canvas/appointment-weather-patterns.html" loading="lazy" title="Appointments and weather example canvas preview" tabindex="-1" scrolling="no"></iframe>
           </div>
           <div class="example-card-body">
             <h3>Appointments &amp; weather</h3>
-            <p>All four patterns in one domain — the exact running example used throughout the Learn section, now a complete, validated model.</p>
+            <p>All four workflow patterns.</p>
             <div class="pattern-pills"><code>state_change</code><code>state_view</code><code>automation</code><code>translation</code></div>
+            <div class="btn-row"><a href="/examples/models/appointment-weather-patterns.em.hcl">View source</a><a href="/examples/canvas/appointment-weather-patterns.html">Open diagram</a></div>
           </div>
-        </a>
+        </article>
 
       </div>
     </div>

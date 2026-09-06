@@ -11,10 +11,10 @@
   } catch (e) {}
 </script>
 <title>Get Started</title>
-<meta name="description" content="Install eventmodeling-hcl, write a first .em.hcl model, validate it, render it to a canvas, and publish it next to your code on GitHub or GitLab Pages.">
+<meta name="description" content="Install eventmodeling-hcl, write a first .em.hcl model, validate it, and render it to HTML.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Get Started — event-modeling-hcl">
-<meta property="og:description" content="Install the CLI, write a first model, validate it, render it, and publish it next to your code.">
+<meta property="og:description" content="Install the CLI, write a first model, validate it, and render it to HTML.">
 <meta property="og:image" content="/assets/img/og-default.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -33,8 +33,8 @@
     <div class="wrap">
       <div class="prose" style="margin: 0 auto;">
         <div class="eyebrow">Get started</div>
-        <h1>From install to a published canvas</h1>
-        <p class="lede">Five steps, no more than a few minutes: install the CLI, write a model, validate it, render it, and publish it next to the code it specifies.</p>
+        <h1>Your first <code>.em.hcl</code> model</h1>
+        <p class="lede">Install the CLI, write a small model, validate it, and render it locally.</p>
       </div>
     </div>
   </section>
@@ -43,7 +43,7 @@
     <div class="wrap prose">
 
       <h2>1 · Install the CLI</h2>
-      <p>Two ways to get <code>eventmodeling-hcl</code> — a published release archive, or building from source with Go 1.25 or newer.</p>
+      <p>Download a release archive, or build from source with Go 1.25 or newer.</p>
 
       <h3>Option A: download a release</h3>
       <code-block lang="text">
@@ -117,7 +117,7 @@
 
       <h2>3 · Validate it</h2>
       <code-block lang="text">./eventmodeling-hcl validate pet.em.hcl</code-block>
-      <p>A valid document prints exactly this — verified against this exact file with the real CLI while writing this page:</p>
+      <p>A valid document prints:</p>
       <code-block lang="text">pet.em.hcl valid</code-block>
       <p>A diagnostic instead would look like <code>file:line:column: Severity EMxxx: message</code>. See the <a href="/learn/quality.html">quality page</a> for what's a hard error versus a warning worth a second look.</p>
 
@@ -132,17 +132,17 @@
   <section class="section">
     <div class="wrap prose">
 
-      <h2>5 · Publish it next to your code</h2>
-      <p>This is the part that makes <code>.em.hcl</code> different from a diagram tool: the model and its rendered canvas are just files. Commit them beside the code they specify, and host the canvas on the same GitHub or GitLab Pages site that documents your project:</p>
+      <h2>Optional: publish the diagram</h2>
+      <p>The model and rendered canvas are files, so you can commit them beside the code and host the canvas with GitHub or GitLab Pages:</p>
       <code-block lang="text">
         git add pet.em.hcl pet.html
         git commit -m "Add pet-registration event model"
         git push
       </code-block>
-      <p>Turn on Pages for the repository (or point an existing Pages site at this path), and the rendered canvas is now living documentation — versioned with the code, reviewed in the same pull requests, never drifting out of sync with a wiki page nobody remembers to update.</p>
+      <p>Keeping the model in the repository means it can be versioned and reviewed with the code.</p>
 
       <callout kind="target">
-        <p><strong>Working with an LLM instead of by hand?</strong> The same three commands — write, <code>validate</code>, <code>diagram</code> — are the exact feedback loop an agent can run on its own. See <a href="/ai.html">Author with AI</a>.</p>
+        <p><strong>Using a coding agent?</strong> It can draft, validate, fix, and render a model before human review. See <a href="/ai.html">Using <code>.em.hcl</code> with coding agents</a>.</p>
       </callout>
 
       <div class="btn-row" style="margin-top: 24px;">

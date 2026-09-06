@@ -10,11 +10,11 @@
     if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
   } catch (e) {}
 </script>
-<title>Why HCL — event-modeling-hcl</title>
-<meta name="description" content="Why event-modeling-hcl chose HCL over YAML and JSON, the architecture that keeps HCL for authoring and a typed IR for everything else, and the honest tradeoffs against emlang, ESDM, and Martin Dilger's Event Modeling Specification.">
+<title>Why HCL? | event-modeling-hcl</title>
+<meta name="description" content="Why this project uses HCL for Event Model source files, and the tradeoffs compared with JSON and YAML.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Why HCL — event-modeling-hcl">
-<meta property="og:description" content="Why event-modeling-hcl chose HCL over YAML and JSON — and what it costs.">
+<meta property="og:title" content="Why HCL? | event-modeling-hcl">
+<meta property="og:description" content="The motivation and tradeoffs behind using HCL for Event Models.">
 <meta property="og:image" content="/assets/img/og-default.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -23,27 +23,9 @@
 <link rel="canonical" href="https://event-modeling-hcl.github.io/why-hcl.html">
 <link rel="stylesheet" href="/assets/site.css">
 <style>
-  /* Page-local: the architecture diagram and its alternative-format cards. */
-  .arch-diagram { width: 100%; height: auto; margin: 8px 0 4px; }
-  .arch-diagram .box { fill: var(--panel); stroke: var(--line); stroke-width: 1.5; }
-  .arch-diagram .box-accent { fill: var(--accent-soft); stroke: var(--accent); }
-  .arch-diagram .box-strong { fill: var(--accent); stroke: var(--accent); }
-  .arch-diagram .box-json { fill: var(--command-bg); stroke: var(--command); }
-  .arch-diagram .box-html { fill: var(--readmodel-bg); stroke: var(--readmodel); }
-  .arch-diagram .box-agent { fill: var(--processor-bg); stroke: var(--processor); }
-  .arch-diagram text { font-family: var(--font-body); fill: var(--ink); }
-  .arch-diagram .mono { font-family: var(--font-mono); }
-  .arch-diagram .title { font-weight: 700; font-size: 16px; }
-  .arch-diagram .sub { font-size: 11.5px; fill: var(--ink-soft); }
-  .arch-diagram .sub-on-strong { font-size: 11.5px; fill: rgba(255,255,255,0.85); }
-  .arch-diagram .title-on-strong { font-weight: 700; font-size: 16px; fill: #fff; }
-  .arch-diagram .arrow { stroke: var(--ink-faint); stroke-width: 1.75; fill: none; }
-  .arch-diagram .arrow-label { font-size: 11.5px; fill: var(--ink-faint); font-style: italic; }
-
   .alt-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
   .alt-card h3 { margin-bottom: 6px; }
   .alt-card .alt-kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 6px; display: block; }
-
   .compare-strip { display: grid; gap: 14px; grid-template-columns: repeat(3, 1fr); margin: 24px 0; }
   @media (max-width: 780px) { .compare-strip { grid-template-columns: 1fr; } }
   .compare-strip code-block { margin: 0; }
@@ -54,248 +36,118 @@
 <site-nav></site-nav>
 
 <main id="main">
-
   <section class="hero" style="padding-bottom: 8px;">
     <div class="wrap">
       <div class="prose">
-        <div class="eyebrow">The case for HCL</div>
-        <h1>Why HCL, honestly</h1>
-        <p class="lede">
-          We picked HCL over YAML and JSON on purpose. Here's the reasoning,
-          the architecture it leads to, and the costs we're not going to
-          pretend don't exist.
-        </p>
+        <div class="eyebrow">One format choice</div>
+        <h1>Why HCL?</h1>
+        <p class="lede">I wanted a text format for Event Models that was comfortable to edit by hand and strict enough to validate.</p>
       </div>
     </div>
   </section>
 
-  <!-- Architecture -->
   <section class="section">
     <div class="wrap">
-      <div class="section-head">
-        <h2>HCL for authoring, a typed IR for everything else</h2>
-        <p>
-          <code>.em.hcl</code> doesn't try to compete with JSON as a machine
-          interchange format, and it doesn't try to be as terse as YAML. It
-          does one job: let a person or a model author an Event Model that
-          <em>reads</em> like Event Modeling. A validator turns that into a
-          strongly typed, normalized model — <code>internal/model.Load</code> —
-          and everything downstream reads from that, not from the HCL text.
-        </p>
+      <div class="prose">
+        <p>JSON was easy to validate but noisy to write. YAML was pleasant to write. HCL had one feature I particularly liked: domain concepts could be blocks.</p>
+        <p>So I tried HCL.</p>
       </div>
-
-      <svg class="arch-diagram" viewBox="0 0 860 430" role="img" aria-label="Architecture: humans and LLMs author .em.hcl, which is validated into a typed Event Model IR, which is exported to JSON, rendered to HTML diagrams, and read by software-generating agents.">
-        <defs>
-          <marker id="arrowhead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-            <path d="M0,0 L10,5 L0,10 z" fill="var(--ink-faint)"></path>
-          </marker>
-        </defs>
-
-        <!-- Humans + LLMs -->
-        <rect class="box" x="320" y="14" width="220" height="48" rx="10"></rect>
-        <text class="title" x="430" y="43" text-anchor="middle">Humans + LLMs</text>
-
-        <path class="arrow" d="M430,62 L430,96" marker-end="url(#arrowhead)"></path>
-
-        <!-- .em.hcl -->
-        <rect class="box box-accent" x="340" y="100" width="180" height="56" rx="10"></rect>
-        <text class="title mono" x="430" y="126" text-anchor="middle">.em.hcl</text>
-        <text class="sub" x="430" y="144" text-anchor="middle">you author this</text>
-
-        <path class="arrow" d="M430,156 L430,196" marker-end="url(#arrowhead)"></path>
-        <text class="arrow-label" x="446" y="181">validate</text>
-
-        <!-- Typed IR -->
-        <rect class="box box-strong" x="260" y="200" width="340" height="64" rx="10"></rect>
-        <text class="title-on-strong" x="430" y="228" text-anchor="middle">Typed Event Model IR</text>
-        <text class="sub-on-strong mono" x="430" y="248" text-anchor="middle">internal/model.Load — normalized, scope-checked</text>
-
-        <!-- fan-out arrows -->
-        <path class="arrow" d="M430,264 C430,290 160,290 160,320" marker-end="url(#arrowhead)"></path>
-        <path class="arrow" d="M430,264 L430,320" marker-end="url(#arrowhead)"></path>
-        <path class="arrow" d="M430,264 C430,290 700,290 700,320" marker-end="url(#arrowhead)"></path>
-
-        <!-- outputs -->
-        <rect class="box box-json" x="35" y="324" width="250" height="72" rx="10"></rect>
-        <text class="title" x="160" y="354" text-anchor="middle">JSON export</text>
-        <text class="sub" x="160" y="374" text-anchor="middle">interchange, APIs, MCP</text>
-
-        <rect class="box box-html" x="305" y="324" width="250" height="72" rx="10"></rect>
-        <text class="title" x="430" y="354" text-anchor="middle">HTML diagrams</text>
-        <text class="sub mono" x="430" y="374" text-anchor="middle">eventmodeling-hcl diagram</text>
-
-        <rect class="box box-agent" x="575" y="324" width="250" height="72" rx="10"></rect>
-        <text class="title" x="700" y="349" text-anchor="middle">Software-generating</text>
-        <text class="title" x="700" y="367" text-anchor="middle">agents</text>
-      </svg>
-
-      <p class="prose">
-        In other words: <strong>HCL for authoring, typed IR internally, JSON
-        for interchange.</strong> We would not make JSON the primary
-        human-authored representation, and we would not try to make
-        <code>.em.hcl</code> as terse as YAML — its job is to make an Event
-        Model look like Event Modeling when you read the source, not to win
-        on keystrokes.
-      </p>
+      <div class="compare-strip">
+        <code-block lang="json">
+          {
+            "kind": "event",
+            "name": "student_registered"
+          }
+        </code-block>
+        <code-block lang="text">
+          kind: event
+          name: student_registered
+        </code-block>
+        <code-block lang="hcl">
+          event "student_registered" {
+          }
+        </code-block>
+      </div>
+      <p class="prose">For this project, the block form is useful because the source resembles the concepts being discussed.</p>
     </div>
   </section>
 
-  <!-- Side-by-side syntax -->
   <section class="section section-alt">
     <div class="wrap">
       <div class="section-head">
-        <h2>The same Event, three ways</h2>
-        <p>
-          JSON and YAML represent an Event Modeling concept as <em>data</em> —
-          a value inside a generic <code>type</code> or <code>kind</code>
-          field. HCL lets the concept <em>be</em> the syntax.
-        </p>
+        <h2>References and validation</h2>
       </div>
-      <div class="compare-strip">
-        <div>
-          <code-block lang="json">
-            {
-              "type": "event",
-              "name": "pet_registered"
-            }
-          </code-block>
-        </div>
-        <div>
-          <code-block lang="text">
-            kind: event
-            name: pet_registered
-          </code-block>
-        </div>
-        <div>
-          <code-block lang="hcl">
-            event "pet_registered" {
-            }
-          </code-block>
-        </div>
+      <code-block lang="hcl">event.school.student_registered</code-block>
+      <div class="prose">
+        <p>HCL parses this as a traversal expression. HCL does not know that it refers to an Event.</p>
+        <p>The <code>.em.hcl</code> validator supplies that meaning. It checks the reference kind, scope, and existence, then produces a typed model for the formatter, renderer, and other tools.</p>
       </div>
-      <p>
-        The reader of the JSON or YAML has to interpret an object whose
-        <code>type</code> field happens to equal <code>event</code>. The
-        reader of the HCL sees an <code>event</code> block. That difference
-        compounds: a validator can say <em>"expected an Event reference,
-        found a Command reference"</em> instead of <em>"invalid string"</em>,
-        because the grammar — not just the data — knows what kind of thing
-        each reference points to.
-      </p>
     </div>
   </section>
 
-  <!-- Full scorecard -->
   <section class="section">
     <div class="wrap">
       <div class="section-head">
-        <h2>JSON vs. YAML vs. HCL, dimension by dimension</h2>
-        <p>Compared specifically as <strong>source languages for Event Modeling</strong>, not as generic serialization formats.</p>
+        <h2>Tradeoffs</h2>
+        <p>These formats solve different problems. This table describes the choices relevant to this project.</p>
       </div>
       <div class="table-wrap">
         <table>
-          <thead>
-            <tr><th>Dimension</th><th>JSON</th><th>YAML</th><th>HCL</th></tr>
-          </thead>
+          <thead><tr><th></th><th>JSON</th><th>YAML</th><th><code>.em.hcl</code></th></tr></thead>
           <tbody>
-            <tr><td>Human readability</td><td>Low</td><td>High</td><td><strong>Highest</strong></td></tr>
-            <tr><td>Human writability</td><td>Low</td><td><strong>Highest</strong></td><td>High</td></tr>
-            <tr><td>Domain concepts visible in syntax</td><td>Moderate — a <code>type</code> field</td><td>Moderate — a <code>kind</code> key</td><td><strong>Strong</strong> — the block keyword</td></tr>
-            <tr><td>Typed references</td><td>Usually strings</td><td>Usually strings</td><td><strong>Native traversals</strong>, checked for scope, kind, existence</td></tr>
-            <tr><td>Comments</td><td>No standard comments</td><td>Excellent</td><td>Excellent</td></tr>
-            <tr><td>Canonical formatting</td><td>Easy</td><td>Harder — whitespace is semantic</td><td><strong>Built in</strong> — <code>eventmodeling-hcl fmt</code></td></tr>
-            <tr><td>Diff readability</td><td>Fair</td><td>Good</td><td><strong>Excellent</strong></td></tr>
-            <tr><td>Structural robustness</td><td>Braces + brackets</td><td>Indentation only</td><td><strong>Indentation + braces</strong></td></tr>
-            <tr><td>Schema / validation ecosystem</td><td><strong>Excellent</strong> — JSON Schema</td><td>Very good</td><td>Custom, purpose-built for this grammar</td></tr>
-            <tr><td>Machine interoperability</td><td><strong>Excellent</strong></td><td>Very good</td><td>Moderate — export the typed IR to JSON instead</td></tr>
-            <tr><td>LLM token efficiency</td><td>Moderate — repeated keys</td><td><strong>Best</strong></td><td>Good</td></tr>
-            <tr><td>Semantic clues in the tokens an LLM sees</td><td>Generic (<code>"type"</code>, <code>"name"</code>)</td><td>Generic</td><td><strong>Domain tokens</strong> (<code>state_change</code>, <code>given</code>, <code>then</code>)</td></tr>
-            <tr><td>Ecosystem cost of adopting it</td><td><strong>None</strong> — universal</td><td>Small</td><td>Real — this project owns the dialect</td></tr>
-            <tr><td>Best role</td><td>IR / API / interchange</td><td>Lightweight DSL</td><td><strong>Primary authoring DSL</strong></td></tr>
+            <tr><td>Familiar ecosystem</td><td>Very broad</td><td>Very broad</td><td>Smaller</td></tr>
+            <tr><td>Human editing</td><td>Verbose</td><td>Compact</td><td>Block-oriented</td></tr>
+            <tr><td>References</td><td>Usually represented as data</td><td>Usually represented as data</td><td>HCL traversals plus <code>.em.hcl</code> validation</td></tr>
+            <tr><td>Comments</td><td>No standard JSON comments</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td>Structure</td><td>Brackets and braces</td><td>Indentation</td><td>Blocks and braces</td></tr>
+            <tr><td>Validation</td><td>JSON Schema ecosystem</td><td>Schema or tool dependent</td><td>Project validator</td></tr>
+            <tr><td>Fit here</td><td>Interchange</td><td>Lightweight authoring</td><td>Domain-oriented authoring</td></tr>
+            <tr><td>Cost</td><td>More syntax noise</td><td>Significant whitespace and YAML semantics</td><td>Custom language tooling</td></tr>
           </tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <!-- Honest tradeoffs / alternatives -->
   <section class="section section-alt">
     <div class="wrap">
       <div class="section-head">
-        <h2>Where we're not the only answer</h2>
-        <p>
-          <code>event-modeling-hcl</code> isn't the only Event-Modeling-as-code
-          project, and picking HCL was a tradeoff, not a free win. Here's who
-          else is in this space, and where they're a genuinely better fit.
-        </p>
+        <h2>Related work</h2>
       </div>
       <div class="alt-grid">
         <div class="card alt-card">
-          <span class="alt-kicker">YAML-based</span>
-          <h3>emlang</h3>
-          <p>
-            A YAML-based Event Modeling toolchain with its own parsing,
-            linting, formatting, diagram generation, and a live editor. If you
-            want the lowest possible adoption cost — a teammate can read a
-            <code>kind: event</code> document with zero language-specific
-            training — emlang's YAML is genuinely easier to onboard than a
-            custom HCL dialect.
-          </p>
+          <span class="alt-kicker">YAML</span>
+          <h3>EmLang</h3>
+          <p>An Event Modeling language and toolchain using YAML. It includes editing, validation, and diagram tooling. If YAML is natural for your team, it is useful to look at.</p>
+          <p><a href="https://github.com/emlang-project/emlang">EmLang on GitHub →</a></p>
         </div>
         <div class="card alt-card">
-          <span class="alt-kicker">YAML-based</span>
+          <span class="alt-kicker">YAML</span>
           <h3>ESDM</h3>
-          <p>
-            Event-Sourced Domain Modeling represents each contract as a
-            separate <code>apiVersion</code>/<code>kind</code> YAML manifest,
-            with linting, rendering, and editor/schema integration around it.
-            It's a mature, practical ecosystem — if HCL didn't give us typed
-            traversal references and a single canonical spelling per flow,
-            YAML would be our choice too.
-          </p>
+          <p>Uses YAML manifests to model event-sourced domains and provides related validation, rendering, and editor tooling.</p>
+          <p><a href="https://www.esdm.io/">ESDM documentation →</a></p>
         </div>
         <div class="card alt-card">
           <span class="alt-kicker">JSON Schema</span>
           <h3>Martin Dilger's Event Modeling Specification</h3>
-          <p>
-            The <a href="https://github.com/dilgerma/event-modeling-spec">domain reference</a>
-            this project natively ports into HCL. Its JSON Schema is the
-            closest thing to a canonical interchange format for Event
-            Modeling today — <code>.em.hcl</code> is designed to complement
-            it, not replace it: author in HCL, export the typed IR to JSON for
-            anything that needs that reference format.
-          </p>
+          <p>A JSON Schema representation of Event Models and an important input to this project.</p>
+          <p><a href="https://github.com/dilgerma/event-modeling-spec">Specification on GitHub →</a></p>
         </div>
       </div>
-
-      <p style="margin-top: 24px;">
-        The cost of choosing HCL is real: it's a stricter dialect to learn
-        than YAML, full HCL is more powerful than this project needs (we
-        explicitly reject variables, functions, and interpolation to keep
-        models declarative and inspectable), and the tooling — parser
-        integration, validator, formatter, diagnostics — is ours to build and
-        maintain rather than borrowed from a large existing ecosystem. Given
-        that the downstream goal is a high-confidence specification for
-        software-generating agents, we think that's the right trade — but it
-        is a trade, not a strictly-better choice.
-      </p>
     </div>
   </section>
 
-  <!-- CTA -->
   <section class="section">
-    <div class="wrap" style="text-align: center;">
-      <div class="prose" style="margin: 0 auto;">
-        <h2>See it in your own repo</h2>
-        <p>Install the CLI and validate a model in a couple of minutes.</p>
-        <div class="btn-row" style="justify-content: center;">
-          <a class="btn btn-primary" href="https://github.com/event-modeling-hcl/eventmodeling-hcl/releases">Get the CLI</a>
-          <a class="btn" href="/">Back to overview</a>
-        </div>
+    <div class="wrap prose" style="margin: 0 auto;">
+      <h2>Use the format that fits</h2>
+      <p>HCL is not required for Event Modeling. It is the tradeoff this project explores.</p>
+      <p>If JSON or YAML fits your tooling better, use that.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="/examples/minimal.html">See an example</a>
+        <a class="btn" href="/">Back to overview</a>
       </div>
     </div>
   </section>
-
 </main>
 
 <site-footer></site-footer>

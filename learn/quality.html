@@ -34,7 +34,7 @@
       <div class="prose" style="margin: 0;">
         <div class="eyebrow">Learn · 05 of 5</div>
         <h1>Quality: smells, errors, and warnings</h1>
-        <p class="lede">A valid file can still be a poor model. Syntax and reference correctness are machine-checkable; business clarity is not fully machine-checkable — knowing which is which is the point of this page.</p>
+        <p class="lede">The validator checks structure. Business clarity still requires judgment.</p>
       </div>
     </div>
   </section>
@@ -43,24 +43,24 @@
     <div class="wrap">
       <div class="section-head">
         <h2>The four anti-patterns</h2>
-        <p>None of these are automatically invalid. Each is a shape worth investigating — the validator surfaces them as warnings, not rejections.</p>
+        <p>These shapes are warnings worth investigating, not automatic rejections.</p>
       </div>
       <div class="card-grid">
         <div class="card">
           <h3>Left chair</h3>
-          <p><code>1 Command → many Events</code>. The Command may be doing too much, or mixing several business capabilities. Ask: if I split this Command by user intent, do the Events naturally separate?</p>
+          <p><code>1 Command → many Events</code>. Check whether several business capabilities are mixed together.</p>
         </div>
         <div class="card">
           <h3>Right chair</h3>
-          <p><code>many Events → 1 Read Model</code>. The Read Model may be answering several questions at once. Ask: can I state its question in one precise sentence?</p>
+          <p><code>many Events → 1 Read Model</code>. Check whether the Read Model answers more than one question.</p>
         </div>
         <div class="card">
           <h3>Bed</h3>
-          <p><code>1 Screen → many Commands</code>. The screen may be bundling unrelated intents. Ask: is this one user goal, or several independent actions merely placed on the same UI?</p>
+          <p><code>1 Screen → many Commands</code>. Check whether the Screen combines unrelated user intents.</p>
         </div>
         <div class="card">
           <h3>Shelf</h3>
-          <p><code>1 workflow → many scenarios, others → none</code>. The team may have specified one convenient slice and stopped. Ask: which important slices still rely on implicit business rules?</p>
+          <p><code>1 workflow → many scenarios, others → none</code>. Check which workflows still rely on implicit rules.</p>
         </div>
       </div>
     </div>
@@ -71,7 +71,7 @@
       <h2>What the validator rejects outright</h2>
       <p>The default profile rejects invalid HCL and unknown syntax, missing required semantic attributes, wrong literal types and invalid examples, duplicate identities, unresolved or wrong-kind references, non-canonical flow directions, invalid pattern-specific scenario structure, non-contiguous chapters, and incorrect Automation/Translation externality. Diagnostics use stable <code>EMxxx</code> codes — <code>EM0xx</code> structural, <code>EM1xx</code> references, <code>EM2xx</code> flow, <code>EM3xx</code> scenarios, <code>EM4xx</code> modeling judgment.</p>
 
-      <h2>What it leaves to human judgment — and validation profiles</h2>
+      <h2>What it leaves to human judgment</h2>
       <p>Some checks need judgment rather than hard rejection: a Command with no incoming flow, API endpoint, or trigger (<code>EM404</code>); the four anti-patterns above; an open hotspot (<code>EM406</code>). Three profiles decide how strict that judgment is:</p>
       <div class="table-wrap">
         <table>
@@ -83,7 +83,7 @@
           </tbody>
         </table>
       </div>
-      <p>The exact same file, checked two ways, makes the boundary concrete. This Command has no incoming flow, API endpoint, or trigger:</p>
+      <p>This Command has no incoming flow, API endpoint, or trigger:</p>
       <code-block lang="hcl">
         bounded_context "appointments" {
           event "appointment_added" {
@@ -101,7 +101,7 @@
 em404-test.em.hcl valid</code-block>
       <p>Under <code>--profile strict</code>, the same diagnostic becomes a hard error and nothing is reported valid:</p>
       <code-block lang="text">em404-test.em.hcl:6:3: Error EM404: Every command has a reason: command "add_appointment" has no incoming flow, api_endpoint, or external_trigger.</code-block>
-      <p>And here's a real right-chair warning from one of this project's own shipped examples — a valid file, flagged anyway:</p>
+      <p>A shipped example also produces a right-chair warning:</p>
       <code-block lang="text">pet-management-detailed.em.hcl:459:12: Warning EM403: Right chair anti-pattern: readmodel "owner_details" connects to several events; review whether the workflow contains more than one business capability.
 pet-management-detailed.em.hcl valid</code-block>
       <callout kind="rule">
@@ -172,19 +172,7 @@ where "orders" is an internal bounded context.</code-block>
         <code-block lang="text">A State Change scenario contains two "when" blocks.</code-block>
         <details class="reveal">
           <summary>Answer</summary>
-          <p><span class="verdict verdict-invalid">Invalid</span> State Change scenarios require exactly one <code>when</code>, targeting a Command.</p>
-        </details>
-      </div>
-
-      <div class="quiz-item">
-        <span class="quiz-kicker">G</span>
-        <code-block lang="text">A State View scenario contains:
-when {
-  query = readmodel.order_summary
-}</code-block>
-        <details class="reveal">
-          <summary>Answer</summary>
-          <p><span class="verdict verdict-invalid">Invalid, twice over</span> State View scenarios have zero <code>when</code> blocks, and <code>query</code> is not part of the language at all. Use one or more Event <code>given</code> steps followed by <code>then { readmodel = ... }</code>.</p>
+          <p><span class="verdict verdict-invalid">Invalid</span> State Change scenarios require one <code>when</code>, targeting a Command.</p>
         </details>
       </div>
 
@@ -194,8 +182,8 @@ when {
   <section class="section section-alt">
     <div class="wrap" style="text-align: center;">
       <div class="prose" style="margin: 0 auto;">
-        <h2>That's the path</h2>
-        <p>Five elements, four patterns, the language mechanics, and pattern-specific scenarios — with the judgment to tell a hard error from a warning worth investigating. The <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/learning-event-modeling-hcl.md">full guide</a> adds a capstone build, a closed-book mastery test, and facilitation rules if you want to go further.</p>
+        <h2>Keep going</h2>
+        <p>The <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/learning-event-modeling-hcl.md">full guide</a> includes more exercises, facilitation notes, and a capstone.</p>
         <div class="btn-row" style="justify-content: center;">
           <a class="btn btn-primary" href="https://github.com/event-modeling-hcl/eventmodeling-hcl/releases">Get the CLI</a>
           <a class="btn" href="/learn/index.html">Back to the path</a>

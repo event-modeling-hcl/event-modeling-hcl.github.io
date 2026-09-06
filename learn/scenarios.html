@@ -34,7 +34,7 @@
       <div class="prose" style="margin: 0;">
         <div class="eyebrow">Learn · 04 of 5</div>
         <h1>Scenarios: make the slice testable</h1>
-        <p class="lede">A scenario lives beside the workflow it specifies. Its title is derived from the label, source order is scenario order — and, critically, not every pattern has a <code>when</code> step.</p>
+        <p class="lede">A scenario lives beside its workflow and describes one business rule using typed steps.</p>
       </div>
     </div>
   </section>
@@ -45,13 +45,13 @@
         <table>
           <thead><tr><th>Workflow</th><th>Given</th><th>When</th><th>Then</th><th>Cardinality</th></tr></thead>
           <tbody>
-            <tr><td>State Change</td><td>Event</td><td>Command</td><td>Event or Error</td><td>zero or more <code>given</code>, exactly one <code>when</code>, one or more <code>then</code></td></tr>
+            <tr><td>State Change</td><td>Event</td><td>Command</td><td>Event or Error</td><td>zero or more <code>given</code>, one <code>when</code>, one or more <code>then</code></td></tr>
             <tr><td>State View</td><td>Event</td><td><strong>none</strong></td><td>Read Model or Error</td><td>one or more <code>given</code>, <strong>zero <code>when</code></strong>, one or more <code>then</code></td></tr>
-            <tr><td>Automation / Translation</td><td>Event or Read Model</td><td>Processor or Command</td><td>Event or Error</td><td>exactly one <code>when</code>, one or more <code>then</code></td></tr>
+            <tr><td>Automation / Translation</td><td>Event or Read Model</td><td>Processor or Command</td><td>Event or Error</td><td>one <code>when</code>, one or more <code>then</code></td></tr>
           </tbody>
         </table>
       </div>
-      <p class="prose">Each step has exactly one typed target, and <code>error</code> is a literal string. There is <strong>no <code>query</code> target or Query concept</strong> anywhere in the language.</p>
+      <p class="prose">Each step has one typed target. An <code>error</code> target contains a literal string.</p>
     </div>
   </section>
 
@@ -93,7 +93,7 @@ Then  Event or Error</code-block>
           }
         }
       </code-block>
-      <p>An error path is just a different <code>then</code> target, plus an optional semantic <code>comment</code> — normal HCL comments are not model content:</p>
+      <p>An error path uses a different <code>then</code> target. An optional <code>comment</code> records the business rule:</p>
       <code-block lang="hcl">
         bounded_context "pet_management" {
           event "pet_added" {
@@ -124,7 +124,7 @@ Then  Event or Error</code-block>
       <h2>State View scenario</h2>
       <code-block lang="text">Given Event(s)
 Then  Read Model or Error</code-block>
-      <p>This mirrors the Event Modeling examples directly: <em>given Student Registered, then Students to Welcome</em>. There is no artificial Query step:</p>
+      <p>For example: <em>given Student Registered, then Students to Welcome</em>.</p>
       <code-block lang="hcl">
         bounded_context "students" {
           event "student_registered" {
@@ -148,31 +148,11 @@ Then  Read Model or Error</code-block>
           }
         }
       </code-block>
-      <p>A State View scenario must have at least one Event <code>given</code>, <strong>no <code>when</code> blocks</strong>, and one or more <code>then</code> steps. Here is a real fixture that gets this wrong — a <code>when</code> step pointing at a Read Model — and the CLI's actual response:</p>
-      <code-block lang="hcl">
-        bounded_context "example" {
-          event "pet_created" {
-          }
-        }
-
-        state_view "view_pets" {
-          readmodel "pets" {
-            question = "Which pets exist?"
-          }
-
-          scenario "loaded" {
-            given { event = event.example.pet_created }
-            when { readmodel = readmodel.pets }
-            then { readmodel = readmodel.pets }
-          }
-        }
-      </code-block>
-      <code-block lang="text">state-view-when.em.hcl:12:24: Error EM303: Invalid scenario target: state_view scenario when steps may use: . You referenced: readmodel.
-state-view-when.em.hcl:10:3: Error EM301: Invalid scenario: state_view scenarios may not contain when steps. Found: when.</code-block>
-      <p>Two diagnostics for one mistake: the <code>when</code> block itself is illegal in a State View scenario (<code>EM301</code>), and even its target would be the wrong kind (<code>EM303</code>). There genuinely is no <code>query</code> concept to reach for instead.</p>
+      <callout kind="rule"><p><strong>State View:</strong> one or more Event <code>given</code> steps, no <code>when</code>, and one or more Read Model or Error <code>then</code> steps.</p></callout>
+      <p>Working from an older draft? See the <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/migrating-v0.2.md">migration guide</a> for the removed Query form.</p>
 
       <h2>Automation / Translation scenarios</h2>
-      <p>For an Automation or Translation scenario: <code>given</code> targets an Event or Read Model; there is exactly one <code>when</code>, targeting a Processor or Command; <code>then</code> targets an Event or Error. This lets the scenario specify machine-driven behavior without inventing a fake human Screen.</p>
+      <p><code>given</code> targets an Event or Read Model, <code>when</code> targets a Processor or Command, and <code>then</code> targets an Event or Error.</p>
       <code-block lang="hcl">
         bounded_context "appointments" {
           event "appointment_added" {
@@ -217,7 +197,7 @@ state-view-when.em.hcl:10:3: Error EM301: Invalid scenario: state_view scenarios
     <div class="wrap">
       <div class="section-head">
         <h2>Faded exercise: complete a State View</h2>
-        <p>Fill in every <code>???</code> before opening the answer. Pay attention to the canonical flow direction and the absence of <code>when</code>.</p>
+        <p>Fill in each <code>???</code> before opening the answer.</p>
       </div>
       <code-block lang="text">
         state_view "show_pet_details" {

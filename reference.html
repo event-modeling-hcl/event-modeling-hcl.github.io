@@ -32,9 +32,9 @@
   <section class="hero" style="padding-bottom: 8px;">
     <div class="wrap">
       <div class="prose" style="margin: 0 auto;">
-        <div class="eyebrow">Reference</div>
+        <div class="eyebrow">Reference for .em.hcl v0.2</div>
         <h1>The cheat sheet</h1>
-        <p class="lede">Every block, attribute, enum, and command in one scannable page. For explanations, see <a href="/learn/index.html">Learn</a>; for the normative grammar, see the <a href="https://github.com/event-modeling-hcl/spec">language spec</a>.</p>
+        <p class="lede">Blocks, attributes, values, and commands in one page. The <a href="https://github.com/event-modeling-hcl/spec">normative specification</a> remains authoritative.</p>
       </div>
     </div>
   </section>
@@ -95,14 +95,12 @@
         <table>
           <thead><tr><th>Workflow</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
           <tbody>
-            <tr><td>State Change</td><td>Event, zero or more</td><td>exactly one, Command</td><td>Event or Error, one or more</td></tr>
+            <tr><td>State Change</td><td>Event, zero or more</td><td>one Command</td><td>Event or Error, one or more</td></tr>
             <tr><td>State View</td><td>Event, one or more</td><td><strong>none</strong></td><td>Read Model or Error, one or more</td></tr>
-            <tr><td>Automation / Translation</td><td>Event or Read Model</td><td>exactly one, Processor or Command</td><td>Event or Error, one or more</td></tr>
+            <tr><td>Automation / Translation</td><td>Event or Read Model</td><td>one Processor or Command</td><td>Event or Error, one or more</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="prose">There is no <code>query</code> target anywhere in the language.</p>
-
       <div class="section-head" style="margin-top: 36px;"><h2>Reference forms</h2></div>
       <div class="table-wrap">
         <table>
@@ -131,7 +129,7 @@
           <thead><tr><th>Attribute</th><th>Meaning</th></tr></thead>
           <tbody>
             <tr><td><code>id_attribute = true</code></td><td>This field identifies the record</td></tr>
-            <tr><td><code>optional = true</code></td><td>Absence is genuinely valid (fields are required by default)</td></tr>
+            <tr><td><code>optional = true</code></td><td>The field may be absent (fields are required by default)</td></tr>
             <tr><td><code>pii = true</code></td><td>Personally identifiable information</td></tr>
             <tr><td><code>cardinality = "List"</code></td><td>The field is list-valued</td></tr>
             <tr><td><code>example = ...</code></td><td>A native HCL literal, checked against the effective type</td></tr>
@@ -197,7 +195,7 @@
     <div class="wrap">
       <div class="section-head"><h2>More</h2></div>
       <div class="btn-row">
-        <a class="btn btn-primary" href="https://github.com/event-modeling-hcl/spec">Normative language spec</a>
+        <a class="btn btn-primary" href="https://github.com/event-modeling-hcl/spec">Normative specification</a>
         <a class="btn" href="https://github.com/event-modeling-hcl/eventmodeling-hcl">Tool repository</a>
         <a class="btn" href="https://github.com/event-modeling-hcl/eventmodeling-hcl/releases">Downloads</a>
       </div>

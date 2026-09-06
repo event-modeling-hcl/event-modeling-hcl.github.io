@@ -11,10 +11,10 @@
   } catch (e) {}
 </script>
 <title>Pet management</title>
-<meta name="description" content="The five-workflow golden model: three bounded contexts, two State Changes, three State Views, including a real right-chair warning.">
+<meta name="description" content="Five pet-management workflows across three bounded contexts.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Pet management — event-modeling-hcl examples">
-<meta property="og:description" content="The five-workflow golden model: three bounded contexts, two State Changes, three State Views, including a real right-chair warning.">
+<meta property="og:description" content="Five pet-management workflows across three bounded contexts.">
 <meta property="og:image" content="/assets/img/og-default.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -34,7 +34,7 @@
       <div class="prose" style="margin: 0;">
         <div class="eyebrow">Examples</div>
         <h1>Pet management</h1>
-        <p class="lede">The five-workflow golden model: three bounded contexts, two State Changes, three State Views — a realistically-sized domain, not a toy. Includes a real right-chair warning worth reading.</p>
+        <p class="lede">Five workflows across owner, pet, and pet-type contexts.</p>
         <div class="pattern-pills-standalone" style="margin-top: 6px;"><code>state_change</code><code>state_view</code></div>
       </div>
     </div>
@@ -44,7 +44,7 @@
     <div class="wrap">
       <div class="section-head">
         <h2>The rendered canvas</h2>
-        <p>The real, live output of <code>eventmodeling-hcl diagram examples/pet-management-detailed.em.hcl</code>. Click a slice for its scenarios.</p>
+        <p>Generated with <code>eventmodeling-hcl diagram examples/pet-management-detailed.em.hcl</code>. Click a slice for its scenarios.</p>
       </div>
       <div class="canvas-embed tall">
         <iframe src="/examples/canvas/pet-management-detailed.html" loading="lazy" title="Pet management interactive canvas"></iframe>
@@ -56,7 +56,7 @@
     <div class="wrap">
       <div class="section-head">
         <h2>The source</h2>
-        <p><code>examples/pet-management-detailed.em.hcl</code>, straight from the tool repo.</p>
+        <p>Source file: <code>examples/pet-management-detailed.em.hcl</code>.</p>
       </div>
       <code-block lang="hcl">
         # Pet-management model using bounded-context-owned events and reusable field types.
