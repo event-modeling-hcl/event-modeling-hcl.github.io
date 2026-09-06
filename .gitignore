@@ -1,0 +1,10 @@
+# Build artifacts rendered by scripts/build-examples.sh (Stage 5).
+/examples/canvas/
+
+# Local tooling
+bin/
+dist/
+
+# OS/editor cruft
+.DS_Store
+*.swp
