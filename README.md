@@ -28,6 +28,24 @@ with `chromium --headless --screenshot` and cropped to the canvas card. If the
 tool's rendered output changes, regenerate it the same way rather than editing
 the PNG by hand.
 
+**Content accuracy:** when porting language/spec content onto this site,
+always pull from the currently *published* source
+(`github.com/event-modeling-hcl/spec`, and the tool repo's own `main`), never
+from a locally cached copy — both have moved since this site started (the
+spec went from draft to final v0.2.0; the tool repo went from `v0.2.0-rc.1`
+on a feature branch to `v0.3.0` on `main`), and a stale copy will teach
+constructs the current validator rejects. Every `<code-block lang="hcl">` on
+the Learn pages is a complete, independently valid `.em.hcl` document (or a
+deliberate negative example, verified to fail with its expected `EMxxx`
+code). `scripts/validate-learn-snippets.py` checks this by extracting every
+such block and running the real CLI's `validate` against it — CI runs it on
+every deploy, but re-run it yourself after editing any Learn page:
+
+```bash
+go build -o /tmp/eventmodeling-hcl ./cmd/eventmodeling-hcl   # in the tool checkout
+TOOL_BIN=/tmp/eventmodeling-hcl scripts/validate-learn-snippets.py
+```
+
 ## Local preview
 
 ```bash
@@ -51,7 +69,7 @@ Under construction, built stage by stage:
 - [x] Stage 1 — design system & shared page shell
 - [x] Stage 2 — landing page
 - [x] Stage 3 — why HCL / comparison page
-- [ ] Stage 4 — learn section
+- [x] Stage 4 — learn section
 - [ ] Stage 5 — examples gallery & canvas pipeline
 - [ ] Stage 6 — author-with-AI, get-started, reference pages
 - [ ] Stage 7 — polish & launch

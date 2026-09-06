@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>The Five Elements</title>
+<meta name="description" content="Event, Command, Read Model, Screen, and the automation gear: the five building blocks of Event Modeling, and how each is declared in .em.hcl.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Five Elements — Learn Event Modeling HCL">
+<meta property="og:description" content="Event, Command, Read Model, Screen, and the automation gear: the five building blocks, in .em.hcl.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px; text-align: left;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0;">
+        <div class="eyebrow">Learn · 01 of 5</div>
+        <h1>The five elements</h1>
+        <p class="lede">Every Event Modeling slice is built from five recurring pieces. Learn to recognize each one before worrying about the four patterns they combine into.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+
+      <h2>Event — a fact that already happened</h2>
+      <p>
+        An Event is a concrete fact in the domain, named in the past tense:
+        <span class="term term-event">Appointment Added</span>,
+        <span class="term term-event">Pet Added</span>,
+        <span class="term term-event">Payment Received</span>,
+        <span class="term term-event">Weather Forecast Changed</span>.
+      </p>
+      <p>In <code>.em.hcl</code>, Events are canonical contracts owned by a bounded context:</p>
+      <code-block lang="hcl">
+        bounded_context "appointments" {
+          event "appointment_added" {
+          }
+        }
+      </code-block>
+      <p>
+        The block label is the identity (<code>appointment_added</code>). Obvious
+        human-facing titles are <strong>derived automatically</strong> — the typed
+        model title-cases the label to <code>Appointment Added</code>. Add an
+        explicit <code>title</code> only when you want different wording.
+      </p>
+      <callout kind="note"><p><strong>Rule of thumb:</strong> if the thing can still be rejected, it is probably not an Event yet.</p></callout>
+
+      <h2>Command — an intent to make something happen</h2>
+      <p>
+        A Command represents a request or intent. It can succeed or fail:
+        <span class="term term-command">Add Appointment</span>,
+        <span class="term term-command">Add Pet</span>,
+        <span class="term term-command">Cancel Subscription</span>.
+      </p>
+      <p>Commands live inside workflows and point to the Event(s) they may produce:</p>
+      <code-block lang="hcl">
+        bounded_context "appointments" {
+          aggregate "appointment" {
+          }
+
+          event "appointment_added" {
+            aggregate = aggregate.appointment
+          }
+        }
+
+        state_change "schedule_appointment" {
+          screen "schedule_appointment_ui" {
+            to = [command.add_appointment]
+          }
+
+          command "add_appointment" {
+            aggregate = aggregate.appointments.appointment
+            to        = [event.appointments.appointment_added]
+          }
+        }
+      </code-block>
+      <p>A Command needs a reason to exist: an incoming flow, an <code>api_endpoint</code>, or an explicit <code>external_trigger</code>. Without one, the validator warns with <code>EM404</code> — more on that on the <a href="/learn/quality.html">quality page</a>.</p>
+
+      <h2>Read Model — an answer to a concrete question</h2>
+      <p>A Read Model makes facts usable. It is not just "some projection" or "some DTO" — the discipline is stricter:</p>
+      <callout kind="rule"><p><strong>No question, no Read Model.</strong></p></callout>
+      <p>The language makes that discipline explicit by requiring <code>question</code>:</p>
+      <code-block lang="hcl">
+        bounded_context "appointments" {
+          event "appointment_added" {
+          }
+        }
+
+        state_view "view_calendar" {
+          readmodel "calendar" {
+            question = "Which appointments are on the calendar?"
+            from     = [event.appointments.appointment_added]
+            to       = [screen.calendar_ui]
+          }
+
+          screen "calendar_ui" {
+          }
+        }
+      </code-block>
+      <p>A good Read Model is easy to test because you can state exactly what question it answers. <code>"What data do we need?"</code> is too vague; <code>"Which appointments do not yet have a weather forecast?"</code> tells you what belongs in the projection and what does not.</p>
+
+      <h2>Screen — where an actor observes or initiates behavior</h2>
+      <p>A Screen is a rough interaction surface: UI, wireframe, or other human-facing interaction point. The cheat sheet emphasizes deliberately rough wireframes — keep the workshop focused on data and behavior, not visual design.</p>
+      <code-block lang="hcl">
+        bounded_context "appointments" {
+          event "appointment_added" {
+          }
+        }
+
+        actor "calendar_user" {
+          auth_required = true
+        }
+
+        state_view "view_calendar" {
+          readmodel "calendar" {
+            question = "Which appointments are on the calendar?"
+            from     = [event.appointments.appointment_added]
+            to       = [screen.calendar_ui]
+          }
+
+          screen "calendar_ui" {
+            actor = actor.calendar_user
+          }
+        }
+      </code-block>
+      <p>Actors are reusable catalog declarations, referenced the same unquoted-traversal way as everything else: <code>actor.calendar_user</code>.</p>
+
+      <h2>Automation / gear — a machine reaction</h2>
+      <p>On the visual cheat sheet, the gear means the computer reacts instead of a human. There's an important mapping to memorize:</p>
+      <callout kind="note">
+        <p><strong>Visual gear concept → <code>processor</code> block.</strong><br>
+        <strong>Automation pattern → <code>automation</code> workflow block.</strong></p>
+      </callout>
+      <code-block lang="hcl">
+        bounded_context "appointments" {
+          event "appointment_added" {
+          }
+        }
+
+        bounded_context "weather" {
+          event "weather_predicted_for_appointment" {
+          }
+        }
+
+        automation "add_weather_forecast" {
+          readmodel "appointments_without_weather_forecast" {
+            question = "Which appointments still need a weather forecast?"
+            from     = [event.appointments.appointment_added]
+            to       = [processor.weather_processor]
+          }
+
+          processor "weather_processor" {
+            to = [command.add_weather_forecast]
+          }
+
+          command "add_weather_forecast" {
+            to = [event.weather.weather_predicted_for_appointment]
+          }
+        }
+      </code-block>
+      <p><code>automation</code> is not a nested element inside another workflow — it is one of the four top-level workflow kinds, same rank as <code>state_change</code>.</p>
+
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <nav class="page-path-nav">
+        <a href="/learn/index.html"><small>Learn</small>← Back to the path</a>
+        <a class="next" href="/learn/patterns.html"><small>Next</small>The four patterns →</a>
+      </nav>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

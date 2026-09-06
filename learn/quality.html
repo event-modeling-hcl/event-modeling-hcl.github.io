@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>Quality: Smells, Errors, Warnings</title>
+<meta name="description" content="The four Event Modeling anti-patterns, what the eventmodeling-hcl validator rejects outright, what it leaves to human judgment, and how validation profiles change the boundary.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Quality: Smells, Errors, Warnings — Learn Event Modeling HCL">
+<meta property="og:description" content="The four anti-patterns, hard errors vs. judgment warnings, and validation profiles — with a validity-spotting drill.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px; text-align: left;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0;">
+        <div class="eyebrow">Learn · 05 of 5</div>
+        <h1>Quality: smells, errors, and warnings</h1>
+        <p class="lede">A valid file can still be a poor model. Syntax and reference correctness are machine-checkable; business clarity is not fully machine-checkable — knowing which is which is the point of this page.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>The four anti-patterns</h2>
+        <p>None of these are automatically invalid. Each is a shape worth investigating — the validator surfaces them as warnings, not rejections.</p>
+      </div>
+      <div class="card-grid">
+        <div class="card">
+          <h3>Left chair</h3>
+          <p><code>1 Command → many Events</code>. The Command may be doing too much, or mixing several business capabilities. Ask: if I split this Command by user intent, do the Events naturally separate?</p>
+        </div>
+        <div class="card">
+          <h3>Right chair</h3>
+          <p><code>many Events → 1 Read Model</code>. The Read Model may be answering several questions at once. Ask: can I state its question in one precise sentence?</p>
+        </div>
+        <div class="card">
+          <h3>Bed</h3>
+          <p><code>1 Screen → many Commands</code>. The screen may be bundling unrelated intents. Ask: is this one user goal, or several independent actions merely placed on the same UI?</p>
+        </div>
+        <div class="card">
+          <h3>Shelf</h3>
+          <p><code>1 workflow → many scenarios, others → none</code>. The team may have specified one convenient slice and stopped. Ask: which important slices still rely on implicit business rules?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>What the validator rejects outright</h2>
+      <p>The default profile rejects invalid HCL and unknown syntax, missing required semantic attributes, wrong literal types and invalid examples, duplicate identities, unresolved or wrong-kind references, non-canonical flow directions, invalid pattern-specific scenario structure, non-contiguous chapters, and incorrect Automation/Translation externality. Diagnostics use stable <code>EMxxx</code> codes — <code>EM0xx</code> structural, <code>EM1xx</code> references, <code>EM2xx</code> flow, <code>EM3xx</code> scenarios, <code>EM4xx</code> modeling judgment.</p>
+
+      <h2>What it leaves to human judgment — and validation profiles</h2>
+      <p>Some checks need judgment rather than hard rejection: a Command with no incoming flow, API endpoint, or trigger (<code>EM404</code>); the four anti-patterns above; an open hotspot (<code>EM406</code>). Three profiles decide how strict that judgment is:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Profile</th><th>Judgment diagnostics (EM404, EM406, the four smells)</th></tr></thead>
+          <tbody>
+            <tr><td><code>workshop</code></td><td>Informational — incomplete discovery stays easy to work with</td></tr>
+            <tr><td><code>valid</code> (default)</td><td>Warnings</td></tr>
+            <tr><td><code>strict</code></td><td><code>EM404</code> and <code>EM406</code> become errors; the four smells stay non-blocking judgment signals</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The exact same file, checked two ways, makes the boundary concrete. This Command has no incoming flow, API endpoint, or trigger:</p>
+      <code-block lang="hcl">
+        bounded_context "appointments" {
+          event "appointment_added" {
+          }
+        }
+
+        state_change "schedule_appointment" {
+          command "add_appointment" {
+            to = [event.appointments.appointment_added]
+          }
+        }
+      </code-block>
+      <p>Under the default <code>valid</code> profile, it's a warning and the file still validates:</p>
+      <code-block lang="text">em404-test.em.hcl:6:3: Warning EM404: Every command has a reason: command "add_appointment" has no incoming flow, api_endpoint, or external_trigger.
+em404-test.em.hcl valid</code-block>
+      <p>Under <code>--profile strict</code>, the same diagnostic becomes a hard error and nothing is reported valid:</p>
+      <code-block lang="text">em404-test.em.hcl:6:3: Error EM404: Every command has a reason: command "add_appointment" has no incoming flow, api_endpoint, or external_trigger.</code-block>
+      <p>And here's a real right-chair warning from one of this project's own shipped examples — a valid file, flagged anyway:</p>
+      <code-block lang="text">pet-management-detailed.em.hcl:459:12: Warning EM403: Right chair anti-pattern: readmodel "owner_details" connects to several events; review whether the workflow contains more than one business capability.
+pet-management-detailed.em.hcl valid</code-block>
+      <callout kind="rule">
+        <p><strong>Use strictness to make an agent-ready model more explicit; don't use permissiveness to hide uncertainty.</strong> Unknown business facts belong in <code>hotspot</code> blocks, not in silence.</p>
+      </callout>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Validity-spotting drill</h2>
+        <p>For each item, decide: <strong>invalid</strong> (validator-level problem), <strong>valid but suspicious</strong> (a warning or smell), or <strong>valid</strong>.</p>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">A</span>
+        <code-block lang="text">event "order_placed" {
+  title = "Order Placed"
+}</code-block>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p><span class="verdict verdict-invalid">Invalid</span> Events are bounded-context-owned contracts and must be declared inside a <code>bounded_context</code>.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">B</span>
+        <code-block lang="text">to = ["event.orders.order_placed"]</code-block>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p><span class="verdict verdict-invalid">Invalid</span> Relationships are typed, unquoted HCL traversals — this is a string.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">C</span>
+        <code-block lang="text">readmodel "order_summary" {
+  title = "Order Summary"
+}</code-block>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p><span class="verdict verdict-invalid">Invalid</span> A <code>readmodel</code> block only exists inside a <code>state_view</code>, <code>automation</code>, or <code>translation</code> workflow — and even declared correctly, it would still need a concrete <code>question</code>.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">D</span>
+        <code-block lang="text">One command -> five semantically unrelated events</code-block>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p><span class="verdict verdict-suspicious">Valid but suspicious</span> A left-chair smell — investigate whether several capabilities are hiding inside one Command.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">E</span>
+        <code-block lang="text">A translation consumes only event.orders.order_placed,
+where "orders" is an internal bounded context.</code-block>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p><span class="verdict verdict-invalid">Invalid</span> A Translation must consume at least one Event from an external bounded context — the validator checks this externality rule directly.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">F</span>
+        <code-block lang="text">A State Change scenario contains two "when" blocks.</code-block>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p><span class="verdict verdict-invalid">Invalid</span> State Change scenarios require exactly one <code>when</code>, targeting a Command.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">G</span>
+        <code-block lang="text">A State View scenario contains:
+when {
+  query = readmodel.order_summary
+}</code-block>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p><span class="verdict verdict-invalid">Invalid, twice over</span> State View scenarios have zero <code>when</code> blocks, and <code>query</code> is not part of the language at all. Use one or more Event <code>given</code> steps followed by <code>then { readmodel = ... }</code>.</p>
+        </details>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap" style="text-align: center;">
+      <div class="prose" style="margin: 0 auto;">
+        <h2>That's the path</h2>
+        <p>Five elements, four patterns, the language mechanics, and pattern-specific scenarios — with the judgment to tell a hard error from a warning worth investigating. The <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/learning-event-modeling-hcl.md">full guide</a> adds a capstone build, a closed-book mastery test, and facilitation rules if you want to go further.</p>
+        <div class="btn-row" style="justify-content: center;">
+          <a class="btn btn-primary" href="https://github.com/event-modeling-hcl/eventmodeling-hcl/releases">Get the CLI</a>
+          <a class="btn" href="/learn/index.html">Back to the path</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>The Language</title>
+<meta name="description" content="The .em.hcl document model, derived titles, typed references, bounded-context ownership, reusable field types, and the one-canonical-edge rule.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Language — Learn Event Modeling HCL">
+<meta property="og:description" content="Identities, typed references, bounded-context ownership, field types, and the one-canonical-edge rule.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px; text-align: left;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0;">
+        <div class="eyebrow">Learn · 03 of 5</div>
+        <h1>The language</h1>
+        <p class="lede">The mechanics beneath the four patterns: what a document contains, how identity and titles work, and the one habit — typed references — that matters more than any other.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+
+      <h2>The document model</h2>
+      <p>A <code>.em.hcl</code> file contains three broad categories. Catalog declarations — <code>bounded_context</code>, <code>actor</code>, <code>team</code>, <code>system</code>, and inside a bounded context <code>aggregate</code>, <code>field_type</code>, <code>event</code> — describe the domain. Workshop notation — <code>chapter</code>, <code>hotspot</code> — carries facilitation state. Workflows — <code>state_change</code>, <code>state_view</code>, <code>automation</code>, <code>translation</code> — describe behavior. A current model is one <code>.em.hcl</code> document.</p>
+      <p><code>.em.hcl</code> is the authoring syntax. After validation, downstream tooling reads the normalized <strong>typed model</strong> — <code>internal/model.Load</code> — rather than raw HCL. That model exposes effective derived titles and a canonical source-to-target edge list, and it separates semantic data (<code>aggregate</code>, <code>from</code>, <code>to</code>, <code>question</code>, <code>actor</code>) from presentation metadata (<code>group_id</code>, <code>tags</code>, <code>sketched</code>).</p>
+
+      <h2>Identities and derived titles</h2>
+      <code-block lang="hcl">
+        state_change "add_pet" {
+        }
+      </code-block>
+      <p>Identity is <code>add_pet</code>; effective display title is <code>Add Pet</code> — title-cased from the label automatically. Labels use <code>lower_snake_case</code>. Do not repeat identity using <code>id</code>, <code>name</code>, <code>type</code>, or an index attribute. Write an explicit <code>title</code> only when you want different wording:</p>
+      <code-block lang="hcl">
+        bounded_context "billing" {
+          event "payment_failed" {
+            title = "Card Payment Was Declined"
+          }
+        }
+      </code-block>
+      <p>The formatter does not write derived titles back into source — required semantic data like <code>readmodel.question</code>, <code>actor.auth_required</code>, field <code>type</code>, and hotspot <code>question</code> stays required regardless. Source order is model order, too: no <code>index</code> or <code>spec_row</code> bookkeeping. Keep workflows in business-time order so the file reads like the Event Model, left to right.</p>
+
+      <h2>Typed references: the most important syntax habit</h2>
+      <p>The language deliberately distinguishes literal data from relationships. Quoted values are data, like <code>description = "Registers a new pet."</code>. Unquoted traversals are references, like <code>to = [event.pet_management.pet_added]</code> or <code>actor = actor.clinic_staff</code>. Do not do this — <code>to = ["event.pet_management.pet_added"]</code> is a quoted string, not a reference, and will not resolve.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Target</th><th>Form</th></tr></thead>
+          <tbody>
+            <tr><td>Bounded context</td><td><code>bounded_context.clinic</code></td></tr>
+            <tr><td>Actor</td><td><code>actor.clinic_staff</code></td></tr>
+            <tr><td>Team</td><td><code>team.clinic_team</code></td></tr>
+            <tr><td>System</td><td><code>system.partner</code></td></tr>
+            <tr><td>Workflow</td><td><code>workflow.add_pet</code></td></tr>
+            <tr><td>Event</td><td><code>event.pet_management.pet_added</code></td></tr>
+            <tr><td>Aggregate</td><td><code>aggregate.pet_management.pet</code></td></tr>
+            <tr><td>Local aggregate, inside owning context</td><td><code>aggregate.pet</code></td></tr>
+            <tr><td>Field type</td><td><code>field_type.pet_management.pet_id</code></td></tr>
+            <tr><td>Local field type, inside owning context</td><td><code>field_type.pet_id</code></td></tr>
+            <tr><td>Local workflow element</td><td><code>command.add_pet</code></td></tr>
+            <tr><td>Workflow-qualified element, for a hotspot</td><td><code>command.add_pet.add_pet_command</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Bounded contexts own domain contracts</h2>
+      <p>Events, aggregates, and field types belong to a bounded context:</p>
+      <code-block lang="hcl">
+        bounded_context "pet_management" {
+          aggregate "pet" {
+          }
+
+          field_type "pet_id" {
+            type         = "Int"
+            id_attribute = true
+            example      = 5
+          }
+
+          event "pet_added" {
+            aggregate = aggregate.pet
+
+            field "pet_id" {
+              type = field_type.pet_id
+            }
+          }
+        }
+      </code-block>
+      <p>Inside the owning context, references are local: <code>aggregate.pet</code>, <code>field_type.pet_id</code>. Outside it, use the qualified form: <code>aggregate.pet_management.pet</code>, <code>field_type.pet_management.pet_id</code>, <code>event.pet_management.pet_added</code>.</p>
+
+      <h2>Aggregates</h2>
+      <p>An aggregate is a context-owned consistency boundary. <code>title</code> and <code>description</code> are optional:</p>
+      <code-block lang="hcl">
+        bounded_context "pet_management" {
+          aggregate "pet" {
+            title       = "Pet"
+            description = "Consistency boundary for pet details."
+          }
+        }
+      </code-block>
+      <p>Commands and Events may declare aggregate dependencies when behavior spans another consistency boundary, with <code>aggregate_dependencies = [aggregate.owner_management.owner]</code>. Aggregates are not a substitute for Event Modeling — the behavior timeline still comes first.</p>
+
+      <h2>Reusable field types</h2>
+      <p>Use a <code>field_type</code> when the same ubiquitous-language concept appears in multiple contracts:</p>
+      <code-block lang="hcl">
+        bounded_context "owner_management" {
+          field_type "owner_id" {
+            type         = "Int"
+            example      = 42
+            id_attribute = true
+          }
+
+          event "owner_registered" {
+            field "owner_id" {
+              type = field_type.owner_id
+            }
+          }
+        }
+      </code-block>
+      <p>For one-off technical data, a built-in type can be inline instead: <code>field "request_id" { type = "UUID" }</code>. Supported built-in types in v0.2.0 are <code>String</code>, <code>Boolean</code>, <code>Double</code>, <code>Decimal</code>, <code>Long</code>, <code>Custom</code>, <code>Date</code>, <code>DateTime</code>, <code>UUID</code>, and <code>Int</code>. Fields are required by default — set <code>optional = true</code> only when absence is genuinely valid, and <code>pii = true</code> for personally identifiable information.</p>
+
+      <h2>Lists and structured data</h2>
+      <p>A custom reusable field type can carry nested subfields:</p>
+      <code-block lang="hcl">
+        bounded_context "owner_management" {
+          field_type "owner_pets" {
+            type        = "Custom"
+            cardinality = "List"
+
+            example = [{
+              id        = 5
+              name      = "Mochi"
+              birthDate = "2020-01-12"
+            }]
+
+            subfield "id" {
+              type         = "Int"
+              id_attribute = true
+            }
+
+            subfield "name" {
+              type = "String"
+            }
+          }
+        }
+      </code-block>
+      <p>Examples are native HCL literals, and the validator checks that examples match the effective type.</p>
+
+      <h2>One edge, one canonical declaration</h2>
+      <p>The schema does not let you choose either endpoint for an edge — each has exactly one canonical spelling. This removes ambiguity for humans, diffs, formatters, and LLM generation.</p>
+      <p><strong>Rule 1 — workflow-local source: write <code>to</code> on the source.</strong></p>
+      <code-block lang="hcl">
+        bounded_context "pet_management" {
+          event "pet_added" {
+          }
+        }
+
+        state_change "add_pet" {
+          screen "add_pet_form" {
+            to = [command.add_pet]
+          }
+
+          command "add_pet" {
+            to = [event.pet_management.pet_added]
+          }
+        }
+      </code-block>
+      <p><strong>Rule 2 — catalog Event source: write <code>from</code> on the receiver.</strong> Catalog Events carry no workflow-specific edges themselves, so the receiving element records the incoming relationship — this is exactly the pattern every <code>readmodel.from</code> you've seen on this page uses.</p>
+
+      <p>Here is what happens when a Command reverses the first rule and puts <code>from</code> on itself instead of <code>to</code> on the Screen:</p>
+      <code-block lang="hcl">
+        bounded_context "example" {
+          event "pet_created" {
+          }
+        }
+
+        state_change "create_pet" {
+          screen "form" {
+            to = [command.create]
+          }
+
+          command "create" {
+            from = [screen.form]
+            to   = [event.example.pet_created]
+          }
+        }
+      </code-block>
+      <p>That's a real fixture from the validator's own test suite. Running it produces a genuine rejection, not a hypothetical one:</p>
+      <code-block lang="text">reverse-flow.em.hcl:11:13: Error EM201: Invalid flow reference: command.from has no canonical flow targets in a state_change workflow. You referenced: screen.form.</code-block>
+
+      <callout kind="target">
+        <p><strong>Retrieval rule:</strong> when unsure where an edge goes, ask <em>who is the source?</em> If the source is a workflow element, put <code>to</code> on it. If the source is a catalog Event, put <code>from</code> on the receiving workflow element.</p>
+      </callout>
+
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <nav class="page-path-nav">
+        <a href="/learn/patterns.html"><small>Previous</small>← The four patterns</a>
+        <a class="next" href="/learn/scenarios.html"><small>Next</small>Scenarios →</a>
+      </nav>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

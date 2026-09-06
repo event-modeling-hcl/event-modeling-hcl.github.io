@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>Scenarios</title>
+<meta name="description" content="Pattern-specific Given/When/Then scenario grammar in .em.hcl: State Change, State View, and Automation/Translation each have a different shape.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scenarios — Learn Event Modeling HCL">
+<meta property="og:description" content="Pattern-specific Given/When/Then scenario grammar, with a faded exercise to complete yourself.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px; text-align: left;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0;">
+        <div class="eyebrow">Learn · 04 of 5</div>
+        <h1>Scenarios: make the slice testable</h1>
+        <p class="lede">A scenario lives beside the workflow it specifies. Its title is derived from the label, source order is scenario order — and, critically, not every pattern has a <code>when</code> step.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Workflow</th><th>Given</th><th>When</th><th>Then</th><th>Cardinality</th></tr></thead>
+          <tbody>
+            <tr><td>State Change</td><td>Event</td><td>Command</td><td>Event or Error</td><td>zero or more <code>given</code>, exactly one <code>when</code>, one or more <code>then</code></td></tr>
+            <tr><td>State View</td><td>Event</td><td><strong>none</strong></td><td>Read Model or Error</td><td>one or more <code>given</code>, <strong>zero <code>when</code></strong>, one or more <code>then</code></td></tr>
+            <tr><td>Automation / Translation</td><td>Event or Read Model</td><td>Processor or Command</td><td>Event or Error</td><td>exactly one <code>when</code>, one or more <code>then</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="prose">Each step has exactly one typed target, and <code>error</code> is a literal string. There is <strong>no <code>query</code> target or Query concept</strong> anywhere in the language.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+
+      <h2>State Change scenario</h2>
+      <code-block lang="text">Given Event(s)
+When  Command
+Then  Event or Error</code-block>
+      <code-block lang="hcl">
+        bounded_context "owner_management" {
+          event "owner_registered" {
+          }
+        }
+
+        bounded_context "pet_management" {
+          event "pet_added" {
+          }
+        }
+
+        state_change "add_pet" {
+          command "add_pet_command" {
+            to = [event.pet_management.pet_added]
+          }
+
+          scenario "add_pet_success" {
+            given {
+              event = event.owner_management.owner_registered
+            }
+
+            when {
+              command = command.add_pet_command
+            }
+
+            then {
+              event = event.pet_management.pet_added
+            }
+          }
+        }
+      </code-block>
+      <p>An error path is just a different <code>then</code> target, plus an optional semantic <code>comment</code> — normal HCL comments are not model content:</p>
+      <code-block lang="hcl">
+        bounded_context "pet_management" {
+          event "pet_added" {
+          }
+        }
+
+        state_change "add_pet" {
+          command "add_pet_command" {
+            to = [event.pet_management.pet_added]
+          }
+
+          scenario "add_pet_validation_error" {
+            when {
+              command = command.add_pet_command
+            }
+
+            then {
+              error = "Pet name is required"
+            }
+
+            comment {
+              description = "A pet must have a name before it can be registered."
+            }
+          }
+        }
+      </code-block>
+
+      <h2>State View scenario</h2>
+      <code-block lang="text">Given Event(s)
+Then  Read Model or Error</code-block>
+      <p>This mirrors the Event Modeling examples directly: <em>given Student Registered, then Students to Welcome</em>. There is no artificial Query step:</p>
+      <code-block lang="hcl">
+        bounded_context "students" {
+          event "student_registered" {
+          }
+        }
+
+        state_view "welcome_students" {
+          readmodel "students_to_welcome" {
+            question = "Which registered students still need a welcome?"
+            from     = [event.students.student_registered]
+          }
+
+          scenario "registered_student_needs_welcome" {
+            given {
+              event = event.students.student_registered
+            }
+
+            then {
+              readmodel = readmodel.students_to_welcome
+            }
+          }
+        }
+      </code-block>
+      <p>A State View scenario must have at least one Event <code>given</code>, <strong>no <code>when</code> blocks</strong>, and one or more <code>then</code> steps. Here is a real fixture that gets this wrong — a <code>when</code> step pointing at a Read Model — and the CLI's actual response:</p>
+      <code-block lang="hcl">
+        bounded_context "example" {
+          event "pet_created" {
+          }
+        }
+
+        state_view "view_pets" {
+          readmodel "pets" {
+            question = "Which pets exist?"
+          }
+
+          scenario "loaded" {
+            given { event = event.example.pet_created }
+            when { readmodel = readmodel.pets }
+            then { readmodel = readmodel.pets }
+          }
+        }
+      </code-block>
+      <code-block lang="text">state-view-when.em.hcl:12:24: Error EM303: Invalid scenario target: state_view scenario when steps may use: . You referenced: readmodel.
+state-view-when.em.hcl:10:3: Error EM301: Invalid scenario: state_view scenarios may not contain when steps. Found: when.</code-block>
+      <p>Two diagnostics for one mistake: the <code>when</code> block itself is illegal in a State View scenario (<code>EM301</code>), and even its target would be the wrong kind (<code>EM303</code>). There genuinely is no <code>query</code> concept to reach for instead.</p>
+
+      <h2>Automation / Translation scenarios</h2>
+      <p>For an Automation or Translation scenario: <code>given</code> targets an Event or Read Model; there is exactly one <code>when</code>, targeting a Processor or Command; <code>then</code> targets an Event or Error. This lets the scenario specify machine-driven behavior without inventing a fake human Screen.</p>
+      <code-block lang="hcl">
+        bounded_context "appointments" {
+          event "appointment_added" {
+          }
+        }
+
+        bounded_context "weather" {
+          event "weather_predicted_for_appointment" {
+          }
+        }
+
+        automation "add_weather_forecast" {
+          processor "weather_processor" {
+            from = [event.appointments.appointment_added]
+            to   = [command.add_weather_forecast]
+          }
+
+          command "add_weather_forecast" {
+            to = [event.weather.weather_predicted_for_appointment]
+          }
+
+          scenario "forecast_is_added" {
+            given {
+              event = event.appointments.appointment_added
+            }
+
+            when {
+              processor = processor.weather_processor
+            }
+
+            then {
+              event = event.weather.weather_predicted_for_appointment
+            }
+          }
+        }
+      </code-block>
+
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Faded exercise: complete a State View</h2>
+        <p>Fill in every <code>???</code> before opening the answer. Pay attention to the canonical flow direction and the absence of <code>when</code>.</p>
+      </div>
+      <code-block lang="text">
+        state_view "show_pet_details" {
+          readmodel "pet_details" {
+            question = ???
+            from     = [???]
+            to       = [???]
+          }
+
+          screen "pet_details_screen" {
+            actor = ???
+          }
+
+          scenario "pet_details_loaded" {
+            given {
+              event = ???
+            }
+
+            then {
+              readmodel = ???
+            }
+          }
+        }
+      </code-block>
+      <details class="reveal">
+        <summary>Answer</summary>
+        <code-block lang="hcl">
+          bounded_context "pet_management" {
+            event "pet_added" {
+            }
+          }
+
+          actor "clinic_staff" {
+            auth_required = true
+          }
+
+          state_view "show_pet_details" {
+            readmodel "pet_details" {
+              question = "What are the current details of this pet?"
+              from     = [event.pet_management.pet_added]
+              to       = [screen.pet_details_screen]
+            }
+
+            screen "pet_details_screen" {
+              actor = actor.clinic_staff
+            }
+
+            scenario "pet_details_loaded" {
+              given {
+                event = event.pet_management.pet_added
+              }
+
+              then {
+                readmodel = readmodel.pet_details
+              }
+            }
+          }
+        </code-block>
+      </details>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <nav class="page-path-nav">
+        <a href="/learn/language.html"><small>Previous</small>← The language</a>
+        <a class="next" href="/learn/quality.html"><small>Next</small>Quality: smells, errors, warnings →</a>
+      </nav>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

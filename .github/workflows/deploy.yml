@@ -44,6 +44,11 @@ jobs:
           TOOL_BIN: ${{ runner.temp }}/bin/eventmodeling-hcl
         run: scripts/build-examples.sh
 
+      - name: Validate every Learn-page HCL snippet
+        env:
+          TOOL_BIN: ${{ runner.temp }}/bin/eventmodeling-hcl
+        run: python3 scripts/validate-learn-snippets.py
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 

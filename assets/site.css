@@ -847,6 +847,154 @@ code-block code {
   font-size: 18px;
 }
 
+/* ---------------------------- reveal (details/summary) ---------------------------- */
+.reveal {
+  margin: 18px 0 26px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  overflow: hidden;
+}
+.reveal > summary {
+  cursor: pointer;
+  padding: 13px 18px;
+  font-weight: 700;
+  background: var(--surface);
+  list-style: none;
+}
+.reveal > summary::-webkit-details-marker {
+  display: none;
+}
+.reveal > summary::before {
+  content: "Reveal answer →";
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+  font-weight: 800;
+}
+.reveal[open] > summary::before {
+  content: "Hide answer ↓";
+}
+.reveal > summary ~ * {
+  margin-left: 18px;
+  margin-right: 18px;
+}
+.reveal > summary ~ *:last-child {
+  margin-bottom: 18px;
+}
+.reveal code-block {
+  margin-left: 0;
+  margin-right: 0;
+}
+.reveal > summary ~ code-block {
+  margin-left: 0;
+  margin-right: 0;
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+/* ---------------------------- quiz drill ---------------------------- */
+.quiz-item {
+  margin: 22px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+}
+.quiz-item:last-child {
+  border-bottom: 0;
+}
+.quiz-item .quiz-kicker {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--ink-faint);
+  margin-bottom: 8px;
+}
+.verdict {
+  display: inline-block;
+  font-size: 11.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 9px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+.verdict-invalid {
+  color: var(--hotspot);
+  background: var(--hotspot-bg);
+}
+.verdict-suspicious {
+  color: var(--event);
+  background: var(--event-bg);
+}
+.verdict-valid {
+  color: var(--readmodel);
+  background: var(--readmodel-bg);
+}
+
+/* ---------------------------- path card (learn hub nav) ---------------------------- */
+a.path-card {
+  display: block;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  color: var(--ink);
+}
+a.path-card:hover {
+  border-color: var(--accent);
+}
+a.path-card .path-step {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-faint);
+  display: block;
+  margin-bottom: 6px;
+}
+a.path-card h3 {
+  margin-bottom: 6px;
+}
+a.path-card .path-go {
+  display: inline-block;
+  margin-top: 10px;
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--accent-ink);
+}
+
+/* ---------------------------- page-path footer nav ---------------------------- */
+.page-path-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 12px 0 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+.page-path-nav a {
+  font-weight: 700;
+  text-decoration: none;
+}
+.page-path-nav a small {
+  display: block;
+  font-weight: 500;
+  color: var(--ink-faint);
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+.page-path-nav .next {
+  margin-left: auto;
+  text-align: right;
+}
+
 /* ---------------------------- eyebrow ---------------------------- */
 .eyebrow {
   text-transform: uppercase;

@@ -14,6 +14,7 @@
   var NAV_LINKS = [
     { href: "/", label: "Home" },
     { href: "/why-hcl.html", label: "Why HCL" },
+    { href: "/learn/index.html", label: "Learn" },
   ];
   var NAV_EXTERNAL = [
     {
@@ -117,7 +118,10 @@
     var there = href.replace(/index\.html$/, "");
     if (there !== "/" && there.endsWith("/")) there = there.slice(0, -1);
     if (here !== "/" && here.endsWith("/")) here = here.slice(0, -1);
-    return here === there || (there === "" && here === "/");
+    if (here === there || (there === "" && here === "/")) return true;
+    // A nav entry pointing at a section hub (e.g. /learn/index.html) also
+    // stays highlighted for every page inside that section.
+    return there !== "" && (here === there || here.indexOf(there + "/") === 0);
   }
 
   function renderNavLink(link) {
