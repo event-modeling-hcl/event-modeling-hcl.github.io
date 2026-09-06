@@ -9,6 +9,19 @@ artifacts are the example canvases under `examples/canvas/`, produced at
 deploy time by running the real `eventmodeling-hcl diagram` command over the
 vendored models in `examples/models/`.
 
+## Design system
+
+`assets/site.css` and `assets/site.js` hold every shared token and component —
+color/type/spacing tokens, `<site-nav>`, `<site-footer>`, `<code-block>`,
+`callout`, and the light/dark/system theme toggle. `assets/hcl-highlight.js`
+is a small dependency-free HCL syntax highlighter used by `<code-block lang="hcl">`.
+Fonts (IBM Plex Sans / Sans Condensed / Mono) are self-hosted under
+`assets/fonts/` under the OFL (see `assets/fonts/OFL.txt`).
+
+[`styleguide.html`](styleguide.html) renders every shared component on one
+page — not linked from navigation, but the place to check a design-system
+change in both themes before it ships to a real page.
+
 ## Local preview
 
 ```bash
@@ -29,7 +42,7 @@ canvases, and publishes to GitHub Pages. One-time repo setting required:
 Under construction, built stage by stage:
 
 - [x] Stage 0 — scaffold & deploy pipeline
-- [ ] Stage 1 — design system & shared page shell
+- [x] Stage 1 — design system & shared page shell
 - [ ] Stage 2 — landing page
 - [ ] Stage 3 — why HCL / comparison page
 - [ ] Stage 4 — learn section

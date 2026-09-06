@@ -1,0 +1,719 @@
+/* ============================================================
+   event-modeling-hcl — shared design system.
+   Identity: "engineered blueprint" — drafting neutrals, indigo
+   chrome, mono spec-data, and the same sticky-note element
+   colors used by the `diagram` command's rendered canvas, so a
+   model embedded in this site looks native to it.
+   ============================================================ */
+
+/* ---------------------------- fonts ---------------------------- */
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("fonts/ibm-plex-sans-var.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "IBM Plex Sans Condensed";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/ibm-plex-sans-condensed-600.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "IBM Plex Sans Condensed";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("fonts/ibm-plex-sans-condensed-700.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/ibm-plex-mono-400.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/ibm-plex-mono-500.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ---------------------------- tokens ---------------------------- */
+/* Bare :root = light (the un-stamped default: system with no dark preference,
+   or an explicit light choice). */
+:root {
+  color-scheme: light;
+
+  --bg: #e9edf4;
+  --surface: #f7f9fc;
+  --panel: #ffffff;
+  --ink: #1a2230;
+  --ink-soft: #56617a;
+  --ink-faint: #8b95a8;
+  --line: #d2d9e4;
+  --line-soft: #e1e6ef;
+  --grid-line: rgba(63, 91, 217, 0.055);
+  --accent: #3f5bd9;
+  --accent-ink: #2b41a8;
+  --accent-soft: #e4e8fb;
+  --shadow-sm: 0 1px 2px rgba(20, 30, 55, 0.1);
+  --shadow: 0 1px 2px rgba(20, 30, 55, 0.09), 0 8px 22px rgba(20, 30, 55, 0.08);
+  --shadow-lg: 0 12px 40px rgba(20, 30, 55, 0.2);
+
+  /* Semantic element colors — the same hues the `diagram` canvas and the
+     learning guide use for Event/Command/Read-model/etc. Text+tint pairs,
+     held to the same hue across themes; only the tint strength changes. */
+  --event: #b45f06;
+  --event-bg: #fff7e6;
+  --command: #2563eb;
+  --command-bg: #eef5ff;
+  --readmodel: #4d7c0f;
+  --readmodel-bg: #f4fae8;
+  --screen: #56617a;
+  --screen-bg: #f4f6f8;
+  --processor: #7c3aed;
+  --processor-bg: #f5f0ff;
+  --translation: #0f766e;
+  --translation-bg: #ecfdf8;
+  --hotspot: #c2413b;
+  --hotspot-bg: #fff1ef;
+
+  --font-display: "IBM Plex Sans Condensed", ui-sans-serif, system-ui,
+    sans-serif;
+  --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", monospace;
+
+  --content-max: 76rem;
+  --prose-max: 42rem;
+  --radius: 14px;
+  --radius-sm: 9px;
+}
+
+/* Dark via OS, unless an explicit light choice is stamped. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0f1421;
+    --surface: #141a29;
+    --panel: #1a2233;
+    --ink: #e8edf6;
+    --ink-soft: #a7b2c6;
+    --ink-faint: #6f7d97;
+    --line: #303b51;
+    --line-soft: rgba(38, 49, 69, 0.6);
+    --grid-line: rgba(120, 145, 205, 0.06);
+    --accent: #7189f2;
+    --accent-ink: #afbeff;
+    --accent-soft: #232f4e;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.45);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 26px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 16px 46px rgba(0, 0, 0, 0.55);
+
+    --event: #f0a63f;
+    --event-bg: #2c2210;
+    --command: #6fa4f7;
+    --command-bg: #172336;
+    --readmodel: #93cf6f;
+    --readmodel-bg: #1a2913;
+    --screen: #a7b2c6;
+    --screen-bg: #1c2434;
+    --processor: #b39bff;
+    --processor-bg: #241d3c;
+    --translation: #4fd1c1;
+    --translation-bg: #102826;
+    --hotspot: #f18b83;
+    --hotspot-bg: #2e1815;
+  }
+}
+
+/* Explicit dark choice wins in both directions. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1421;
+  --surface: #141a29;
+  --panel: #1a2233;
+  --ink: #e8edf6;
+  --ink-soft: #a7b2c6;
+  --ink-faint: #6f7d97;
+  --line: #303b51;
+  --line-soft: rgba(38, 49, 69, 0.6);
+  --grid-line: rgba(120, 145, 205, 0.06);
+  --accent: #7189f2;
+  --accent-ink: #afbeff;
+  --accent-soft: #232f4e;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.45);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 26px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 46px rgba(0, 0, 0, 0.55);
+
+  --event: #f0a63f;
+  --event-bg: #2c2210;
+  --command: #6fa4f7;
+  --command-bg: #172336;
+  --readmodel: #93cf6f;
+  --readmodel-bg: #1a2913;
+  --screen: #a7b2c6;
+  --screen-bg: #1c2434;
+  --processor: #b39bff;
+  --processor-bg: #241d3c;
+  --translation: #4fd1c1;
+  --translation-bg: #102826;
+  --hotspot: #f18b83;
+  --hotspot-bg: #2e1815;
+}
+
+/* ---------------------------- reset ---------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img,
+svg {
+  max-width: 100%;
+  display: block;
+}
+a {
+  color: var(--accent-ink);
+}
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  margin: 0 0 0.5em;
+}
+h1 {
+  font-size: clamp(2rem, 1.35rem + 2.6vw, 2.75rem);
+}
+h2 {
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+}
+h3 {
+  font-size: 1.3rem;
+}
+h4 {
+  font-size: 1.05rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+}
+p {
+  margin: 0 0 1.1em;
+}
+ul,
+ol {
+  padding-left: 1.4em;
+}
+li {
+  margin: 0.3em 0;
+}
+code,
+kbd,
+samp {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+:not(pre) > code {
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+  padding: 0.12em 0.4em;
+  border-radius: 5px;
+}
+hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 2.5em 0;
+}
+
+/* Respect reduced-motion preferences everywhere. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Visible, consistent keyboard focus everywhere (never rely on :hover). */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------------------------- skip link ---------------------------- */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -48px;
+  z-index: 100;
+  background: var(--panel);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  box-shadow: var(--shadow);
+  transition: top 0.15s ease;
+}
+.skip-link:focus {
+  top: 12px;
+}
+
+/* ---------------------------- layout ---------------------------- */
+.wrap {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 48px);
+}
+.prose {
+  max-width: var(--prose-max);
+}
+main {
+  display: block;
+}
+
+/* ---------------------------- site-nav ---------------------------- */
+site-nav {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.site-nav-bar {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 14px clamp(20px, 4vw, 48px);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.site-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 15px;
+  margin-right: auto;
+}
+.site-nav-brand:hover {
+  color: var(--ink);
+}
+.site-nav-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  flex: none;
+}
+.site-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.site-nav-links a {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+.site-nav-links a:hover {
+  color: var(--ink);
+  background: var(--line-soft);
+}
+.site-nav-links a[aria-current="page"] {
+  color: var(--accent-ink);
+  background: var(--accent-soft);
+}
+.site-nav-links a.is-external::after {
+  content: "↗";
+  margin-left: 4px;
+  font-size: 0.85em;
+  opacity: 0.6;
+}
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--ink-soft);
+  border-radius: 999px;
+  padding: 7px 12px;
+  font: 600 12px var(--font-body);
+  cursor: pointer;
+}
+.theme-toggle:hover {
+  color: var(--ink);
+  border-color: var(--ink-faint);
+}
+.nav-toggle {
+  display: none;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: var(--radius-sm);
+  padding: 7px 10px;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+@media (max-width: 420px) {
+  .site-nav-brand-text {
+    display: none;
+  }
+}
+
+@media (max-width: 780px) {
+  .site-nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding: 8px 20px 16px;
+    gap: 2px;
+    display: none;
+  }
+  .site-nav-links.is-open {
+    display: flex;
+  }
+  .site-nav-links a {
+    padding: 10px 12px;
+  }
+  .nav-toggle {
+    display: inline-flex;
+  }
+}
+
+/* ---------------------------- site-footer ---------------------------- */
+site-footer {
+  display: block;
+  border-top: 1px solid var(--line);
+  margin-top: 64px;
+}
+.site-footer-bar {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 32px clamp(20px, 4vw, 48px) 44px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+.site-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.site-footer-links a {
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+.site-footer-links a:hover {
+  color: var(--accent-ink);
+}
+
+/* ---------------------------- buttons ---------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 14.5px;
+  text-decoration: none;
+  cursor: pointer;
+  line-height: 1.3;
+}
+.btn:hover {
+  border-color: var(--ink-faint);
+}
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+.btn-primary:hover {
+  background: var(--accent-ink);
+  border-color: var(--accent-ink);
+}
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ---------------------------- callouts ---------------------------- */
+callout {
+  display: block;
+  margin: 22px 0;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--ink-faint);
+  background: var(--surface);
+}
+callout > :last-child {
+  margin-bottom: 0;
+}
+callout[kind="note"] {
+  border-left-color: var(--ink-faint);
+}
+callout[kind="rule"] {
+  border-left-color: var(--processor);
+  background: var(--processor-bg);
+}
+callout[kind="target"] {
+  border-left-color: var(--command);
+  background: var(--command-bg);
+}
+callout[kind="warn"] {
+  border-left-color: var(--hotspot);
+  background: var(--hotspot-bg);
+}
+
+/* ---------------------------- element term badges ---------------------------- */
+.term {
+  font-weight: 700;
+  border-radius: 5px;
+  padding: 0 0.25em;
+}
+.term-event {
+  color: var(--event);
+  background: var(--event-bg);
+}
+.term-command {
+  color: var(--command);
+  background: var(--command-bg);
+}
+.term-readmodel {
+  color: var(--readmodel);
+  background: var(--readmodel-bg);
+}
+.term-screen {
+  color: var(--screen);
+  background: var(--screen-bg);
+}
+.term-processor {
+  color: var(--processor);
+  background: var(--processor-bg);
+}
+.term-translation {
+  color: var(--translation);
+  background: var(--translation-bg);
+}
+.term-hotspot {
+  color: var(--hotspot);
+  background: var(--hotspot-bg);
+}
+
+/* ---------------------------- code-block ---------------------------- */
+code-block {
+  display: block;
+  margin: 20px 0 26px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  background: var(--panel);
+}
+.code-block-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.code-block-lang {
+  font: 700 11px var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.code-block-copy {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--ink-soft);
+  border-radius: 7px;
+  padding: 4px 10px;
+  font: 600 12px var(--font-body);
+  cursor: pointer;
+}
+.code-block-copy:hover {
+  color: var(--ink);
+  border-color: var(--ink-faint);
+}
+code-block pre {
+  margin: 0;
+  padding: 16px 18px;
+  overflow-x: auto;
+  background: transparent;
+}
+code-block code {
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  line-height: 1.6;
+  background: transparent;
+  padding: 0;
+  white-space: pre;
+}
+
+/* HCL token colors — held constant across themes like the element badges. */
+.tok-comment {
+  color: var(--ink-faint);
+  font-style: italic;
+}
+.tok-string {
+  color: var(--readmodel);
+}
+.tok-number,
+.tok-bool {
+  color: var(--processor);
+}
+.tok-ref {
+  color: var(--command);
+}
+.tok-keyword {
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+.tok-attr {
+  color: var(--ink);
+  font-weight: 600;
+}
+.tok-punct {
+  color: var(--ink-faint);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .tok-keyword {
+    color: var(--accent);
+  }
+}
+:root[data-theme="dark"] .tok-keyword {
+  color: var(--accent);
+}
+
+/* ---------------------------- tables ---------------------------- */
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin: 20px 0 28px;
+  background: var(--panel);
+}
+.table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+.table-wrap th,
+.table-wrap td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line-soft);
+  text-align: left;
+  vertical-align: top;
+  font-size: 14px;
+}
+.table-wrap th {
+  background: var(--surface);
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+}
+.table-wrap tr:last-child td {
+  border-bottom: 0;
+}
+
+/* ---------------------------- cards ---------------------------- */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: var(--shadow-sm);
+}
+.card-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+/* ---------------------------- eyebrow ---------------------------- */
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-ink);
+}

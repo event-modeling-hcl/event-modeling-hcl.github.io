@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>Style Guide — event-modeling-hcl</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+  /* Style-guide-only scaffolding, not part of the shared system. */
+  .sg-section { padding: 40px 0; border-bottom: 1px solid var(--line); }
+  .sg-swatches { display: flex; flex-wrap: wrap; gap: 10px; }
+  .sg-swatch { width: 120px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); font-size: 12px; }
+  .sg-swatch-fill { height: 48px; }
+  .sg-swatch-label { padding: 6px 8px; background: var(--panel); }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+  <div class="wrap">
+
+    <section class="sg-section">
+      <div class="eyebrow">Internal QA page — not linked from navigation</div>
+      <h1>Style guide</h1>
+      <p class="prose">Every shared component from <code>assets/site.css</code> and
+        <code>assets/site.js</code>, in one place, so a theme or component change can
+        be checked in both light and dark mode before it ships to real pages.</p>
+    </section>
+
+    <section class="sg-section">
+      <h2>Type scale</h2>
+      <h1>Heading 1 — the sell, in one line</h1>
+      <h2>Heading 2 — a section title</h2>
+      <h3>Heading 3 — a subsection</h3>
+      <h4>Heading 4 — a label-weight heading</h4>
+      <p class="prose">Body copy runs in IBM Plex Sans at a comfortable measure. A
+        Read Model makes facts usable — it is not just "some projection." <code>field_type</code>
+        is a reusable, ubiquitous-language concept referenced by traversal, not by string.</p>
+    </section>
+
+    <section class="sg-section">
+      <h2>Element badges</h2>
+      <p>The same hues the <code>diagram</code> canvas uses for each element kind:</p>
+      <p>
+        <span class="term term-event">Event</span>
+        <span class="term term-command">Command</span>
+        <span class="term term-readmodel">Read Model</span>
+        <span class="term term-screen">Screen</span>
+        <span class="term term-processor">Processor</span>
+        <span class="term term-translation">Translation</span>
+        <span class="term term-hotspot">Hotspot</span>
+      </p>
+    </section>
+
+    <section class="sg-section">
+      <h2>Callouts</h2>
+      <callout kind="note"><p><strong>Note:</strong> block labels use lower snake_case so every identity is traversal-safe.</p></callout>
+      <callout kind="target"><p><strong>Target:</strong> after this stage, every shared component renders correctly in both themes at both mobile and desktop widths.</p></callout>
+      <callout kind="rule"><p><strong>Rule:</strong> no question, no Read Model.</p></callout>
+      <callout kind="warn"><p><strong>Warning:</strong> an <code>automation</code> workflow must not consume an event from an external bounded context — that is a Translation.</p></callout>
+    </section>
+
+    <section class="sg-section">
+      <h2>Buttons</h2>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="#main">Primary action</a>
+        <a class="btn" href="#main">Secondary action</a>
+        <button class="theme-toggle" data-theme-toggle type="button"></button>
+      </div>
+    </section>
+
+    <section class="sg-section">
+      <h2>Code block</h2>
+      <p>Rendered by <code>&lt;code-block lang="hcl"&gt;</code>, highlighted by <code>assets/hcl-highlight.js</code>:</p>
+      <code-block lang="hcl">
+        # Minimal Event Modeling document with context-owned contracts.
+        bounded_context "pet_management" {
+          title = "Pet Management"
+
+          aggregate "pet" {
+          }
+
+          field_type "pet_id" {
+            type         = "Int"
+            id_attribute = true
+            example      = 5
+          }
+
+          event "pet_added" {
+            title     = "Pet Added"
+            aggregate = aggregate.pet
+
+            field "pet_id" {
+              type = field_type.pet_id
+            }
+          }
+        }
+
+        state_change "add_pet" {
+          title = "Add Pet"
+
+          screen "add_pet_form" {
+            title = "Add Pet Form"
+            to    = [command.add_pet_command]
+          }
+
+          command "add_pet_command" {
+            title     = "Add Pet"
+            aggregate = aggregate.pet_management.pet
+            to        = [event.pet_management.pet_added]
+
+            field "pet_id" {
+              type = field_type.pet_management.pet_id
+            }
+          }
+        }
+      </code-block>
+    </section>
+
+    <section class="sg-section">
+      <h2>Table</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Pattern</th><th>Core question</th><th>HCL workflow</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>State Change</td><td>What does someone want to change?</td><td><code>state_change</code></td></tr>
+            <tr><td>State View</td><td>What does someone need to know?</td><td><code>state_view</code></td></tr>
+            <tr><td>Automation</td><td>What should the system do next by itself?</td><td><code>automation</code></td></tr>
+            <tr><td>Translation</td><td>How do we translate another context's fact?</td><td><code>translation</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sg-section">
+      <h2>Cards</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h3>In your repo</h3>
+          <p>A model lives beside the code it specifies and renders straight to a
+            hosted diagram on GitHub or GitLab Pages.</p>
+        </div>
+        <div class="card">
+          <h3>Human + LLM</h3>
+          <p>Constrained enough for an LLM to generate correctly, readable enough for
+            a person to review and edit by hand.</p>
+        </div>
+        <div class="card">
+          <h3>Validated, not just drawn</h3>
+          <p>Every reference is checked for scope, kind, and existence before it ever
+            reaches a diagram.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-section" style="border-bottom: 0;">
+      <h2>Neutral &amp; accent tokens</h2>
+      <div class="sg-swatches">
+        <div class="sg-swatch"><div class="sg-swatch-fill" style="background:var(--bg)"></div><div class="sg-swatch-label">--bg</div></div>
+        <div class="sg-swatch"><div class="sg-swatch-fill" style="background:var(--surface)"></div><div class="sg-swatch-label">--surface</div></div>
+        <div class="sg-swatch"><div class="sg-swatch-fill" style="background:var(--panel)"></div><div class="sg-swatch-label">--panel</div></div>
+        <div class="sg-swatch"><div class="sg-swatch-fill" style="background:var(--line)"></div><div class="sg-swatch-label">--line</div></div>
+        <div class="sg-swatch"><div class="sg-swatch-fill" style="background:var(--accent)"></div><div class="sg-swatch-label">--accent</div></div>
+        <div class="sg-swatch"><div class="sg-swatch-fill" style="background:var(--ink)"></div><div class="sg-swatch-label">--ink</div></div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>
