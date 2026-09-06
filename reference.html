@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>Reference</title>
+<meta name="description" content="The .em.hcl block and attribute cheat sheet, reference-form table, validation profiles, EMxxx diagnostic families, and eventmodeling-hcl CLI commands.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reference — event-modeling-hcl">
+<meta property="og:description" content="The .em.hcl block/attribute cheat sheet and CLI command reference.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0 auto;">
+        <div class="eyebrow">Reference</div>
+        <h1>The cheat sheet</h1>
+        <p class="lede">Every block, attribute, enum, and command in one scannable page. For explanations, see <a href="/learn/index.html">Learn</a>; for the normative grammar, see the <a href="https://github.com/event-modeling-hcl/spec">language spec</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head"><h2>Top-level blocks</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Block</th><th>Category</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>bounded_context</code></td><td>Catalog</td><td>Owns aggregates, field types, and Events</td></tr>
+            <tr><td><code>actor</code></td><td>Catalog</td><td>A reusable human or system actor</td></tr>
+            <tr><td><code>team</code></td><td>Catalog</td><td>A reusable owning team</td></tr>
+            <tr><td><code>system</code></td><td>Catalog</td><td>A reusable external or internal system</td></tr>
+            <tr><td><code>state_change</code></td><td>Workflow</td><td>Screen/API → Command → Event</td></tr>
+            <tr><td><code>state_view</code></td><td>Workflow</td><td>Event → Read Model → Screen</td></tr>
+            <tr><td><code>automation</code></td><td>Workflow</td><td>Internal Event → Processor → Command → Event</td></tr>
+            <tr><td><code>translation</code></td><td>Workflow</td><td>External Event → Processor → Command → internal Event</td></tr>
+            <tr><td><code>chapter</code></td><td>Workshop notation</td><td>Groups a contiguous range of workflows</td></tr>
+            <tr><td><code>hotspot</code></td><td>Workshop notation</td><td>An unresolved question or blocker</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-head" style="margin-top: 36px;"><h2>Inside a <code>bounded_context</code></h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Block</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>aggregate</code></td><td>A context-owned consistency boundary</td></tr>
+            <tr><td><code>field_type</code></td><td>A reusable, ubiquitous-language field definition</td></tr>
+            <tr><td><code>event</code></td><td>A canonical past-tense fact, with <code>field</code> children</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-head" style="margin-top: 36px;"><h2>Inside a workflow</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Block</th><th>Used by</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>screen</code></td><td>State Change, State View</td><td>A human-facing interaction surface</td></tr>
+            <tr><td><code>command</code></td><td>State Change, Automation, Translation</td><td>An intent that can succeed or fail; needs a reason (<code>to</code>-flow, <code>api_endpoint</code>, or <code>external_trigger</code>)</td></tr>
+            <tr><td><code>readmodel</code></td><td>State View, Automation, Translation</td><td>Requires <code>question</code></td></tr>
+            <tr><td><code>processor</code></td><td>Automation, Translation</td><td>The "gear" — a machine reaction</td></tr>
+            <tr><td><code>scenario</code></td><td>Any workflow</td><td>Pattern-specific Given/When/Then — see below</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <div class="section-head"><h2>Scenario grammar</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Workflow</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+          <tbody>
+            <tr><td>State Change</td><td>Event, zero or more</td><td>exactly one, Command</td><td>Event or Error, one or more</td></tr>
+            <tr><td>State View</td><td>Event, one or more</td><td><strong>none</strong></td><td>Read Model or Error, one or more</td></tr>
+            <tr><td>Automation / Translation</td><td>Event or Read Model</td><td>exactly one, Processor or Command</td><td>Event or Error, one or more</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="prose">There is no <code>query</code> target anywhere in the language.</p>
+
+      <div class="section-head" style="margin-top: 36px;"><h2>Reference forms</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Target</th><th>Form</th></tr></thead>
+          <tbody>
+            <tr><td>Bounded context</td><td><code>bounded_context.clinic</code></td></tr>
+            <tr><td>Actor / Team / System</td><td><code>actor.clinic_staff</code> / <code>team.clinic_team</code> / <code>system.partner</code></td></tr>
+            <tr><td>Workflow</td><td><code>workflow.add_pet</code></td></tr>
+            <tr><td>Event</td><td><code>event.pet_management.pet_added</code></td></tr>
+            <tr><td>Aggregate</td><td><code>aggregate.pet_management.pet</code> (or <code>aggregate.pet</code> inside its own context)</td></tr>
+            <tr><td>Field type</td><td><code>field_type.pet_management.pet_id</code> (or <code>field_type.pet_id</code> inside its own context)</td></tr>
+            <tr><td>Local workflow element</td><td><code>command.add_pet</code></td></tr>
+            <tr><td>Workflow-qualified element (for a hotspot)</td><td><code>command.add_pet.add_pet_command</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head"><h2>Field types and flags</h2></div>
+      <p class="prose">Built-in types: <code>String</code>, <code>Boolean</code>, <code>Double</code>, <code>Decimal</code>, <code>Long</code>, <code>Custom</code>, <code>Date</code>, <code>DateTime</code>, <code>UUID</code>, <code>Int</code>.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Attribute</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><code>id_attribute = true</code></td><td>This field identifies the record</td></tr>
+            <tr><td><code>optional = true</code></td><td>Absence is genuinely valid (fields are required by default)</td></tr>
+            <tr><td><code>pii = true</code></td><td>Personally identifiable information</td></tr>
+            <tr><td><code>cardinality = "List"</code></td><td>The field is list-valued</td></tr>
+            <tr><td><code>example = ...</code></td><td>A native HCL literal, checked against the effective type</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-head" style="margin-top: 36px;"><h2>Workflow status values</h2></div>
+      <p class="prose"><code>created</code>, <code>planned</code>, <code>assigned</code>, <code>in_progress</code>, <code>review</code>, <code>blocked</code>, <code>done</code>, <code>informational</code>.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <div class="section-head"><h2>Validation profiles</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Profile</th><th>Judgment diagnostics (EM404, EM406, the four smells)</th></tr></thead>
+          <tbody>
+            <tr><td><code>workshop</code></td><td>Informational</td></tr>
+            <tr><td><code>valid</code> (default)</td><td>Warnings</td></tr>
+            <tr><td><code>strict</code></td><td><code>EM404</code> / <code>EM406</code> become errors; the four smells stay non-blocking</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-head" style="margin-top: 36px;"><h2>Diagnostic families</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Prefix</th><th>Category</th></tr></thead>
+          <tbody>
+            <tr><td><code>EM0xx</code></td><td>Structural</td></tr>
+            <tr><td><code>EM1xx</code></td><td>References</td></tr>
+            <tr><td><code>EM2xx</code></td><td>Flow</td></tr>
+            <tr><td><code>EM3xx</code></td><td>Scenarios</td></tr>
+            <tr><td><code>EM4xx</code></td><td>Modeling judgment</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="prose">Diagnostics print as <code>file:line:column: Severity EMxxx: message</code>.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head"><h2>CLI commands</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Command</th><th>Does</th></tr></thead>
+          <tbody>
+            <tr><td><code>eventmodeling-hcl validate &lt;model.em.hcl&gt;</code></td><td>Validates with the default <code>valid</code> profile</td></tr>
+            <tr><td><code>eventmodeling-hcl validate --profile &lt;workshop|valid|strict&gt; &lt;model.em.hcl&gt;</code></td><td>Validates with an explicit profile</td></tr>
+            <tr><td><code>eventmodeling-hcl diagram &lt;model.em.hcl&gt; -o &lt;file&gt;</code></td><td>Renders a self-contained interactive HTML canvas (or writes to stdout without <code>-o</code>)</td></tr>
+            <tr><td><code>eventmodeling-hcl fmt -w &lt;model.em.hcl&gt;</code></td><td>Canonicalizes whitespace and attribute order in place</td></tr>
+            <tr><td><code>eventmodeling-hcl version</code></td><td>Prints the installed version</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <div class="section-head"><h2>More</h2></div>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="https://github.com/event-modeling-hcl/spec">Normative language spec</a>
+        <a class="btn" href="https://github.com/event-modeling-hcl/eventmodeling-hcl">Tool repository</a>
+        <a class="btn" href="https://github.com/event-modeling-hcl/eventmodeling-hcl/releases">Downloads</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>Author with AI</title>
+<meta name="description" content="Why .em.hcl works as a blueprint for software-generating agents: a constrained grammar an LLM can draft correctly, and a validator that closes the loop instead of a human proofreading every line.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Author with AI — event-modeling-hcl">
+<meta property="og:description" content="A blueprint a model can build from: the write, validate, diagram feedback loop.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+  .loop-steps { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin: 24px 0; }
+  .loop-steps .card { position: relative; padding-top: 30px; }
+  .loop-steps .card b { position: absolute; top: 14px; left: 22px; font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); }
+  .prompt-list { list-style: none; padding: 0; }
+  .prompt-list li { margin: 0 0 18px; padding: 16px 18px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+  .prompt-list li strong { display: block; margin-bottom: 6px; }
+  .prompt-list li em { display: block; margin-top: 8px; font-style: normal; color: var(--ink-soft); font-size: 13.5px; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0 auto;">
+        <div class="eyebrow">Human + LLM</div>
+        <h1>A blueprint a model can build from</h1>
+        <p class="lede">
+          <code>.em.hcl</code> is deliberately not a general-purpose format: no
+          variables, no interpolation, no computed references — just blocks,
+          typed traversals, and literals. That makes it easy for an LLM to
+          generate correctly the first time, and just as easy for the
+          validator to catch the times it doesn't.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>The loop</h2>
+        <p>The same three commands a human runs by hand — write, <code>validate</code>, <code>diagram</code> — are exactly the feedback loop an agent can run on its own, with a machine-checkable diagnostic standing in for a human code reviewer's first pass.</p>
+      </div>
+      <div class="loop-steps">
+        <div class="card"><b>1</b><h3>Describe the workflow</h3><p>In plain language: the Events involved, who triggers what, which context owns which fact.</p></div>
+        <div class="card"><b>2</b><h3>The model drafts <code>.em.hcl</code></h3><p>A constrained grammar with no dynamic features means there's very little space to generate something that merely <em>looks</em> plausible.</p></div>
+        <div class="card"><b>3</b><h3><code>validate</code> catches the gaps</h3><p>Stable <code>EMxxx</code> codes and exact source positions — a diagnostic an agent can act on directly, not prose to interpret.</p></div>
+        <div class="card"><b>4</b><h3><code>diagram</code> shows the result</h3><p>A human reviews the actual causal shape — the canvas — not the raw HCL text.</p></div>
+        <div class="card"><b>5</b><h3>Build software from the model</h3><p>The typed IR (<code>internal/model.Load</code>) is the same validated source an agent reads to generate the rest of the system.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>The loop, on a real mistake</h2>
+      <p>
+        Here's a realistic failure mode: a model trained on an earlier draft
+        of this language might still reach for a <code>query</code> step in a
+        State View scenario — that concept existed once and no longer does.
+        Say it drafts this:
+      </p>
+      <code-block lang="hcl">
+        bounded_context "example" {
+          event "pet_created" {
+          }
+        }
+
+        state_view "view_pets" {
+          readmodel "pets" {
+            question = "Which pets exist?"
+          }
+
+          scenario "loaded" {
+            given { event = event.example.pet_created }
+            when { readmodel = readmodel.pets }
+            then { readmodel = readmodel.pets }
+          }
+        }
+      </code-block>
+      <p>Running <code>validate</code> — the exact command an agent would run next — rejects it immediately, with a precise reason instead of a vague failure:</p>
+      <code-block lang="text">state-view-when.em.hcl:12:24: Error EM303: Invalid scenario target: state_view scenario when steps may use: . You referenced: readmodel.
+state-view-when.em.hcl:10:3: Error EM301: Invalid scenario: state_view scenarios may not contain when steps. Found: when.</code-block>
+      <p>That's specific enough to fix without a human in the loop: drop the <code>when</code> block, keep the <code>given</code> and <code>then</code>. The corrected version — the one actually used on the <a href="/learn/scenarios.html">scenarios page</a> — validates cleanly:</p>
+      <code-block lang="hcl">
+        bounded_context "students" {
+          event "student_registered" {
+          }
+        }
+
+        state_view "welcome_students" {
+          readmodel "students_to_welcome" {
+            question = "Which registered students still need a welcome?"
+            from     = [event.students.student_registered]
+          }
+
+          scenario "registered_student_needs_welcome" {
+            given {
+              event = event.students.student_registered
+            }
+
+            then {
+              readmodel = readmodel.students_to_welcome
+            }
+          }
+        }
+      </code-block>
+      <p>No human had to spot the mistake by reading HCL closely — the validator did, in one pass, with a source position and a stable code.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Prompt patterns worth reusing</h2>
+      </div>
+      <ul class="prompt-list">
+        <li>
+          <strong>Draft from a list of facts</strong>
+          "Here are the business Events for {domain}: {list}. Draft a valid <code>.em.hcl</code> model: pick the right one of the four patterns for each transition, and add one success and one failure scenario per workflow."
+          <em>Gives the model exactly the input Event Modeling itself starts from — facts, not implementation detail.</em>
+        </li>
+        <li>
+          <strong>Fix from a diagnostic</strong>
+          "Running <code>eventmodeling-hcl validate</code> on this file produced: {paste the EMxxx diagnostic}. Fix the model to satisfy it without changing the modeled behavior."
+          <em>The diagnostic is the whole prompt — no need to explain the rule in your own words.</em>
+        </li>
+        <li>
+          <strong>Generate from the model</strong>
+          "Here is a validated <code>.em.hcl</code> workflow: {paste it}. Generate the {command handler / read-model projection / API endpoint} for the {workflow} slice in {language}."
+          <em>The model is the spec; ask for an implementation of one slice at a time, not the whole system at once.</em>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap" style="text-align: center;">
+      <div class="prose" style="margin: 0 auto;">
+        <h2>Try the loop yourself</h2>
+        <p>Install the CLI, and run the same <code>validate</code> → <code>diagram</code> cycle on a model an LLM drafts for you.</p>
+        <div class="btn-row" style="justify-content: center;">
+          <a class="btn btn-primary" href="/start.html">Get started</a>
+          <a class="btn" href="/why-hcl.html">Why HCL</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

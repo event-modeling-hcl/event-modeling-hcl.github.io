@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>Get Started</title>
+<meta name="description" content="Install eventmodeling-hcl, write a first .em.hcl model, validate it, render it to a canvas, and publish it next to your code on GitHub or GitLab Pages.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Get Started — event-modeling-hcl">
+<meta property="og:description" content="Install the CLI, write a first model, validate it, render it, and publish it next to your code.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0 auto;">
+        <div class="eyebrow">Get started</div>
+        <h1>From install to a published canvas</h1>
+        <p class="lede">Five steps, no more than a few minutes: install the CLI, write a model, validate it, render it, and publish it next to the code it specifies.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+
+      <h2>1 · Install the CLI</h2>
+      <p>Two ways to get <code>eventmodeling-hcl</code> — a published release archive, or building from source with Go 1.25 or newer.</p>
+
+      <h3>Option A: download a release</h3>
+      <code-block lang="text">
+        curl -LO https://github.com/event-modeling-hcl/eventmodeling-hcl/releases/latest/download/eventmodeling-hcl_0.3.0_linux_amd64.tar.gz
+        curl -LO https://github.com/event-modeling-hcl/eventmodeling-hcl/releases/latest/download/checksums.txt
+        sha256sum -c checksums.txt
+        tar -xzf eventmodeling-hcl_0.3.0_linux_amd64.tar.gz
+      </code-block>
+      <p>Swap <code>linux_amd64</code> for <code>darwin_amd64</code>, <code>darwin_arm64</code>, <code>linux_arm64</code>, <code>windows_amd64</code>, or <code>windows_arm64</code> as needed, and the version number for whatever the <a href="https://github.com/event-modeling-hcl/eventmodeling-hcl/releases">releases page</a> currently lists. With GitHub CLI 2.49.0 or newer, you can also verify the archive was actually produced by this repository's release workflow:</p>
+      <code-block lang="text">gh attestation verify eventmodeling-hcl_0.3.0_linux_amd64.tar.gz --repo event-modeling-hcl/eventmodeling-hcl</code-block>
+
+      <h3>Option B: build from source</h3>
+      <code-block lang="text">
+        git clone https://github.com/event-modeling-hcl/eventmodeling-hcl.git
+        cd eventmodeling-hcl
+        go build -o eventmodeling-hcl ./cmd/eventmodeling-hcl
+      </code-block>
+      <p>Either way, confirm it runs:</p>
+      <code-block lang="text">./eventmodeling-hcl version</code-block>
+
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+
+      <h2>2 · Write your first model</h2>
+      <p>Save this as <code>pet.em.hcl</code>. It's the same minimal model used throughout this site — one bounded context, one Event, one State Change workflow:</p>
+      <code-block lang="hcl">
+        bounded_context "pet_management" {
+          title = "Pet Management"
+
+          aggregate "pet" {
+          }
+
+          field_type "pet_id" {
+            type         = "Int"
+            id_attribute = true
+            example      = 5
+          }
+
+          event "pet_added" {
+            title     = "Pet Added"
+            aggregate = aggregate.pet
+
+            field "pet_id" {
+              type = field_type.pet_id
+            }
+          }
+        }
+
+        state_change "add_pet" {
+          title = "Add Pet"
+
+          screen "add_pet_form" {
+            title = "Add Pet Form"
+            to    = [command.add_pet_command]
+          }
+
+          command "add_pet_command" {
+            title     = "Add Pet"
+            aggregate = aggregate.pet_management.pet
+            to        = [event.pet_management.pet_added]
+
+            field "pet_id" {
+              type = field_type.pet_management.pet_id
+            }
+          }
+        }
+      </code-block>
+
+      <h2>3 · Validate it</h2>
+      <code-block lang="text">./eventmodeling-hcl validate pet.em.hcl</code-block>
+      <p>A valid document prints exactly this — verified against this exact file with the real CLI while writing this page:</p>
+      <code-block lang="text">pet.em.hcl valid</code-block>
+      <p>A diagnostic instead would look like <code>file:line:column: Severity EMxxx: message</code>. See the <a href="/learn/quality.html">quality page</a> for what's a hard error versus a warning worth a second look.</p>
+
+      <h2>4 · Render the canvas</h2>
+      <code-block lang="text">./eventmodeling-hcl diagram pet.em.hcl -o pet.html</code-block>
+      <code-block lang="text">wrote pet.html</code-block>
+      <p><code>pet.html</code> is a single self-contained file — no external dependencies, no build step. Open it directly in a browser.</p>
+
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+
+      <h2>5 · Publish it next to your code</h2>
+      <p>This is the part that makes <code>.em.hcl</code> different from a diagram tool: the model and its rendered canvas are just files. Commit them beside the code they specify, and host the canvas on the same GitHub or GitLab Pages site that documents your project:</p>
+      <code-block lang="text">
+        git add pet.em.hcl pet.html
+        git commit -m "Add pet-registration event model"
+        git push
+      </code-block>
+      <p>Turn on Pages for the repository (or point an existing Pages site at this path), and the rendered canvas is now living documentation — versioned with the code, reviewed in the same pull requests, never drifting out of sync with a wiki page nobody remembers to update.</p>
+
+      <callout kind="target">
+        <p><strong>Working with an LLM instead of by hand?</strong> The same three commands — write, <code>validate</code>, <code>diagram</code> — are the exact feedback loop an agent can run on its own. See <a href="/ai.html">Author with AI</a>.</p>
+      </callout>
+
+      <div class="btn-row" style="margin-top: 24px;">
+        <a class="btn btn-primary" href="/learn/index.html">Learn the method</a>
+        <a class="btn" href="/reference.html">Language reference</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

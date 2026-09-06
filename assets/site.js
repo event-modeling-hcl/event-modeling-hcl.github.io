@@ -27,6 +27,8 @@
 
   var FOOTER_LINKS = [
     { href: "/", label: "Home" },
+    { href: "/ai.html", label: "Author with AI" },
+    { href: "/reference.html", label: "Reference" },
     {
       href: "https://github.com/event-modeling-hcl/eventmodeling-hcl",
       label: "Tool repository",
@@ -168,6 +170,9 @@
             return "<li>" + l + "</a></li>";
           })
           .join("") +
+        '<li><a class="nav-cta" href="/start.html"' +
+        (isCurrentPage("/start.html") ? ' aria-current="page"' : "") +
+        ">Get Started</a></li>" +
         "</ul>" +
         themeButtonHtml() +
         "</div>";

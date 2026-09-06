@@ -71,5 +71,5 @@ Under construction, built stage by stage:
 - [x] Stage 3 — why HCL / comparison page
 - [x] Stage 4 — learn section
 - [x] Stage 5 — examples gallery & canvas pipeline
-- [ ] Stage 6 — author-with-AI, get-started, reference pages
+- [x] Stage 6 — author-with-AI, get-started, reference pages
 - [ ] Stage 7 — polish & launch

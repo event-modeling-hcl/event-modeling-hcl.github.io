@@ -381,6 +381,19 @@ site-nav {
   color: var(--accent-ink);
   background: var(--accent-soft);
 }
+.site-nav-links a.nav-cta {
+  background: var(--accent);
+  color: white;
+  margin-left: 4px;
+}
+.site-nav-links a.nav-cta:hover {
+  background: var(--accent-ink);
+  color: white;
+}
+.site-nav-links a.nav-cta[aria-current="page"] {
+  background: var(--accent-ink);
+  color: white;
+}
 .site-nav-links a.is-external::after {
   content: "↗";
   margin-left: 4px;
@@ -419,7 +432,7 @@ site-nav {
   }
 }
 
-@media (max-width: 780px) {
+@media (max-width: 960px) {
   .site-nav-links {
     position: absolute;
     top: 100%;
