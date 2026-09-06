@@ -234,41 +234,15 @@
           We picked HCL over YAML and JSON on purpose, for one reason above
           the rest: HCL blocks let the domain concept <em>be</em> the syntax,
           instead of a value inside a generic <code>type</code> field. That's
-          not free, and we're not going to pretend it is.
+          not free, and we're not going to pretend it is — the full
+          dimension-by-dimension scorecard and the honest tradeoffs against
+          emlang, ESDM, and Martin Dilger's Event Modeling Specification are
+          laid out on their own page.
         </p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="/why-hcl.html">Read the full comparison</a>
+        </div>
       </div>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Dimension</th><th>JSON</th><th>YAML</th><th>HCL</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Domain concepts in the syntax</td><td>Moderate — a <code>type</code> field</td><td>Moderate — a <code>kind</code> key</td><td><strong>Strong</strong> — the block keyword</td></tr>
-            <tr><td>References</td><td>Strings</td><td>Strings</td><td><strong>Typed traversals</strong>, checked for scope and kind</td></tr>
-            <tr><td>Canonical formatting</td><td>Easy</td><td>Harder — whitespace is semantic</td><td><strong>Built in</strong> — <code>eventmodeling-hcl fmt</code></td></tr>
-            <tr><td>Ecosystem &amp; tooling</td><td><strong>Enormous</strong> — every language, everywhere</td><td>Large</td><td>Ours to build</td></tr>
-            <tr><td>Learning curve for a new author</td><td>Low</td><td><strong>Lowest</strong></td><td>A grammar and a few conventions to learn</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <p>
-        <code>event-modeling-hcl</code> isn't the only Event-Modeling-as-code
-        project, and it doesn't need to be the only right answer.
-        <a href="https://github.com/dilgerma/event-modeling-spec">Martin Dilger's Event Modeling Specification</a>
-        defines the domain reference this project ports natively into HCL — its
-        JSON Schema remains the closest thing to a canonical interchange format
-        for the method, and <code>.em.hcl</code> is designed to sit on top of
-        that reference, not replace it: author in HCL, and let a typed
-        intermediate representation carry the model to JSON, HTML, or
-        anything else that needs it. Projects like emlang and ESDM take the
-        YAML route instead — a real, lower-friction choice if you don't need
-        typed references or a single canonical spelling for every flow. The
-        cost of choosing HCL is real: a stricter dialect to learn than YAML,
-        and a smaller ecosystem that this project has to build rather than
-        borrow.
-      </p>
     </div>
   </section>
 

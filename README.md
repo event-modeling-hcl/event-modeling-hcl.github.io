@@ -50,7 +50,7 @@ Under construction, built stage by stage:
 - [x] Stage 0 — scaffold & deploy pipeline
 - [x] Stage 1 — design system & shared page shell
 - [x] Stage 2 — landing page
-- [ ] Stage 3 — why HCL / comparison page
+- [x] Stage 3 — why HCL / comparison page
 - [ ] Stage 4 — learn section
 - [ ] Stage 5 — examples gallery & canvas pipeline
 - [ ] Stage 6 — author-with-AI, get-started, reference pages

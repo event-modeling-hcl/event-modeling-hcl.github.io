@@ -11,7 +11,10 @@
 
   // Single source of truth for the top nav. Add an entry here once the page
   // it points to actually exists — see README.md's stage checklist.
-  var NAV_LINKS = [{ href: "/", label: "Home" }];
+  var NAV_LINKS = [
+    { href: "/", label: "Home" },
+    { href: "/why-hcl.html", label: "Why HCL" },
+  ];
   var NAV_EXTERNAL = [
     {
       href: "https://github.com/event-modeling-hcl/eventmodeling-hcl",
