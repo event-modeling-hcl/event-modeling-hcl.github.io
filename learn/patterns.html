@@ -50,7 +50,7 @@
             <tr><td>State Change</td><td>What does someone want to change?</td><td>Screen/API → Command → Event</td><td>Often</td><td>No requirement</td><td><code>state_change</code></td></tr>
             <tr><td>State View</td><td>What does someone need to know?</td><td>Event → Read Model → Screen</td><td>Often</td><td>No requirement</td><td><code>state_view</code></td></tr>
             <tr><td>Automation</td><td>What should the system do next by itself?</td><td>Internal Event → Read Model/Processor → Command → Event</td><td>No</td><td><strong>No external event input</strong></td><td><code>automation</code></td></tr>
-            <tr><td>Translation</td><td>How do we translate another context's fact into our language?</td><td>External Event → Read Model/Processor → Command → Internal Event</td><td>No</td><td><strong>Yes</strong></td><td><code>translation</code></td></tr>
+            <tr><td>Translation</td><td>How is another context's fact translated into the model's language?</td><td>External Event → Read Model/Processor → Command → Internal Event</td><td>No</td><td><strong>Yes</strong></td><td><code>translation</code></td></tr>
           </tbody>
         </table>
       </div>

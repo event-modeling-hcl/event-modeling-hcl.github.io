@@ -92,9 +92,9 @@ canvases, and publishes to GitHub Pages. One-time repo setting required:
 ## SEO and crawling
 
 `sitemap.xml` and `robots.txt` live at the repo root. `robots.txt` disallows
-`/examples/canvas/` — those files are the CLI's raw diagram output (its
-`<head>` isn't ours to control), not pages meant to rank on their own; the
-per-example detail pages in `/examples/*.html` are what should get indexed
+`/examples/canvas/` because those files are the CLI's raw diagram output. Their
+generated `<head>` is outside this site's control, and they are not intended to
+rank. The per-example detail pages in `/examples/*.html` should be indexed
 instead. Keep `sitemap.xml` in sync when adding or removing a page.
 
 ## Custom domain
