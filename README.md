@@ -32,8 +32,8 @@ the PNG by hand.
 always pull from the currently *published* source
 (`github.com/event-modeling-hcl/spec`, and the tool repo's own `main`), never
 from a locally cached copy — both have moved since this site started (the
-spec went from draft to final v0.2.0; the tool repo went from `v0.2.0-rc.1`
-on a feature branch to `v0.3.0` on `main`), and a stale copy will teach
+spec went from draft to v0.3.0; the tool repo reached `v0.4.0` on `main`),
+and a stale copy will teach
 constructs the current validator rejects. Every `<code-block lang="hcl">` on
 the Learn pages is a complete, independently valid `.em.hcl` document (or a
 deliberate negative example, verified to fail with its expected `EMxxx`

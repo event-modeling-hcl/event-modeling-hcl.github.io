@@ -211,9 +211,13 @@
           status      = "created"
 
           screen "pet_screen" {
-            title = "Pet screen"
-            actor = actor.clinic_staff
-            to    = [command.register_pet_command]
+            title  = "Pet screen"
+            actor  = actor.clinic_staff
+            fields = [field_type.clinic.pet_name]
+            to     = [command.register_pet_command]
+
+            field "pet_id" {
+            }
           }
 
           screen_image "pet_form" {
@@ -366,7 +370,7 @@
           question = "Which notification channel should be used?"
           on       = processor.notify_owner.pet_notification
         }
-      </code-block>
+</code-block>
     </div>
   </section>
 

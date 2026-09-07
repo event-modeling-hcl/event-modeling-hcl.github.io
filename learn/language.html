@@ -139,6 +139,28 @@
       </code-block>
       <p>Inline one-off fields with a built-in type, such as <code>field "request_id" { type = "UUID" }</code>. The <a href="/reference.html">reference</a> lists available types and flags.</p>
 
+      <h2>Field shorthand</h2>
+      <p>A plain <code>field</code> can infer a same-named <code>field_type</code>. A <code>fields</code> list adds reusable fields when no per-field override is needed:</p>
+      <code-block lang="hcl">
+        bounded_context "pet_management" {
+          field_type "pet_id" {
+            type = "UUID"
+          }
+
+          field_type "pet_name" {
+            type = "String"
+          }
+
+          event "pet_added" {
+            fields = [field_type.pet_id]
+
+            field "pet_name" {
+            }
+          }
+        }
+      </code-block>
+      <p>The shorthand applies only to <code>field</code> blocks. A <code>field_type</code> must still declare an explicit built-in <code>type</code>.</p>
+
       <h2>Lists and structured data</h2>
       <p>A custom reusable field type can carry nested subfields:</p>
       <code-block lang="hcl">

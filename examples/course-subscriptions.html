@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>Course subscriptions</title>
+<meta name="description" content="A .em.hcl model for registrar translation, course administration, and student course subscriptions.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Course subscriptions — event-modeling-hcl examples">
+<meta property="og:description" content="Registrar translation, course administration, and student subscriptions in one Event Model.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="canonical" href="https://event-modeling-hcl.github.io/examples/course-subscriptions.html">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+  <section class="hero" style="padding-bottom: 8px; text-align: left;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0;">
+        <div class="eyebrow">Examples</div>
+        <h1>Course subscriptions</h1>
+        <p class="lede">Registrar translation, course administration, and student subscriptions.</p>
+        <div class="pattern-pills-standalone" style="margin-top: 6px;"><code>translation</code><code>state_change</code><code>state_view</code></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>The rendered canvas</h2>
+        <p>Generated with <code>eventmodeling-hcl diagram examples/course_subscriptions.em.hcl</code>. Click a slice for its scenarios.</p>
+      </div>
+      <div class="canvas-embed tall">
+        <iframe src="/examples/canvas/course_subscriptions.html" loading="lazy" title="Course subscriptions interactive canvas"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>What it covers</h2>
+      <p>An external Registrar event is translated into the Course Subscriptions context. A course manager registers courses and changes capacity. A student views the catalogue, subscribes, reviews their subscriptions, and unsubscribes.</p>
+      <p>The model contains two bounded contexts, two actors, seven workflows, and 24 scenarios. The external Registrar event also shows the renderer's external-event notation.</p>
+      <div class="btn-row"><a class="btn btn-primary" href="/examples/models/course_subscriptions.em.hcl">View source</a><a class="btn" href="/examples/canvas/course_subscriptions.html">Open diagram</a></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <nav class="page-path-nav">
+        <a href="/examples/index.html"><small>Examples</small>← Back to the gallery</a>
+        <a class="next" href="/learn/index.html"><small>Learn</small>Learn the method →</a>
+      </nav>
+    </div>
+  </section>
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>
