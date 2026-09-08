@@ -44,6 +44,19 @@ jobs:
           TOOL_BIN: ${{ runner.temp }}/bin/eventmodeling-hcl
         run: scripts/build-examples.sh
 
+      - name: Build the playground WASM module
+        working-directory: tool
+        run: make build-wasm
+
+      - name: Copy playground assets into the site
+        run: |
+          mkdir -p playground
+          cp tool/web/playground/seed.js playground/seed.js
+          cp tool/web/playground/editor.js playground/editor.js
+          cp tool/web/playground/loader.js playground/loader.js
+          cp tool/web/playground/eventmodeling-hcl.wasm playground/eventmodeling-hcl.wasm
+          cp tool/web/playground/wasm_exec.js playground/wasm_exec.js
+
       - name: Validate every Learn-page HCL snippet
         env:
           TOOL_BIN: ${{ runner.temp }}/bin/eventmodeling-hcl

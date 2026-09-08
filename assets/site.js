@@ -16,6 +16,7 @@
     { href: "/why-hcl.html", label: "Why HCL" },
     { href: "/learn/index.html", label: "Learn" },
     { href: "/examples/index.html", label: "Examples" },
+    { href: "/playground/", label: "Playground" },
   ];
   var NAV_EXTERNAL = [
     {

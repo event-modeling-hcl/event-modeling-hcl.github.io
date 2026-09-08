@@ -89,6 +89,17 @@ which builds the `eventmodeling-hcl` CLI from its own repo, renders the example
 canvases, and publishes to GitHub Pages. One-time repo setting required:
 **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 
+The same workflow also runs `make build-wasm` in the tool checkout and copies
+its output — `eventmodeling-hcl.wasm`, `wasm_exec.js`, `seed.js`, `editor.js`, and
+`loader.js` — into `/playground/`. `playground/index.html` loads those shared assets
+unmodified. They are one shared source the tool repo owns (`web/playground/`), not a
+reimplementation, so a change to the tool's WASM API (function names, the
+`{html, diagnostics}` shape) or to that DOM contract breaks both call sites
+together, on purpose, rather than silently drifting apart. The WASM module is
+~2.2&nbsp;MB gzipped and loads once, only on `/playground/`, then stays
+browser-cached — the rest of the site never pays for it. All three files are
+`.gitignore`d here, the same way `examples/canvas/` is.
+
 ## SEO and crawling
 
 `sitemap.xml` and `robots.txt` live at the repo root. `robots.txt` disallows

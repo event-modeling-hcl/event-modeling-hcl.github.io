@@ -1,6 +1,15 @@
 # Build artifacts rendered by scripts/build-examples.sh (Stage 5).
 /examples/canvas/
 
+# WASM playground assets, copied from the tool repo's `make build-wasm`
+# output at deploy time (Stage 6 of the REPL plan) — same treatment as
+# examples/canvas/ above: generated, not committed.
+/playground/editor.js
+/playground/loader.js
+/playground/seed.js
+/playground/eventmodeling-hcl.wasm
+/playground/wasm_exec.js
+
 # Local tooling
 bin/
 dist/

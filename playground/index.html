@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>Playground</title>
+<meta name="description" content="Edit .em.hcl in the browser and see it validated and rendered live — the real eventmodeling-hcl core, compiled to WebAssembly. No install, nothing sent to a server.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Playground — event-modeling-hcl">
+<meta property="og:description" content="Edit .em.hcl in the browser and see it validated and rendered live, entirely client-side.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="canonical" href="https://event-modeling-hcl.github.io/playground/">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+  /* The editor's DOM ids (#editor, #profile, #preview, #diagnostics,
+     #format-btn, #status) and the .diagnostic* classes are a fixed
+     contract with /playground/editor.js, copied verbatim from the tool
+     repo at deploy time. See that file's own header comment for details.
+     Only the styling below is page-local. */
+  .pg-shell {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    height: 70vh;
+    min-height: 480px;
+  }
+  @media (max-width: 860px) {
+    .pg-shell { grid-template-columns: 1fr; height: auto; }
+  }
+  .pg-pane { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--panel); }
+  .pg-pane + .pg-pane { border-left: 1px solid var(--line); }
+  @media (max-width: 860px) {
+    .pg-pane { min-height: 360px; }
+    .pg-pane + .pg-pane { border-left: 0; border-top: 1px solid var(--line); }
+  }
+  .pg-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .pg-toolbar label { font: 600 13px var(--font-body); color: var(--ink-soft); }
+  .pg-toolbar select {
+    font: 600 13px var(--font-body);
+    padding: 5px 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--ink);
+  }
+  .pg-spacer { flex: 1; min-width: 0; }
+  #status { font-size: 12.5px; color: var(--ink-soft); }
+  #editor {
+    flex: 1;
+    min-height: 0;
+    border: 0;
+    resize: none;
+    padding: 14px;
+    font: 13.5px/1.6 var(--font-mono);
+    background: var(--panel);
+    color: var(--ink);
+    tab-size: 2;
+  }
+  #editor:disabled { opacity: 0.6; }
+  #preview { flex: 1; min-height: 0; border: 0; background: #fff; }
+  .pg-diagnostics-wrap {
+    border-top: 1px solid var(--line);
+    max-height: 34%;
+    overflow-y: auto;
+    background: var(--surface);
+  }
+  #diagnostics { list-style: none; margin: 0; padding: 8px 14px; font-size: 13px; }
+  #diagnostics li { padding: 5px 0; border-bottom: 1px solid var(--line-soft); }
+  #diagnostics li:last-child { border-bottom: 0; }
+  #diagnostics .diagnostic-error code { color: var(--hotspot); font-weight: 600; }
+  #diagnostics .diagnostic-warning code { color: var(--event); font-weight: 600; }
+  #diagnostics .diagnostic-info code { color: var(--ink-faint); font-weight: 600; }
+  #diagnostics .diagnostic-location,
+  #diagnostics .diagnostic-empty { color: var(--ink-faint); }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0 auto;">
+        <div class="eyebrow">Try it live</div>
+        <h1>Playground</h1>
+        <p class="lede">
+          The real <code>eventmodeling-hcl</code> core — the same parser,
+          validator, and renderer the CLI uses — compiled to WebAssembly and
+          running entirely in this tab. Nothing you type leaves your
+          browser.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top: 8px;">
+    <div class="wrap">
+      <div class="pg-shell">
+        <div class="pg-pane">
+          <div class="pg-toolbar">
+            <span id="status">Loading…</span>
+            <span class="pg-spacer"></span>
+            <label for="profile">Profile</label>
+            <select id="profile">
+              <option value="workshop">workshop</option>
+              <option value="valid" selected>valid</option>
+              <option value="strict">strict</option>
+            </select>
+            <button id="format-btn" class="btn" type="button">Format</button>
+          </div>
+          <textarea id="editor" spellcheck="false" aria-label=".em.hcl source"></textarea>
+          <div class="pg-diagnostics-wrap">
+            <ul id="diagnostics"></ul>
+          </div>
+        </div>
+        <div class="pg-pane">
+          <iframe id="preview" title="Rendered diagram" sandbox="allow-scripts"></iframe>
+        </div>
+      </div>
+
+      <p class="prose" style="margin-top: 20px;">
+        Loading the WebAssembly module downloads about 2&nbsp;MB once — this
+        page is the one place on the site that costs that, and your browser
+        caches it afterward. Want the same editor without a browser tab
+        open? <a href="/start.html">Install the CLI</a> and run
+        <code>eventmodeling-hcl serve</code> for the same live-reload loop
+        against a file in your own editor.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+
+<!-- Ordering matters here too, for the same reason as the tool repo's
+     web/playground/index.html: editor.js must register
+     window.onEventModelingReady before wasm_exec.js loads the module that
+     calls it, and both must run after the markup above. -->
+<script src="/playground/seed.js"></script>
+<script src="/playground/editor.js"></script>
+<script src="/playground/wasm_exec.js"></script>
+<script src="/playground/loader.js"></script>
+</body>
+</html>
