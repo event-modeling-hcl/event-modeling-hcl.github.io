@@ -97,8 +97,12 @@ reimplementation, so a change to the tool's WASM API (function names, the
 `{html, diagnostics}` shape) or to that DOM contract breaks both call sites
 together, on purpose, rather than silently drifting apart. The WASM module is
 ~2.2&nbsp;MB gzipped and loads once, only on `/playground/`, then stays
-browser-cached — the rest of the site never pays for it. All three files are
+browser-cached — the rest of the site never pays for it. These generated files are
 `.gitignore`d here, the same way `examples/canvas/` is.
+
+The full-page playground loads CodeMirror 5 from cdnjs for source editing,
+line numbers, and folding. The editor stores its draft, profile, pane width,
+and preview zoom in the browser's local storage.
 
 ## SEO and crawling
 

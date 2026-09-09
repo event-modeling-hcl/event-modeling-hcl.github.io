@@ -23,6 +23,19 @@ class PlaygroundAssetsTest(unittest.TestCase):
         for asset in ("seed.js", "editor.js", "loader.js", "eventmodeling-hcl.wasm", "wasm_exec.js"):
             self.assertIn(asset, deploy)
 
+    def test_playground_is_a_full_page_editor_app(self):
+        page = (ROOT / "playground" / "index.html").read_text()
+
+        self.assertIn("codemirror.min.css", page)
+        self.assertIn("codemirror.min.js", page)
+        self.assertIn('/playground/app.js', page)
+        self.assertIn('class="pg-appbar"', page)
+        self.assertIn('id="resize-handle"', page)
+        self.assertIn('id="btn-zoom-in"', page)
+        self.assertIn('id="console-body"', page)
+        self.assertNotIn("<site-nav>", page)
+        self.assertNotIn("<site-footer>", page)
+
 
 if __name__ == "__main__":
     unittest.main()

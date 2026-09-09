@@ -4,166 +4,52 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<script>
-  try {
-    var t = localStorage.getItem("theme");
-    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
-  } catch (e) {}
-</script>
-<title>Playground</title>
-<meta name="description" content="Edit .em.hcl in the browser and see it validated and rendered live — the real eventmodeling-hcl core, compiled to WebAssembly. No install, nothing sent to a server.">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Playground — event-modeling-hcl">
-<meta property="og:description" content="Edit .em.hcl in the browser and see it validated and rendered live, entirely client-side.">
-<meta property="og:image" content="/assets/img/og-default.png">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<title>Playground | eventmodeling-hcl</title>
+<meta name="description" content="Edit and render Event Modeling HCL in the browser.">
 <link rel="canonical" href="https://event-modeling-hcl.github.io/playground/">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
 <link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/addon/fold/foldgutter.min.css">
 <style>
-  /* The editor's DOM ids (#editor, #profile, #preview, #diagnostics,
-     #format-btn, #status) and the .diagnostic* classes are a fixed
-     contract with /playground/editor.js, copied verbatim from the tool
-     repo at deploy time. See that file's own header comment for details.
-     Only the styling below is page-local. */
-  .pg-shell {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: var(--shadow-sm);
-    height: 70vh;
-    min-height: 480px;
-  }
-  @media (max-width: 860px) {
-    .pg-shell { grid-template-columns: 1fr; height: auto; }
-  }
-  .pg-pane { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--panel); }
-  .pg-pane + .pg-pane { border-left: 1px solid var(--line); }
-  @media (max-width: 860px) {
-    .pg-pane { min-height: 360px; }
-    .pg-pane + .pg-pane { border-left: 0; border-top: 1px solid var(--line); }
-  }
-  .pg-toolbar {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px 12px;
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--line);
-    background: var(--surface);
-  }
-  .pg-toolbar label { font: 600 13px var(--font-body); color: var(--ink-soft); }
-  .pg-toolbar select {
-    font: 600 13px var(--font-body);
-    padding: 5px 8px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--line);
-    background: var(--panel);
-    color: var(--ink);
-  }
-  .pg-spacer { flex: 1; min-width: 0; }
-  #status { font-size: 12.5px; color: var(--ink-soft); }
-  #editor {
-    flex: 1;
-    min-height: 0;
-    border: 0;
-    resize: none;
-    padding: 14px;
-    font: 13.5px/1.6 var(--font-mono);
-    background: var(--panel);
-    color: var(--ink);
-    tab-size: 2;
-  }
-  #editor:disabled { opacity: 0.6; }
-  #preview { flex: 1; min-height: 0; border: 0; background: #fff; }
-  .pg-diagnostics-wrap {
-    border-top: 1px solid var(--line);
-    max-height: 34%;
-    overflow-y: auto;
-    background: var(--surface);
-  }
-  #diagnostics { list-style: none; margin: 0; padding: 8px 14px; font-size: 13px; }
-  #diagnostics li { padding: 5px 0; border-bottom: 1px solid var(--line-soft); }
-  #diagnostics li:last-child { border-bottom: 0; }
-  #diagnostics .diagnostic-error code { color: var(--hotspot); font-weight: 600; }
-  #diagnostics .diagnostic-warning code { color: var(--event); font-weight: 600; }
-  #diagnostics .diagnostic-info code { color: var(--ink-faint); font-weight: 600; }
-  #diagnostics .diagnostic-location,
-  #diagnostics .diagnostic-empty { color: var(--ink-faint); }
+html,body{height:100%;overflow:hidden}body{display:flex;flex-direction:column;background:var(--panel)}
+.pg-appbar,.pg-toolbar,.pg-preview-bar,.pg-console-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--surface);border-color:var(--line);border-style:solid}.pg-appbar{min-height:52px;border-width:0 0 1px;flex-wrap:wrap}.pg-brand{font:700 18px var(--font-display);color:var(--ink);text-decoration:none}.pg-brand code{font-size:.8em}.pg-spacer{flex:1}.pg-back,.pg-appbar button,.pg-preview-bar button,.pg-console-bar button,.pg-toolbar button{font:600 13px var(--font-body);color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-sm);padding:5px 9px;cursor:pointer}.pg-appbar button:hover,.pg-preview-bar button:hover,.pg-console-bar button:hover,.pg-toolbar button:hover,.pg-back:hover{border-color:var(--accent);color:var(--accent-ink)}.pg-status{font-size:12px;color:var(--ink-soft);white-space:nowrap}.pg-appbar select{font:600 13px var(--font-body);padding:5px 8px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--panel);color:var(--ink)}
+.pg-workspace{display:flex;flex:1;min-height:0}.pg-editor-pane,.pg-preview-pane{display:flex;flex-direction:column;min-width:260px;min-height:0}.pg-editor-pane{width:42%;border-right:1px solid var(--line)}.pg-preview-pane{flex:1}.pg-toolbar,.pg-preview-bar{border-width:0 0 1px}.pg-toolbar{justify-content:space-between}.pg-toolbar h1,.pg-preview-bar h2{font:600 13px var(--font-body);margin:0;color:var(--ink-soft)}.pg-toolbar button{color:#fff;background:var(--accent);border-color:var(--accent)}.pg-toolbar button:hover{color:#fff;background:var(--accent-ink)}.pg-resize-handle{width:6px;flex:0 0 6px;cursor:col-resize;background:var(--line);touch-action:none}.pg-resize-handle:hover,.pg-resize-handle.is-dragging{background:var(--accent)}.CodeMirror{flex:1;height:0;min-height:0;font:13px/1.55 var(--font-mono);background:var(--panel);color:var(--ink)}.CodeMirror-gutters{background:var(--surface);border-right:1px solid var(--line)}.CodeMirror-linenumber{color:var(--ink-faint)}.cm-hcl-comment{color:var(--ink-faint)}.cm-hcl-block{color:var(--command);font-weight:600}.cm-hcl-key{color:var(--accent-ink)}.cm-hcl-string{color:var(--readmodel)}.cm-hcl-ref{color:var(--processor)}.cm-hcl-literal{color:var(--event)}
+.pg-preview-stage{flex:1;min-height:0;overflow:auto;background:#fff}.pg-preview-scale{width:100%;height:100%;transform-origin:0 0}.pg-preview-scale iframe{width:100%;height:100%;border:0;display:block;background:#fff}.pg-zoom-level{min-width:44px;text-align:center;font:12px var(--font-mono);color:var(--ink-soft)}.pg-console{height:180px;flex:0 0 180px;display:flex;flex-direction:column;border-top:1px solid var(--line);background:var(--surface)}.pg-console-bar{border-width:0 0 1px}.pg-console-title{font:600 13px var(--font-body);color:var(--ink-soft)}.pg-badge{font:600 11px var(--font-body);border-radius:9px;padding:2px 7px;background:var(--accent-soft);color:var(--accent-ink)}.pg-badge.is-error{background:var(--hotspot-bg);color:var(--hotspot)}.pg-badge.is-warning{background:var(--event-bg);color:var(--event)}.pg-console-body{overflow:auto;flex:1;padding:8px 12px;font:12px/1.55 var(--font-mono)}#diagnostics{list-style:none;margin:0;padding:0}#diagnostics li{padding:4px 0;border-bottom:1px solid var(--line-soft)}#diagnostics li:last-child{border:0}.diagnostic-error code{color:var(--hotspot)}.diagnostic-warning code{color:var(--event)}.diagnostic-location,.diagnostic-empty{color:var(--ink-faint)}
+@media (max-width:800px){html,body{overflow:auto}.pg-appbar{position:sticky;top:0;z-index:2}.pg-workspace{display:block;min-height:auto}.pg-editor-pane,.pg-preview-pane{width:100%;min-width:0;height:52vh}.pg-editor-pane{border-right:0;border-bottom:1px solid var(--line)}.pg-resize-handle{display:none}.pg-console{height:150px;min-height:150px}.pg-appbar .pg-spacer{display:none}}
 </style>
 </head>
 <body>
-<a class="skip-link" href="#main">Skip to content</a>
-<site-nav></site-nav>
-
-<main id="main">
-
-  <section class="hero" style="padding-bottom: 8px;">
-    <div class="wrap">
-      <div class="prose" style="margin: 0 auto;">
-        <div class="eyebrow">Try it live</div>
-        <h1>Playground</h1>
-        <p class="lede">
-          The real <code>eventmodeling-hcl</code> core — the same parser,
-          validator, and renderer the CLI uses — compiled to WebAssembly and
-          running entirely in this tab. Nothing you type leaves your
-          browser.
-        </p>
-      </div>
-    </div>
+<header class="pg-appbar">
+  <a class="pg-brand" href="/"><code>{ }</code> eventmodeling-hcl</a>
+  <strong>Playground</strong>
+  <span class="pg-spacer"></span>
+  <span id="status" class="pg-status" role="status">Loading...</span>
+  <label class="pg-status" for="profile">Profile</label>
+  <select id="profile"><option value="workshop">workshop</option><option value="valid" selected>valid</option><option value="strict">strict</option></select>
+  <a class="pg-back" href="/">Back to site</a>
+</header>
+<main class="pg-workspace" id="main">
+  <section class="pg-editor-pane" aria-label="Source editor">
+    <div class="pg-toolbar"><h1>model.em.hcl</h1><span><button id="reset-btn" type="button">Reset example</button> <button id="format-btn" type="button">Format</button></span></div>
+    <textarea id="editor" spellcheck="false" aria-label="Event Modeling HCL source"></textarea>
   </section>
-
-  <section class="section" style="padding-top: 8px;">
-    <div class="wrap">
-      <div class="pg-shell">
-        <div class="pg-pane">
-          <div class="pg-toolbar">
-            <span id="status">Loading…</span>
-            <span class="pg-spacer"></span>
-            <label for="profile">Profile</label>
-            <select id="profile">
-              <option value="workshop">workshop</option>
-              <option value="valid" selected>valid</option>
-              <option value="strict">strict</option>
-            </select>
-            <button id="format-btn" class="btn" type="button">Format</button>
-          </div>
-          <textarea id="editor" spellcheck="false" aria-label=".em.hcl source"></textarea>
-          <div class="pg-diagnostics-wrap">
-            <ul id="diagnostics"></ul>
-          </div>
-        </div>
-        <div class="pg-pane">
-          <iframe id="preview" title="Rendered diagram" sandbox="allow-scripts"></iframe>
-        </div>
-      </div>
-
-      <p class="prose" style="margin-top: 20px;">
-        Loading the WebAssembly module downloads about 2&nbsp;MB once — this
-        page is the one place on the site that costs that, and your browser
-        caches it afterward. Want the same editor without a browser tab
-        open? <a href="/start.html">Install the CLI</a> and run
-        <code>eventmodeling-hcl serve</code> for the same live-reload loop
-        against a file in your own editor.
-      </p>
-    </div>
+  <div id="resize-handle" class="pg-resize-handle" aria-label="Resize editor and preview" role="separator" aria-orientation="vertical" tabindex="0"></div>
+  <section class="pg-preview-pane" aria-label="Diagram preview">
+    <div class="pg-preview-bar"><h2>Diagram</h2><span class="pg-spacer"></span><button id="btn-zoom-out" type="button" title="Zoom out" aria-label="Zoom out">-</button><span id="zoom-level" class="pg-zoom-level">100%</span><button id="btn-zoom-in" type="button" title="Zoom in" aria-label="Zoom in">+</button><button id="btn-zoom-reset" type="button" title="Reset zoom">Reset</button></div>
+    <div class="pg-preview-stage"><div id="preview-scale" class="pg-preview-scale"><iframe id="preview" title="Rendered Event Model" sandbox="allow-scripts allow-same-origin"></iframe></div></div>
   </section>
-
 </main>
-
-<site-footer></site-footer>
-<script src="/assets/hcl-highlight.js" defer></script>
-<script src="/assets/site.js" defer></script>
-
-<!-- Ordering matters here too, for the same reason as the tool repo's
-     web/playground/index.html: editor.js must register
-     window.onEventModelingReady before wasm_exec.js loads the module that
-     calls it, and both must run after the markup above. -->
+<aside class="pg-console" aria-label="Diagnostics console">
+  <div class="pg-console-bar"><span class="pg-console-title">Diagnostics</span><span id="diagnostic-badge" class="pg-badge">Loading</span><span class="pg-spacer"></span><button id="btn-clear" type="button">Clear</button></div>
+  <div id="console-body" class="pg-console-body"><ul id="diagnostics"></ul></div>
+</aside>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/addon/fold/foldcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/addon/fold/foldgutter.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/addon/fold/indent-fold.min.js"></script>
 <script src="/playground/seed.js"></script>
+<script src="/playground/app.js"></script>
 <script src="/playground/editor.js"></script>
 <script src="/playground/wasm_exec.js"></script>
 <script src="/playground/loader.js"></script>
