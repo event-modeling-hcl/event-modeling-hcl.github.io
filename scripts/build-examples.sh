@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Renders every vendored .em.hcl example into a self-contained interactive
-# canvas using the real `eventmodeling-hcl diagram` command, so the examples
+# canvas using the real `emhcl diagram` command, so the examples
 # gallery only ever shows output the tool actually produced.
 #
-# Usage: TOOL_BIN=/path/to/eventmodeling-hcl scripts/build-examples.sh
+# Usage: TOOL_BIN=/path/to/emhcl scripts/build-examples.sh
 #
 # Reads:  examples/models/*.em.hcl   (vendored example sources; added in Stage 5)
 # Writes: examples/canvas/<name>.html (git-ignored build artifacts)
@@ -14,7 +14,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 MODELS_DIR="$ROOT/examples/models"
 CANVAS_DIR="$ROOT/examples/canvas"
-TOOL_BIN="${TOOL_BIN:-eventmodeling-hcl}"
+TOOL_BIN="${TOOL_BIN:-emhcl}"
 
 if [ ! -d "$MODELS_DIR" ]; then
   echo "build-examples: no $MODELS_DIR yet, nothing to render."

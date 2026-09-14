@@ -41,7 +41,7 @@
   ];
 
   var LOGO_SVG =
-    '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="event-modeling-hcl">' +
+    '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="emhcl">' +
     '<rect width="64" height="64" rx="14" fill="var(--accent)"/>' +
     '<text x="32" y="42" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" ' +
     'font-size="28" font-weight="700" fill="#f7f9fc">{ }</text>' +
@@ -161,7 +161,7 @@
         '<a class="site-nav-brand" href="/">' +
         '<span class="site-nav-mark">' +
         LOGO_SVG +
-        '</span><span class="site-nav-brand-text">event-modeling-hcl</span></a>' +
+        '</span><span class="site-nav-brand-text">emhcl</span></a>' +
         '<button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav-links" aria-label="Menu">☰</button>' +
         '<ul class="site-nav-links" id="site-nav-links">' +
         links
@@ -196,7 +196,7 @@
         '<div class="site-footer-bar">' +
         "<span>© " +
         year +
-        ' event-modeling-hcl · Apache License 2.0 · built with plain HTML, CSS &amp; JS</span>' +
+        ' emhcl · Apache License 2.0 · built with plain HTML, CSS &amp; JS</span>' +
         '<ul class="site-footer-links">' +
         FOOTER_LINKS.map(function (l) {
           var ext = l.href.startsWith("http")

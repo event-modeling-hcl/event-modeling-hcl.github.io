@@ -68,10 +68,12 @@ class ExampleAssetsTest(unittest.TestCase):
         homepage = (ROOT / "index.html").read_text()
         self.assertIn('/examples/course-subscriptions.html', homepage)
 
-    def test_install_page_uses_the_current_release_archive(self):
+    def test_install_page_uses_the_current_release(self):
         start = (ROOT / "start.html").read_text()
-        self.assertIn("eventmodeling-hcl_0.4.0_linux_amd64.tar.gz", start)
-        self.assertNotIn("eventmodeling-hcl_0.3.0_linux_amd64.tar.gz", start)
+        self.assertIn("emhcl_0.6.0_linux_amd64.tar.gz", start)
+        self.assertIn("go install github.com/event-modeling-hcl/eventmodeling-hcl/cmd/emhcl@v0.6.0", start)
+        self.assertIn("emhcl version", start)
+        self.assertNotIn("eventmodeling-hcl_0.5.0_linux_amd64.tar.gz", start)
 
     def test_inline_sources_match_their_vendored_models(self):
         for model, (detail_name, _) in PUBLISHED_EXAMPLES.items():

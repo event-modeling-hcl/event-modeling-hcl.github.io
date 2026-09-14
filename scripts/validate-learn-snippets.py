@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Validate every <code-block lang="hcl"> on the Learn pages against the
-real `eventmodeling-hcl validate` — the site's rule that nothing taught here
+real `emhcl validate` — the site's rule that nothing taught here
 is "a syntax that only looks right".
 
 Each block must be either:
@@ -9,13 +9,13 @@ Each block must be either:
     must fail with its documented EMxxx diagnostic code(s).
 
 Usage:
-    TOOL_BIN=/path/to/eventmodeling-hcl scripts/validate-learn-snippets.py
+    TOOL_BIN=/path/to/emhcl scripts/validate-learn-snippets.py
 
 Re-run this after editing any file under learn/. TOOL_BIN defaults to
-"eventmodeling-hcl" on PATH; build it from the tool repo if you don't have
+"emhcl" on PATH; build it from the tool repo if you don't have
 a release installed:
-    go build -o /tmp/eventmodeling-hcl ./cmd/eventmodeling-hcl   # in the tool checkout
-    TOOL_BIN=/tmp/eventmodeling-hcl scripts/validate-learn-snippets.py
+    go build -o /tmp/emhcl ./cmd/emhcl   # in the tool checkout
+    TOOL_BIN=/tmp/emhcl scripts/validate-learn-snippets.py
 """
 import html
 import os
@@ -26,7 +26,7 @@ import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LEARN_DIR = os.path.join(ROOT, "learn")
-TOOL_BIN = os.environ.get("TOOL_BIN", "eventmodeling-hcl")
+TOOL_BIN = os.environ.get("TOOL_BIN", "emhcl")
 
 BLOCK_RE = re.compile(r'<code-block lang="hcl">(.*?)</code-block>', re.DOTALL)
 

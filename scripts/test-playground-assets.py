@@ -20,7 +20,7 @@ class PlaygroundAssetsTest(unittest.TestCase):
         self.assertIn("/playground/", sitemap)
         self.assertIn('url=/playground/', redirect)
         self.assertIn("/playground/", page)
-        for asset in ("seed.js", "editor.js", "loader.js", "eventmodeling-hcl.wasm", "wasm_exec.js"):
+        for asset in ("seed.js", "editor.js", "loader.js", "emhcl.wasm", "wasm_exec.js"):
             self.assertIn(asset, deploy)
 
     def test_playground_is_a_full_page_editor_app(self):

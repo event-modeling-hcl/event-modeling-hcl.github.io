@@ -11,9 +11,9 @@
   } catch (e) {}
 </script>
 <title>Get Started</title>
-<meta name="description" content="Install eventmodeling-hcl, write a first .em.hcl model, validate it, and render it to HTML.">
+<meta name="description" content="Install emhcl, write a first .em.hcl model, validate it, and render it to HTML.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Get Started — event-modeling-hcl">
+<meta property="og:title" content="Get Started — emhcl">
 <meta property="og:description" content="Install the CLI, write a first model, validate it, and render it to HTML.">
 <meta property="og:image" content="/assets/img/og-default.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -43,26 +43,37 @@
     <div class="wrap prose">
 
       <h2>1 · Install the CLI</h2>
-      <p>Download a release archive, or build from source with Go 1.25 or newer.</p>
+      <p>Install emhcl for your user account with Go 1.25 or newer, or use a release archive.</p>
 
-      <h3>Option A: download a release</h3>
+      <h3>Option A: install with Go</h3>
+      <code-block lang="text">go install github.com/event-modeling-hcl/eventmodeling-hcl/cmd/emhcl@v0.6.0</code-block>
+      <p>Go writes the executable to <code>GOBIN</code>, or to <code>$(go env GOPATH)/bin</code> when <code>GOBIN</code> is unset. Add that directory to your <code>PATH</code> so <code>emhcl</code> is available from any directory:</p>
       <code-block lang="text">
-        curl -LO https://github.com/event-modeling-hcl/eventmodeling-hcl/releases/latest/download/eventmodeling-hcl_0.4.0_linux_amd64.tar.gz
-        curl -LO https://github.com/event-modeling-hcl/eventmodeling-hcl/releases/latest/download/checksums.txt
-        sha256sum -c checksums.txt
-        tar -xzf eventmodeling-hcl_0.4.0_linux_amd64.tar.gz
+        export PATH="$(go env GOPATH)/bin:$PATH"
+        emhcl version
       </code-block>
-      <p>Swap <code>linux_amd64</code> for <code>darwin_amd64</code>, <code>darwin_arm64</code>, <code>linux_arm64</code>, <code>windows_amd64</code>, or <code>windows_arm64</code> as needed, and the version number for whatever the <a href="https://github.com/event-modeling-hcl/eventmodeling-hcl/releases">releases page</a> currently lists. With GitHub CLI 2.49.0 or newer, you can also verify the archive was actually produced by this repository's release workflow:</p>
-      <code-block lang="text">gh attestation verify eventmodeling-hcl_0.4.0_linux_amd64.tar.gz --repo event-modeling-hcl/eventmodeling-hcl</code-block>
 
-      <h3>Option B: build from source</h3>
+      <h3>Option B: download a release</h3>
+      <code-block lang="text">
+        curl -LO https://github.com/event-modeling-hcl/eventmodeling-hcl/releases/download/v0.6.0/emhcl_0.6.0_linux_amd64.tar.gz
+        curl -LO https://github.com/event-modeling-hcl/eventmodeling-hcl/releases/download/v0.6.0/checksums.txt
+        grep ' emhcl_0.6.0_linux_amd64.tar.gz$' checksums.txt | sha256sum -c -
+        tar -xzf emhcl_0.6.0_linux_amd64.tar.gz
+      </code-block>
+      <p>Swap <code>linux_amd64</code> for <code>darwin_amd64</code>, <code>darwin_arm64</code>, <code>linux_arm64</code>, <code>windows_amd64</code>, or <code>windows_arm64</code> as needed. Each v0.6.0 archive also contains the deprecated <code>eventmodeling-hcl</code> compatibility executable. With GitHub CLI 2.49.0 or newer, verify the archive was produced by this repository's release workflow:</p>
+      <code-block lang="text">gh attestation verify emhcl_0.6.0_linux_amd64.tar.gz --repo event-modeling-hcl/eventmodeling-hcl</code-block>
+
+      <h3>Option C: build from source</h3>
       <code-block lang="text">
         git clone https://github.com/event-modeling-hcl/eventmodeling-hcl.git
         cd eventmodeling-hcl
-        go build -o eventmodeling-hcl ./cmd/eventmodeling-hcl
+        go build -o emhcl ./cmd/emhcl
       </code-block>
-      <p>Either way, confirm it runs:</p>
-      <code-block lang="text">./eventmodeling-hcl version</code-block>
+      <p>Confirm the command runs:</p>
+      <code-block lang="text">emhcl version</code-block>
+      <callout kind="warn">
+        <p><strong>Migrating an existing script?</strong> The old <code>eventmodeling-hcl</code> command remains available in v0.6.0 only. Change scripts to <code>emhcl</code> before the compatibility command is removed in v0.7.0.</p>
+      </callout>
 
     </div>
   </section>
@@ -112,13 +123,13 @@
       </code-block>
 
       <h2>3 · Validate it</h2>
-      <code-block lang="text">./eventmodeling-hcl validate pet.em.hcl</code-block>
+      <code-block lang="text">emhcl validate pet.em.hcl</code-block>
       <p>A valid document prints:</p>
       <code-block lang="text">pet.em.hcl valid</code-block>
       <p>A diagnostic instead would look like <code>file:line:column: Severity EMxxx: message</code>. See the <a href="/learn/quality.html">quality page</a> for what's a hard error versus a warning worth a second look.</p>
 
       <h2>4 · Render the canvas</h2>
-      <code-block lang="text">./eventmodeling-hcl diagram pet.em.hcl -o pet.html</code-block>
+      <code-block lang="text">emhcl diagram pet.em.hcl -o pet.html</code-block>
       <code-block lang="text">wrote pet.html</code-block>
       <p><code>pet.html</code> is a single self-contained file — no external dependencies, no build step. Open it directly in a browser.</p>
 

@@ -11,9 +11,9 @@
   } catch (e) {}
 </script>
 <title>Reference</title>
-<meta name="description" content="The .em.hcl block and attribute cheat sheet, reference-form table, validation profiles, EMxxx diagnostic families, and eventmodeling-hcl CLI commands.">
+<meta name="description" content="The .em.hcl block and attribute cheat sheet, reference-form table, validation profiles, EMxxx diagnostic families, and emhcl CLI commands.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Reference — event-modeling-hcl">
+<meta property="og:title" content="Reference — emhcl">
 <meta property="og:description" content="The .em.hcl block/attribute cheat sheet and CLI command reference.">
 <meta property="og:image" content="/assets/img/og-default.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -183,11 +183,11 @@
         <table>
           <thead><tr><th>Command</th><th>Does</th></tr></thead>
           <tbody>
-            <tr><td><code>eventmodeling-hcl validate &lt;model.em.hcl&gt;</code></td><td>Validates with the default <code>valid</code> profile</td></tr>
-            <tr><td><code>eventmodeling-hcl validate --profile &lt;workshop|valid|strict&gt; &lt;model.em.hcl&gt;</code></td><td>Validates with an explicit profile</td></tr>
-            <tr><td><code>eventmodeling-hcl diagram &lt;model.em.hcl&gt; -o &lt;file&gt;</code></td><td>Renders a self-contained interactive HTML canvas (or writes to stdout without <code>-o</code>)</td></tr>
-            <tr><td><code>eventmodeling-hcl fmt -w &lt;model.em.hcl&gt;</code></td><td>Canonicalizes whitespace and attribute order in place</td></tr>
-            <tr><td><code>eventmodeling-hcl version</code></td><td>Prints the installed version</td></tr>
+            <tr><td><code>emhcl validate &lt;model.em.hcl&gt;</code></td><td>Validates with the default <code>valid</code> profile</td></tr>
+            <tr><td><code>emhcl validate --profile &lt;workshop|valid|strict&gt; &lt;model.em.hcl&gt;</code></td><td>Validates with an explicit profile</td></tr>
+            <tr><td><code>emhcl diagram &lt;model.em.hcl&gt; -o &lt;file&gt;</code></td><td>Renders a self-contained interactive HTML canvas (or writes to stdout without <code>-o</code>)</td></tr>
+            <tr><td><code>emhcl fmt -w &lt;model.em.hcl&gt;</code></td><td>Canonicalizes whitespace and attribute order in place</td></tr>
+            <tr><td><code>emhcl version</code></td><td>Prints the installed version</td></tr>
           </tbody>
         </table>
       </div>

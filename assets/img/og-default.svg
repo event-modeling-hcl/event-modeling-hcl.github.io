@@ -14,7 +14,7 @@
         font-size="42" font-weight="700" fill="#f7f9fc">{ }</text>
 
   <text x="90" y="330" font-family="ui-sans-serif, system-ui, sans-serif"
-        font-size="58" font-weight="700" fill="#e8edf6">event-modeling-hcl</text>
+        font-size="58" font-weight="700" fill="#e8edf6">emhcl</text>
 
   <text x="90" y="392" font-family="ui-sans-serif, system-ui, sans-serif"
         font-size="30" font-weight="400" fill="#a7b2c6">Event Modeling, natively in HCL</text>
