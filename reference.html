@@ -185,12 +185,29 @@
           <tbody>
             <tr><td><code>emhcl validate &lt;model.em.hcl&gt;</code></td><td>Validates with the default <code>valid</code> profile</td></tr>
             <tr><td><code>emhcl validate --profile &lt;workshop|valid|strict&gt; &lt;model.em.hcl&gt;</code></td><td>Validates with an explicit profile</td></tr>
-            <tr><td><code>emhcl diagram &lt;model.em.hcl&gt; -o &lt;file&gt;</code></td><td>Renders a self-contained interactive HTML canvas (or writes to stdout without <code>-o</code>)</td></tr>
+            <tr><td><code>emhcl diagram &lt;model.em.hcl&gt; -o &lt;file&gt;</code></td><td>Renders a self-contained interactive HTML canvas with switchable Model, Storming, and Context Map views (or writes to stdout without <code>-o</code>)</td></tr>
             <tr><td><code>emhcl fmt -w &lt;model.em.hcl&gt;</code></td><td>Canonicalizes whitespace and attribute order in place</td></tr>
             <tr><td><code>emhcl version</code></td><td>Prints the installed version</td></tr>
           </tbody>
         </table>
       </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head"><h2>Diagram views</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>View</th><th>Shows</th></tr></thead>
+          <tbody>
+            <tr><td><code>Model</code></td><td>Left-to-right Event Model with screen, processor, model, and event swimlanes and typed flow arrows</td></tr>
+            <tr><td><code>Storming</code></td><td>An Event Model in an Event Storming-inspired visual style: one row per workflow with sticky notes for screens, commands, aggregates, events, automations/translations, and read models</td></tr>
+            <tr><td><code>Context Map</code> (experimental)</td><td>Bounded-context map derived from cross-context event consumption, with upstream/downstream relationships</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="prose">One generated file carries all three; switch between them from the canvas masthead.</p>
     </div>
   </section>
 

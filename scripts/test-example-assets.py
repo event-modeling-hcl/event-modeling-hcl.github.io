@@ -58,11 +58,13 @@ class ExampleAssetsTest(unittest.TestCase):
             detail_path = EXAMPLES / f"{detail_name}.html"
 
             self.assertTrue(detail_path.is_file(), detail_path)
+            detail_text = detail_path.read_text()
             self.assertIn(source_url, gallery)
+            self.assertIn(f'href="{canvas_url}"', gallery)
             self.assertIn(detail_url, sitemap)
-            self.assertIn(canvas_url, detail_path.read_text())
+            self.assertIn(f'href="{canvas_url}"', detail_text)
             if model == "course_subscriptions":
-                self.assertIn(source_url, detail_path.read_text())
+                self.assertIn(source_url, detail_text)
 
     def test_homepage_features_course_subscriptions(self):
         homepage = (ROOT / "index.html").read_text()
@@ -70,8 +72,8 @@ class ExampleAssetsTest(unittest.TestCase):
 
     def test_install_page_uses_the_current_release(self):
         start = (ROOT / "start.html").read_text()
-        self.assertIn("emhcl_0.6.0_linux_amd64.tar.gz", start)
-        self.assertIn("go install github.com/event-modeling-hcl/eventmodeling-hcl/cmd/emhcl@v0.6.0", start)
+        self.assertIn("emhcl_0.7.0_linux_amd64.tar.gz", start)
+        self.assertIn("go install github.com/event-modeling-hcl/eventmodeling-hcl/cmd/emhcl@v0.7.0", start)
         self.assertIn("emhcl version", start)
         self.assertNotIn("eventmodeling-hcl_0.5.0_linux_amd64.tar.gz", start)
 
