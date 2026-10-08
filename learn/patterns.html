@@ -11,10 +11,10 @@
   } catch (e) {}
 </script>
 <title>The Four Patterns</title>
-<meta name="description" content="State Change, State View, Automation, and Translation: the four Event Modeling patterns, contrasted side by side with a minimal, validating .em.hcl shape for each.">
+<meta name="description" content="State Change, State View, Automation, and Translation are the four Event Modeling patterns. This page compares them side by side and shows a minimal, valid .em.hcl shape for each.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="The Four Patterns — Learn Event Modeling HCL">
-<meta property="og:description" content="State Change, State View, Automation, and Translation, contrasted side by side.">
+<meta property="og:title" content="The Four Patterns: Learn Event Modeling HCL">
+<meta property="og:description" content="State Change, State View, Automation, and Translation, compared side by side.">
 <meta property="og:image" content="/assets/img/og-default.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -34,7 +34,7 @@
       <div class="prose" style="margin: 0;">
         <div class="eyebrow">Learn · 02 of 5</div>
         <h1>The four patterns</h1>
-        <p class="lede">Four recurring causal shapes organize Event Modeling workflows.</p>
+        <p class="lede">Four causal shapes organize Event Modeling workflows.</p>
       </div>
     </div>
   </section>
@@ -49,12 +49,12 @@
           <tbody>
             <tr><td>State Change</td><td>What does someone want to change?</td><td>Screen/API → Command → Event</td><td>Often</td><td>No requirement</td><td><code>state_change</code></td></tr>
             <tr><td>State View</td><td>What does someone need to know?</td><td>Event → Read Model → Screen</td><td>Often</td><td>No requirement</td><td><code>state_view</code></td></tr>
-            <tr><td>Automation</td><td>What should the system do next by itself?</td><td>Internal Event → Read Model/Processor → Command → Event</td><td>No</td><td><strong>No external event input</strong></td><td><code>automation</code></td></tr>
-            <tr><td>Translation</td><td>How is another context's fact translated into the model's language?</td><td>External Event → Read Model/Processor → Command → Internal Event</td><td>No</td><td><strong>Yes</strong></td><td><code>translation</code></td></tr>
+            <tr><td>Automation</td><td>What must the system do next by itself?</td><td>Internal Event → Read Model/Processor → Command → Event</td><td>No</td><td>No external Event input</td><td><code>automation</code></td></tr>
+            <tr><td>Translation</td><td>How does the system turn a fact from another context into the language of this model?</td><td>External Event → Read Model/Processor → Command → Internal Event</td><td>No</td><td>Yes</td><td><code>translation</code></td></tr>
           </tbody>
         </table>
       </div>
-      <p class="prose"><strong>Quick check:</strong> which pattern turns intent into fact, and which turns facts into an answer?</p>
+      <p class="prose">Quick check: which pattern turns intent into fact, and which pattern turns facts into an answer?</p>
     </div>
   </section>
 
@@ -62,7 +62,7 @@
     <div class="wrap prose">
 
       <h2>State Change</h2>
-      <p>A user or other trigger wants something to happen. The system evaluates the Command. If accepted, one or more Events record the resulting facts.</p>
+      <p>A user or another trigger wants something to happen. The system evaluates the Command. If the system accepts the Command, one or more Events record the resulting facts.</p>
       <code-block lang="text">Screen / API -> Command -> Event</code-block>
       <code-block lang="hcl">
         actor "scheduler" {
@@ -90,10 +90,10 @@
           }
         }
       </code-block>
-      <p>The bounded context owns the Event. The workflow references it. An API-triggered Command can use <code>api_endpoint</code> instead of a Screen.</p>
+      <p>The bounded context owns the Event. A bounded context is a part of the system with its own language. The workflow references the Event. A Command that an API triggers can use <code>api_endpoint</code> instead of a Screen.</p>
 
       <h2>State View</h2>
-      <p>Facts already exist. A Read Model folds or interprets those facts so a user or API can answer one question.</p>
+      <p>The facts already exist. A Read Model is an answer to one question. It folds or interprets those facts so that a user or an API can get the answer.</p>
       <code-block lang="text">Event -> Read Model -> Screen</code-block>
       <code-block lang="hcl">
         actor "calendar_user" {
@@ -117,11 +117,11 @@
           }
         }
       </code-block>
-      <p>Catalog Event to Read Model is written as <code>readmodel.from</code>. Read Model to Screen is written as <code>readmodel.to</code>.</p>
-      <callout kind="rule"><p><strong>Scenario:</strong> GIVEN Event(s) → THEN Read Model.</p></callout>
+      <p>You write the flow from a catalog Event to a Read Model as <code>readmodel.from</code>. You write the flow from a Read Model to a Screen as <code>readmodel.to</code>.</p>
+      <callout kind="rule"><p>Scenario: GIVEN Event(s) → THEN Read Model.</p></callout>
 
       <h2>Automation</h2>
-      <p>The system reacts to <strong>its own internal facts</strong> and issues a new Command without a user screen.</p>
+      <p>The system reacts to its own internal facts. It issues a new Command without a user screen. A Processor is the machine step that issues the Command.</p>
       <code-block lang="text">Internal Event -> Read Model -> Processor -> Command -> Event</code-block>
       <code-block lang="hcl">
         bounded_context "appointments" {
@@ -153,7 +153,7 @@
       <p>An Automation consumes internal Events. External input belongs in a Translation.</p>
 
       <h2>Translation</h2>
-      <p>Another context or external system speaks in its own language. A Translation takes an external fact and turns it into a Command/Event in the receiving context's language.</p>
+      <p>Another context or external system uses its own language. A Translation takes an external fact and turns it into a Command and an Event in the language of the receiving context.</p>
       <code-block lang="text">External Event -> Read Model / Processor -> Command -> Internal Event</code-block>
       <code-block lang="hcl">
         system "weather_provider" {
@@ -189,7 +189,7 @@
           }
         }
       </code-block>
-      <p>A Translation consumes an Event from an external bounded context. A Processor may receive that Event directly when no Read Model is needed.</p>
+      <p>A Translation consumes an Event from an external bounded context. If no Read Model is needed, a Processor can receive that Event directly.</p>
 
     </div>
   </section>

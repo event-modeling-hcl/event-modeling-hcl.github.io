@@ -11,10 +11,10 @@
   } catch (e) {}
 </script>
 <title>Quality: Smells, Errors, Warnings</title>
-<meta name="description" content="The four Event Modeling anti-patterns, what the emhcl validator rejects outright, what it leaves to human judgment, and how validation profiles change the boundary.">
+<meta name="description" content="The four Event Modeling anti-patterns, the errors the emhcl validator reports, the checks it leaves to people, and how validation profiles change the rules.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Quality: Smells, Errors, Warnings — Learn Event Modeling HCL">
-<meta property="og:description" content="The four anti-patterns, hard errors vs. judgment warnings, and validation profiles — with a validity-spotting drill.">
+<meta property="og:title" content="Quality: Smells, Errors, Warnings | Learn Event Modeling HCL">
+<meta property="og:description" content="The four anti-patterns, hard errors and judgment warnings, and validation profiles. Includes a drill to spot valid and invalid models.">
 <meta property="og:image" content="/assets/img/og-default.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -43,7 +43,7 @@
     <div class="wrap">
       <div class="section-head">
         <h2>The four anti-patterns</h2>
-        <p>These shapes are warnings worth investigating, not automatic rejections.</p>
+        <p>These shapes are warnings. Investigate them. The validator does not reject them automatically.</p>
       </div>
       <div class="card-grid">
         <div class="card">
@@ -69,17 +69,17 @@
   <section class="section section-alt">
     <div class="wrap prose">
       <h2>What the validator rejects outright</h2>
-      <p>The default profile rejects invalid HCL and unknown syntax, missing required semantic attributes, wrong literal types and invalid examples, duplicate identities, unresolved or wrong-kind references, non-canonical flow directions, invalid pattern-specific scenario structure, non-contiguous chapters in a one-file model, and incorrect Automation/Translation externality. In a folder model, it also rejects chapters in several files and a workflow in two chapters. Diagnostics use stable <code>EMxxx</code> codes — <code>EM0xx</code> structural, <code>EM1xx</code> references, <code>EM2xx</code> flow, <code>EM3xx</code> scenarios, <code>EM4xx</code> modeling judgment.</p>
+      <p>The default profile rejects these problems: invalid HCL and unknown syntax, missing required semantic attributes, wrong literal types, invalid examples, duplicate identities, unresolved references, and references of the wrong kind. It also rejects non-canonical flow directions, invalid pattern-specific scenario structure, non-contiguous chapters in a one-file model, and incorrect Automation/Translation externality. In a folder model, it also rejects chapters in several files and a workflow in two chapters. Diagnostics use stable <code>EMxxx</code> codes. <code>EM0xx</code> codes report structure, <code>EM1xx</code> references, <code>EM2xx</code> flow, <code>EM3xx</code> scenarios, and <code>EM4xx</code> modeling judgment.</p>
 
       <h2>What it leaves to human judgment</h2>
-      <p>Some checks need judgment rather than hard rejection: a Command with no incoming flow, API endpoint, or trigger (<code>EM404</code>); the four anti-patterns above; an open hotspot (<code>EM406</code>); a workflow in no chapter in a folder model (<code>EM407</code>). Three profiles decide how strict that judgment is:</p>
+      <p>Some checks need judgment, not hard rejection. These are a Command with no incoming flow, API endpoint, or trigger (<code>EM404</code>), the four anti-patterns above, an open hotspot (<code>EM406</code>), and a workflow in no chapter in a folder model (<code>EM407</code>). Three profiles decide how strict the checks are:</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Profile</th><th>Judgment diagnostics (EM404, EM406, EM407, the four smells)</th></tr></thead>
           <tbody>
-            <tr><td><code>workshop</code></td><td>Informational — incomplete discovery stays easy to work with</td></tr>
+            <tr><td><code>workshop</code></td><td>Informational. Incomplete discovery stays easy to work with.</td></tr>
             <tr><td><code>valid</code> (default)</td><td>Warnings</td></tr>
-            <tr><td><code>strict</code></td><td><code>EM404</code>, <code>EM406</code>, and <code>EM407</code> become errors; the four smells stay non-blocking judgment signals</td></tr>
+            <tr><td><code>strict</code></td><td><code>EM404</code>, <code>EM406</code>, and <code>EM407</code> become errors. The four smells stay non-blocking judgment signals.</td></tr>
           </tbody>
         </table>
       </div>
@@ -96,16 +96,16 @@
           }
         }
       </code-block>
-      <p>Under the default <code>valid</code> profile, it's a warning and the file still validates:</p>
+      <p>Under the default <code>valid</code> profile, this is a warning and the file still validates:</p>
       <code-block lang="text">em404-test.em.hcl:6:3: Warning EM404: Every command has a reason: command "add_appointment" has no incoming flow, api_endpoint, or external_trigger.
 em404-test.em.hcl valid</code-block>
-      <p>Under <code>--profile strict</code>, the same diagnostic becomes a hard error and nothing is reported valid:</p>
+      <p>Under <code>--profile strict</code>, the same diagnostic becomes a hard error, and the validator reports nothing as valid:</p>
       <code-block lang="text">em404-test.em.hcl:6:3: Error EM404: Every command has a reason: command "add_appointment" has no incoming flow, api_endpoint, or external_trigger.</code-block>
       <p>A shipped example also produces a right-chair warning:</p>
       <code-block lang="text">pet-management-detailed.em.hcl:459:12: Warning EM403: Right chair anti-pattern: readmodel "owner_details" connects to several events; review whether the workflow contains more than one business capability.
 pet-management-detailed.em.hcl valid</code-block>
       <callout kind="rule">
-        <p><strong>Use strictness to make an agent-ready model more explicit; don't use permissiveness to hide uncertainty.</strong> Unknown business facts belong in <code>hotspot</code> blocks, not in silence.</p>
+        <p>To make an agent-ready model more explicit, use strictness. Do not use permissiveness to hide uncertainty. Put unknown business facts in <code>hotspot</code> blocks, not in silence.</p>
       </callout>
     </div>
   </section>
@@ -114,7 +114,7 @@ pet-management-detailed.em.hcl valid</code-block>
     <div class="wrap">
       <div class="section-head">
         <h2>Validity-spotting drill</h2>
-        <p>For each item, decide: <strong>invalid</strong> (validator-level problem), <strong>valid but suspicious</strong> (a warning or smell), or <strong>valid</strong>.</p>
+        <p>For each item, decide which label applies: invalid (a validator-level problem), valid but suspicious (a warning or smell), or valid.</p>
       </div>
 
       <div class="quiz-item">
@@ -124,7 +124,7 @@ pet-management-detailed.em.hcl valid</code-block>
 }</code-block>
         <details class="reveal">
           <summary>Answer</summary>
-          <p><span class="verdict verdict-invalid">Invalid</span> Events are bounded-context-owned contracts and must be declared inside a <code>bounded_context</code>.</p>
+          <p><span class="verdict verdict-invalid">Invalid</span> Events are contracts that a bounded context owns. You must declare them inside a <code>bounded_context</code>.</p>
         </details>
       </div>
 
@@ -133,7 +133,7 @@ pet-management-detailed.em.hcl valid</code-block>
         <code-block lang="text">to = ["event.orders.order_placed"]</code-block>
         <details class="reveal">
           <summary>Answer</summary>
-          <p><span class="verdict verdict-invalid">Invalid</span> Relationships are typed, unquoted HCL traversals — this is a string.</p>
+          <p><span class="verdict verdict-invalid">Invalid</span> Relationships are typed, unquoted HCL traversals. This is a string.</p>
         </details>
       </div>
 
@@ -144,7 +144,7 @@ pet-management-detailed.em.hcl valid</code-block>
 }</code-block>
         <details class="reveal">
           <summary>Answer</summary>
-          <p><span class="verdict verdict-invalid">Invalid</span> A <code>readmodel</code> block only exists inside a <code>state_view</code>, <code>automation</code>, or <code>translation</code> workflow — and even declared correctly, it would still need a concrete <code>question</code>.</p>
+          <p><span class="verdict verdict-invalid">Invalid</span> A <code>readmodel</code> block exists only inside a <code>state_view</code>, <code>automation</code>, or <code>translation</code> workflow. Even if you declare it correctly, it needs a concrete <code>question</code>.</p>
         </details>
       </div>
 
@@ -153,7 +153,7 @@ pet-management-detailed.em.hcl valid</code-block>
         <code-block lang="text">One command -> five semantically unrelated events</code-block>
         <details class="reveal">
           <summary>Answer</summary>
-          <p><span class="verdict verdict-suspicious">Valid but suspicious</span> A left-chair smell — investigate whether several capabilities are hiding inside one Command.</p>
+          <p><span class="verdict verdict-suspicious">Valid but suspicious</span> This is a left-chair smell. Investigate whether one Command hides several capabilities.</p>
         </details>
       </div>
 
@@ -163,7 +163,7 @@ pet-management-detailed.em.hcl valid</code-block>
 where "orders" is an internal bounded context.</code-block>
         <details class="reveal">
           <summary>Answer</summary>
-          <p><span class="verdict verdict-invalid">Invalid</span> A Translation must consume at least one Event from an external bounded context — the validator checks this externality rule directly.</p>
+          <p><span class="verdict verdict-invalid">Invalid</span> A Translation must consume at least one Event from an external bounded context. The validator checks this externality rule directly.</p>
         </details>
       </div>
 
@@ -172,7 +172,7 @@ where "orders" is an internal bounded context.</code-block>
         <code-block lang="text">A State Change scenario contains two "when" blocks.</code-block>
         <details class="reveal">
           <summary>Answer</summary>
-          <p><span class="verdict verdict-invalid">Invalid</span> State Change scenarios require one <code>when</code>, targeting a Command.</p>
+          <p><span class="verdict verdict-invalid">Invalid</span> A State Change scenario requires one <code>when</code> block that targets a Command.</p>
         </details>
       </div>
 
@@ -183,7 +183,7 @@ where "orders" is an internal bounded context.</code-block>
     <div class="wrap" style="text-align: center;">
       <div class="prose" style="margin: 0 auto;">
         <h2>Keep going</h2>
-        <p>The <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/learning-event-modeling-hcl.md">full guide</a> includes more exercises, facilitation notes, and a capstone.</p>
+        <p>The <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/learning-event-modeling-hcl.md">full guide</a> includes more exercises, facilitation notes, and a final project.</p>
         <div class="btn-row" style="justify-content: center;">
           <a class="btn btn-primary" href="https://github.com/event-modeling-hcl/eventmodeling-hcl/releases">Get the CLI</a>
           <a class="btn" href="/learn/index.html">Back to the path</a>

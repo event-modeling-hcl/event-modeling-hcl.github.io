@@ -11,10 +11,10 @@
   } catch (e) {}
 </script>
 <title>Why HCL? | event-modeling-hcl</title>
-<meta name="description" content="Why this project uses HCL for Event Model source files, and the tradeoffs compared with JSON and YAML.">
+<meta name="description" content="Why this project uses HCL for Event Model source files, and how HCL compares with JSON and YAML.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Why HCL? | event-modeling-hcl">
-<meta property="og:description" content="The motivation and tradeoffs behind using HCL for Event Models.">
+<meta property="og:description" content="Why this project uses HCL for Event Models, and the tradeoffs of that choice.">
 <meta property="og:image" content="/assets/img/og-default.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -41,7 +41,7 @@
       <div class="prose">
         <div class="eyebrow">One format choice</div>
         <h1>Why HCL?</h1>
-        <p class="lede">A text format was needed that would be comfortable to edit by hand and strict enough to validate.</p>
+        <p class="lede">The project needed a text format that people can edit by hand and a tool can validate.</p>
       </div>
     </div>
   </section>
@@ -49,8 +49,8 @@
   <section class="section">
     <div class="wrap">
       <div class="prose">
-        <p>JSON was easy to validate but noisy to write. YAML was pleasant to write. HCL offered a useful feature: domain concepts could be blocks.</p>
-        <p>HCL was selected for the experiment.</p>
+        <p>JSON is easy to validate but noisy to write. YAML is pleasant to write. HCL has one more feature: domain concepts can be blocks.</p>
+        <p>The project chose HCL for this experiment.</p>
       </div>
       <div class="compare-strip">
         <code-block lang="json">
@@ -68,7 +68,7 @@
           }
         </code-block>
       </div>
-      <p class="prose">For this project, the block form is useful because the source resembles the concepts being discussed.</p>
+      <p class="prose">In this project, the block form helps because the source looks like the concepts that people discuss.</p>
     </div>
   </section>
 
@@ -80,7 +80,7 @@
       <code-block lang="hcl">event.school.student_registered</code-block>
       <div class="prose">
         <p>HCL parses this as a traversal expression. HCL does not know that it refers to an Event.</p>
-        <p>The <code>.em.hcl</code> validator supplies that meaning. It checks the reference kind, scope, and existence, then produces a typed model for the formatter, renderer, and other tools.</p>
+        <p>The <code>.em.hcl</code> validator supplies that meaning. It checks the reference kind, scope, and existence. Then it produces a typed model for the formatter, renderer, and other tools.</p>
       </div>
     </div>
   </section>
@@ -89,7 +89,7 @@
     <div class="wrap">
       <div class="section-head">
         <h2>Tradeoffs</h2>
-        <p>These formats solve different problems. This table describes the choices relevant to this project.</p>
+        <p>These formats solve different problems. This table lists the differences that matter for this project.</p>
       </div>
       <div class="table-wrap">
         <table>
@@ -97,7 +97,7 @@
           <tbody>
             <tr><td>Familiar ecosystem</td><td>Very broad</td><td>Very broad</td><td>Smaller</td></tr>
             <tr><td>Human editing</td><td>Verbose</td><td>Compact</td><td>Block-oriented</td></tr>
-            <tr><td>References</td><td>Usually represented as data</td><td>Usually represented as data</td><td>HCL traversals plus <code>.em.hcl</code> validation</td></tr>
+            <tr><td>References</td><td>Usually plain data</td><td>Usually plain data</td><td>HCL traversals plus <code>.em.hcl</code> validation</td></tr>
             <tr><td>Comments</td><td>No standard JSON comments</td><td>Yes</td><td>Yes</td></tr>
             <tr><td>Structure</td><td>Brackets and braces</td><td>Indentation</td><td>Blocks and braces</td></tr>
             <tr><td>Validation</td><td>JSON Schema ecosystem</td><td>Schema or tool dependent</td><td>Project validator</td></tr>
@@ -118,19 +118,19 @@
         <div class="card alt-card">
           <span class="alt-kicker">YAML</span>
           <h3>EmLang</h3>
-          <p>An Event Modeling language and toolchain using YAML. It includes editing, validation, and diagram tooling. If YAML is natural for your team, it is useful to look at.</p>
+          <p>An Event Modeling language and toolchain that uses YAML. It includes editing, validation, and diagram tooling. If YAML suits your team, read about it.</p>
           <p><a href="https://github.com/emlang-project/emlang">EmLang on GitHub →</a></p>
         </div>
         <div class="card alt-card">
           <span class="alt-kicker">YAML</span>
           <h3>ESDM</h3>
-          <p>Uses YAML manifests to model event-sourced domains and provides related validation, rendering, and editor tooling.</p>
+          <p>Uses YAML manifests to model event-sourced domains. It also provides validation, rendering, and editor tooling.</p>
           <p><a href="https://www.esdm.io/">ESDM documentation →</a></p>
         </div>
         <div class="card alt-card">
           <span class="alt-kicker">JSON Schema</span>
           <h3>Martin Dilger's Event Modeling Specification</h3>
-          <p>A JSON Schema representation of Event Models and an important input to this project.</p>
+          <p>A JSON Schema representation of Event Models. It is a main input to this project.</p>
           <p><a href="https://github.com/dilgerma/event-modeling-spec">Specification on GitHub →</a></p>
         </div>
       </div>
@@ -140,8 +140,8 @@
   <section class="section">
     <div class="wrap prose" style="margin: 0 auto;">
       <h2>Use the format that fits</h2>
-      <p>HCL is not required for Event Modeling. It is the tradeoff this project explores.</p>
-      <p>If JSON or YAML fits your tooling better, use that.</p>
+      <p>Event Modeling does not require HCL. This project explores HCL as one tradeoff.</p>
+      <p>If JSON or YAML suits your tooling better, use that.</p>
       <div class="btn-row">
         <a class="btn btn-primary" href="/examples/minimal.html">See an example</a>
         <a class="btn" href="/">Back to overview</a>

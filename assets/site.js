@@ -42,9 +42,9 @@
 
   var LOGO_SVG =
     '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="emhcl">' +
-    '<rect width="64" height="64" rx="14" fill="var(--accent)"/>' +
+    '<rect width="64" height="64" fill="#141413"/>' +
     '<text x="32" y="42" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" ' +
-    'font-size="28" font-weight="700" fill="#f7f9fc">{ }</text>' +
+    'font-size="28" font-weight="700" fill="#faf9f6">{ }</text>' +
     "</svg>";
 
   // ---------------------------- theme toggle ----------------------------

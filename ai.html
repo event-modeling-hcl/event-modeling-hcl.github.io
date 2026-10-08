@@ -40,7 +40,7 @@
         <div class="eyebrow">Coding agents</div>
         <h1>Using <code>.em.hcl</code> with coding agents</h1>
         <p class="lede">A coding agent can draft <code>.em.hcl</code>, run the validator, fix diagnostics, and render the result.</p>
-        <p>That makes a useful little feedback loop.</p>
+        <p>This creates a useful feedback loop.</p>
       </div>
     </div>
   </section>
@@ -49,14 +49,14 @@
     <div class="wrap">
       <div class="section-head"><h2>Works today</h2></div>
       <div class="loop-steps">
-        <div class="card"><h3>1. Draft</h3><p>Describe the Events, actors, ownership, and workflow.</p></div>
+        <div class="card"><h3>1. Draft</h3><p>Describe the events, actors, ownership, and workflow.</p></div>
         <div class="card"><h3>2. Validate</h3><p>Run <code>emhcl validate</code>.</p></div>
         <div class="card"><h3>3. Fix</h3><p>Use the source position and <code>EMxxx</code> diagnostic.</p></div>
         <div class="card"><h3>4. Diagram</h3><p>Render the model and review its causal shape.</p></div>
         <div class="card"><h3>5. Review</h3><p>A person checks whether it describes the business.</p></div>
       </div>
       <callout kind="warn">
-        <p><strong>Validation has limits.</strong> It catches language and model-structure errors. It does not tell you whether the business model is correct.</p>
+        <p>Validation has limits. It catches language and model-structure errors. It does not tell you whether the business model is correct.</p>
       </callout>
     </div>
   </section>
@@ -65,7 +65,7 @@
     <div class="wrap prose">
       <h2>Possible next step</h2>
       <p>Feed one validated workflow to a coding agent as structured context for implementing that slice.</p>
-      <p>The CLI does not generate an application. The implementation still needs engineering decisions, tests, and review.</p>
+      <p>The CLI does not generate an application. Engineering decisions, tests, and review are still needed.</p>
     </div>
   </section>
 

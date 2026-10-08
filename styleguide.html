@@ -10,17 +10,17 @@
     if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
   } catch (e) {}
 </script>
-<title>Style Guide — emhcl</title>
+<title>Style Guide | emhcl</title>
 <meta name="robots" content="noindex">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
 <link rel="stylesheet" href="/assets/site.css">
 <style>
   /* Style-guide-only scaffolding, not part of the shared system. */
-  .sg-section { padding: 40px 0; border-bottom: 1px solid var(--line); }
-  .sg-swatches { display: flex; flex-wrap: wrap; gap: 10px; }
-  .sg-swatch { width: 120px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); font-size: 12px; }
+  .sg-section { padding: var(--space-6) 0 var(--space-6); border-bottom: 1px solid var(--line); }
+  .sg-swatches { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+  .sg-swatch { width: 120px; border: 1px solid var(--line); font-size: var(--text-xs); }
   .sg-swatch-fill { height: 48px; }
-  .sg-swatch-label { padding: 6px 8px; background: var(--panel); }
+  .sg-swatch-label { padding: 6px var(--space-2); background: var(--panel); }
 </style>
 </head>
 <body>
@@ -31,27 +31,33 @@
   <div class="wrap">
 
     <section class="sg-section">
-      <div class="eyebrow">Internal QA page — not linked from navigation</div>
+      <div class="eyebrow">Internal QA page, not linked from navigation</div>
       <h1>Style guide</h1>
-      <p class="prose">Every shared component from <code>assets/site.css</code> and
-        <code>assets/site.js</code>, in one place, so a theme or component change can
-        be checked in both light and dark mode before it ships to real pages.</p>
+      <p class="prose">This page shows every shared component from <code>assets/site.css</code> and
+        <code>assets/site.js</code>. Use it to check a theme or component change in light and dark mode before the change ships.</p>
     </section>
 
     <section class="sg-section">
       <h2>Type scale</h2>
-      <h1>Heading 1 — the sell, in one line</h1>
-      <h2>Heading 2 — a section title</h2>
-      <h3>Heading 3 — a subsection</h3>
-      <h4>Heading 4 — a label-weight heading</h4>
-      <p class="prose">Body copy runs in IBM Plex Sans at a comfortable measure. A
-        Read Model makes facts usable — it is not just "some projection." <code>field_type</code>
-        is a reusable, ubiquitous-language concept referenced by traversal, not by string.</p>
+      <h1>Heading 1: the sell, in one line</h1>
+      <h2>Heading 2: a section title</h2>
+      <h3>Heading 3: a subsection</h3>
+      <h4>Heading 4: a label-weight heading</h4>
+      <p class="prose">Body copy uses IBM Plex Sans at a readable line length. A
+        Read Model makes facts usable. It is more than "some projection." <code>field_type</code>
+        is a reusable concept that other blocks reference by traversal, not by string.</p>
+      <p class="prose">Links in prose use <a href="#main">ink color with a thin underline</a>. Hover a link to make the underline thicker.</p>
+    </section>
+
+    <section class="sg-section">
+      <h2>Eyebrow</h2>
+      <p>The eyebrow is the one place where clay text appears.</p>
+      <div class="eyebrow">Section label</div>
     </section>
 
     <section class="sg-section">
       <h2>Element badges</h2>
-      <p>The same hues the <code>diagram</code> canvas uses for each element kind:</p>
+      <p>The <code>diagram</code> canvas uses the same hues for each element kind:</p>
       <p>
         <span class="term term-event">Event</span>
         <span class="term term-command">Command</span>
@@ -65,24 +71,27 @@
 
     <section class="sg-section">
       <h2>Callouts</h2>
-      <callout kind="note"><p><strong>Note:</strong> block labels use lower snake_case so every identity is traversal-safe.</p></callout>
-      <callout kind="target"><p><strong>Target:</strong> after this stage, every shared component renders correctly in both themes at both mobile and desktop widths.</p></callout>
-      <callout kind="rule"><p><strong>Rule:</strong> no question, no Read Model.</p></callout>
-      <callout kind="warn"><p><strong>Warning:</strong> an <code>automation</code> workflow must not consume an event from an external bounded context — that is a Translation.</p></callout>
+      <p>A callout has a thin left rule and no fill. The rule is gray for notes, clay for rules and targets, and red for warnings.</p>
+      <callout kind="note"><p>Block labels use lower snake_case, so every identity is safe to traverse.</p></callout>
+      <callout kind="target"><p>After this stage, every shared component renders correctly in both themes at mobile and desktop widths.</p></callout>
+      <callout kind="rule"><p>No question, no Read Model.</p></callout>
+      <callout kind="warn"><p>An <code>automation</code> workflow must not consume an event from an external bounded context. That case is a Translation.</p></callout>
     </section>
 
     <section class="sg-section">
       <h2>Buttons</h2>
+      <p>The primary button has a flat top and rounded bottom corners. Other buttons have square corners.</p>
       <div class="btn-row">
         <a class="btn btn-primary" href="#main">Primary action</a>
         <a class="btn" href="#main">Secondary action</a>
+        <button class="btn" type="button" disabled>Disabled action</button>
         <button class="theme-toggle" data-theme-toggle type="button"></button>
       </div>
     </section>
 
     <section class="sg-section">
       <h2>Code block</h2>
-      <p>Rendered by <code>&lt;code-block lang="hcl"&gt;</code>, highlighted by <code>assets/hcl-highlight.js</code>:</p>
+      <p>The element <code>&lt;code-block lang="hcl"&gt;</code> renders this block. The file <code>assets/hcl-highlight.js</code> adds the highlighting:</p>
       <code-block lang="hcl">
         # Minimal Event Modeling document with context-owned contracts.
         bounded_context "pet_management" {
@@ -138,8 +147,8 @@
           <tbody>
             <tr><td>State Change</td><td>What does someone want to change?</td><td><code>state_change</code></td></tr>
             <tr><td>State View</td><td>What does someone need to know?</td><td><code>state_view</code></td></tr>
-            <tr><td>Automation</td><td>What should the system do next by itself?</td><td><code>automation</code></td></tr>
-            <tr><td>Translation</td><td>How is another context's fact translated?</td><td><code>translation</code></td></tr>
+            <tr><td>Automation</td><td>What must the system do next by itself?</td><td><code>automation</code></td></tr>
+            <tr><td>Translation</td><td>How does the system translate a fact from another context?</td><td><code>translation</code></td></tr>
           </tbody>
         </table>
       </div>
@@ -150,24 +159,22 @@
       <div class="card-grid">
         <div class="card">
           <h3>In your repo</h3>
-          <p>A model lives beside the code it specifies and renders straight to a
-            hosted diagram on GitHub or GitLab Pages.</p>
+          <p>A model lives beside the code that it describes. It renders to a
+            hosted diagram on GitHub Pages or GitLab Pages.</p>
         </div>
         <div class="card">
-          <h3>Human + LLM</h3>
-          <p>Constrained enough for an LLM to generate correctly, readable enough for
-            a person to review and edit by hand.</p>
+          <h3>Human and LLM</h3>
+          <p>The format is strict enough for an LLM to generate correctly. A person can read and edit it by hand.</p>
         </div>
         <div class="card">
-          <h3>Validated, not just drawn</h3>
-          <p>Every reference is checked for scope, kind, and existence before it ever
-            reaches a diagram.</p>
+          <h3>Validated and drawn</h3>
+          <p>The tool checks every reference for scope, kind, and existence before the reference reaches a diagram.</p>
         </div>
       </div>
     </section>
 
     <section class="sg-section" style="border-bottom: 0;">
-      <h2>Neutral &amp; accent tokens</h2>
+      <h2>Neutral and accent tokens</h2>
       <div class="sg-swatches">
         <div class="sg-swatch"><div class="sg-swatch-fill" style="background:var(--bg)"></div><div class="sg-swatch-label">--bg</div></div>
         <div class="sg-swatch"><div class="sg-swatch-fill" style="background:var(--surface)"></div><div class="sg-swatch-label">--surface</div></div>
@@ -179,6 +186,39 @@
     </section>
 
   </div>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Alternate section</div>
+        <h2>Section alt</h2>
+        <p>This section uses the <code>section-alt</code> class. It has a stone background and thin rules on top and bottom.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-dark">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Inverted section</div>
+        <h2>Section dark</h2>
+        <p>This section uses the <code>section-dark</code> class. It has a near-black background, ivory text, and serif headings. In dark theme it uses a darker black with a thin border, so it stays distinct.</p>
+      </div>
+      <div class="card-grid">
+        <div class="card">
+          <h3>Card in a dark section</h3>
+          <p>The card has a dark fill and a thin border. <a href="#main">Links</a> and <code>inline code</code> stay readable.</p>
+        </div>
+        <div class="card">
+          <h3>Buttons in a dark section</h3>
+          <div class="btn-row">
+            <a class="btn btn-primary" href="#main">Primary action</a>
+            <a class="btn" href="#main">Secondary action</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <site-footer></site-footer>

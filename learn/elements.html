@@ -11,10 +11,10 @@
   } catch (e) {}
 </script>
 <title>The Five Elements</title>
-<meta name="description" content="Event, Command, Read Model, Screen, and the automation gear: the five building blocks of Event Modeling, and how each is declared in .em.hcl.">
+<meta name="description" content="Event, Command, Read Model, Screen, and the automation gear are the five building blocks of Event Modeling. This page shows how .em.hcl declares each one.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="The Five Elements — Learn Event Modeling HCL">
-<meta property="og:description" content="Event, Command, Read Model, Screen, and the automation gear: the five building blocks, in .em.hcl.">
+<meta property="og:title" content="The Five Elements: Learn Event Modeling HCL">
+<meta property="og:description" content="Event, Command, Read Model, Screen, and the automation gear are the five building blocks, shown in .em.hcl.">
 <meta property="og:image" content="/assets/img/og-default.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -34,7 +34,7 @@
       <div class="prose" style="margin: 0;">
         <div class="eyebrow">Learn · 01 of 5</div>
         <h1>The five elements</h1>
-        <p class="lede">Five recurring pieces appear across the four workflow patterns.</p>
+        <p class="lede">Five pieces appear across the four workflow patterns.</p>
       </div>
     </div>
   </section>
@@ -42,32 +42,32 @@
   <section class="section">
     <div class="wrap prose">
 
-      <h2>Event — a fact that already happened</h2>
+      <h2>Event: a fact that already happened</h2>
       <p>
-        An Event is a concrete fact in the domain, named in the past tense:
+        An Event is a concrete fact in the domain. Its name is in the past tense:
         <span class="term term-event">Appointment Added</span>,
         <span class="term term-event">Pet Added</span>,
         <span class="term term-event">Payment Received</span>,
         <span class="term term-event">Weather Forecast Changed</span>.
       </p>
-      <p>In <code>.em.hcl</code>, Events are canonical contracts owned by a bounded context:</p>
+      <p>In <code>.em.hcl</code>, a bounded context owns each Event. A bounded context is a part of the system with its own language. The Event is the canonical contract:</p>
       <code-block lang="hcl">
         bounded_context "appointments" {
           event "appointment_added" {
           }
         }
       </code-block>
-      <p>The label is the identity. <code>appointment_added</code> gets the derived title <code>Appointment Added</code>; add <code>title</code> only for different wording.</p>
-      <callout kind="note"><p><strong>Rule of thumb:</strong> if the thing can still be rejected, it is probably not an Event yet.</p></callout>
+      <p>The label is the identity. The label <code>appointment_added</code> gets the derived title <code>Appointment Added</code>. To use different wording, add <code>title</code>.</p>
+      <callout kind="note"><p>Rule of thumb: if the system can still reject the thing, it is probably not an Event yet.</p></callout>
 
-      <h2>Command — an intent to make something happen</h2>
+      <h2>Command: an intent to make something happen</h2>
       <p>
-        A Command represents a request or intent. It can succeed or fail:
+        A Command is a request or an intent. It can succeed or fail:
         <span class="term term-command">Add Appointment</span>,
         <span class="term term-command">Add Pet</span>,
         <span class="term term-command">Cancel Subscription</span>.
       </p>
-      <p>Commands live inside workflows and point to the Event(s) they may produce:</p>
+      <p>Commands live inside workflows. A workflow is one flow of elements. Each Command points to the Events that it can produce:</p>
       <code-block lang="hcl">
         bounded_context "appointments" {
           aggregate "appointment" {
@@ -89,12 +89,12 @@
           }
         }
       </code-block>
-      <p>A Command needs an incoming flow, an <code>api_endpoint</code>, or <code>external_trigger</code>. Otherwise the validator reports <code>EM404</code>.</p>
+      <p>A Command needs an incoming flow, an <code>api_endpoint</code>, or <code>external_trigger</code>. If it has none of these, the validator reports <code>EM404</code>.</p>
 
-      <h2>Read Model — an answer to a concrete question</h2>
+      <h2>Read Model: an answer to a concrete question</h2>
       <p>A Read Model answers one concrete question.</p>
-      <callout kind="rule"><p><strong>No question, no Read Model.</strong></p></callout>
-      <p>The language makes that discipline explicit by requiring <code>question</code>:</p>
+      <callout kind="rule"><p>No question, no Read Model.</p></callout>
+      <p>The language requires <code>question</code> to enforce this rule:</p>
       <code-block lang="hcl">
         bounded_context "appointments" {
           event "appointment_added" {
@@ -112,10 +112,10 @@
           }
         }
       </code-block>
-      <p><code>"What data is needed?"</code> is vague. <code>"Which appointments do not yet have a weather forecast?"</code> defines the projection.</p>
+      <p><code>"What data is needed?"</code> is vague. <code>"Which appointments do not yet have a weather forecast?"</code> defines the projection. A projection is a view that the system builds from Events.</p>
 
-      <h2>Screen — where an actor observes or initiates behavior</h2>
-      <p>A Screen is a UI, rough wireframe, or other human-facing interaction point.</p>
+      <h2>Screen: where an actor sees or starts behavior</h2>
+      <p>A Screen is a UI, a rough wireframe, or another point where a human interacts with the system.</p>
       <code-block lang="hcl">
         bounded_context "appointments" {
           event "appointment_added" {
@@ -138,13 +138,13 @@
           }
         }
       </code-block>
-      <p>Actors are reusable catalog declarations referenced with traversals such as <code>actor.calendar_user</code>.</p>
+      <p>Actors are reusable catalog declarations. You reference them with traversals such as <code>actor.calendar_user</code>.</p>
 
-      <h2>Automation / gear — a machine reaction</h2>
-      <p>The gear on the visual cheat sheet means the computer reacts instead of a human.</p>
+      <h2>Automation (gear): a machine reaction</h2>
+      <p>On the visual cheat sheet, the gear means that the computer reacts instead of a human.</p>
       <callout kind="note">
-        <p><strong>Visual gear concept → <code>processor</code> block.</strong><br>
-        <strong>Automation pattern → <code>automation</code> workflow block.</strong></p>
+        <p>Visual gear concept → <code>processor</code> block.<br>
+        Automation pattern → <code>automation</code> workflow block.</p>
       </callout>
       <code-block lang="hcl">
         bounded_context "appointments" {
@@ -173,7 +173,7 @@
           }
         }
       </code-block>
-      <p><code>automation</code> is a top-level workflow kind. Its machine reaction is a <code>processor</code>.</p>
+      <p>The <code>automation</code> block is a top-level workflow kind. Its machine reaction is a <code>processor</code>.</p>
 
     </div>
   </section>

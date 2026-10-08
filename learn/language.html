@@ -11,10 +11,10 @@
   } catch (e) {}
 </script>
 <title>The Language</title>
-<meta name="description" content="The .em.hcl document model, derived titles, typed references, bounded-context ownership, reusable field types, and the one-canonical-edge rule.">
+<meta name="description" content="The .em.hcl document model, derived titles, typed references, bounded-context ownership, reusable field types, and the rule of one canonical edge.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="The Language — Learn Event Modeling HCL">
-<meta property="og:description" content="Identities, typed references, bounded-context ownership, field types, and the one-canonical-edge rule.">
+<meta property="og:title" content="The Language | Learn Event Modeling HCL">
+<meta property="og:description" content="Identities, typed references, bounded-context ownership, field types, and the rule of one canonical edge.">
 <meta property="og:image" content="/assets/img/og-default.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -43,9 +43,9 @@
     <div class="wrap prose">
 
       <h2>The model</h2>
-      <p>A model contains domain catalogs, workshop notation, and workflows. Catalogs define contexts, actors, ownership, Events, aggregates, and field types. Workflows describe behavior. Chapters and hotspots retain workshop context.</p>
+      <p>A model contains domain catalogs (lists of shared definitions), workshop notation, and workflows. Catalogs define contexts, actors, ownership, Events, aggregates, and field types. Workflows describe behavior. Chapters and hotspots keep workshop context.</p>
       <p>A model is one <code>.em.hcl</code> file or a folder of <code>.em.hcl</code> files. In a folder, each file holds whole top-level blocks, and a reference in one file can point to a block in another file. See <a href="/reference.html#folder-models">Folder models</a>.</p>
-      <p>After validation, downstream tools use a normalized typed model with derived titles and source-to-target edges.</p>
+      <p>After validation, downstream tools use a normalized typed model that has derived titles and source-to-target edges.</p>
 
       <h2>Identities and derived titles</h2>
       <code-block lang="hcl">
@@ -60,10 +60,10 @@
           }
         }
       </code-block>
-      <p>The formatter leaves derived titles implicit. Source order is model order, so keep workflows in business-time order. In a folder model, the files are read in name order, and the chapter lists set the workflow order.</p>
+      <p>The formatter leaves derived titles implicit. Source order is model order, so keep workflows in business-time order. In a folder model, the tool reads files in name order, and the chapter lists set the workflow order.</p>
 
-      <h2>Typed references: the most important syntax habit</h2>
-      <p>Quoted values are data. Unquoted traversals are references. For example, <code>to = [event.pet_management.pet_added]</code> resolves a relationship; quoting that traversal turns it into an invalid string.</p>
+      <h2>Typed references</h2>
+      <p>Quoted values are data. Unquoted traversals are references. For example, <code>to = [event.pet_management.pet_added]</code> resolves a relationship. If you quote that traversal, it becomes an invalid string.</p>
 
       <div class="table-wrap">
         <table>
@@ -107,10 +107,10 @@
           }
         }
       </code-block>
-      <p>Inside the owning context, references are local: <code>aggregate.pet</code>, <code>field_type.pet_id</code>. Outside it, use the qualified form: <code>aggregate.pet_management.pet</code>, <code>field_type.pet_management.pet_id</code>, <code>event.pet_management.pet_added</code>.</p>
+      <p>Inside the owning context, references are local, for example <code>aggregate.pet</code> and <code>field_type.pet_id</code>. Outside the context, use the qualified form: <code>aggregate.pet_management.pet</code>, <code>field_type.pet_management.pet_id</code>, <code>event.pet_management.pet_added</code>.</p>
 
       <h2>Aggregates</h2>
-      <p>An aggregate is a context-owned consistency boundary:</p>
+      <p>An aggregate is a consistency boundary that a context owns:</p>
       <code-block lang="hcl">
         bounded_context "pet_management" {
           aggregate "pet" {
@@ -122,7 +122,7 @@
       <p>Use <code>aggregate_dependencies</code> when behavior spans another consistency boundary.</p>
 
       <h2>Reusable field types</h2>
-      <p>Use a <code>field_type</code> when the same ubiquitous-language concept appears in multiple contracts:</p>
+      <p>Use a <code>field_type</code> when the same business term appears in several contracts:</p>
       <code-block lang="hcl">
         bounded_context "owner_management" {
           field_type "owner_id" {
@@ -138,10 +138,10 @@
           }
         }
       </code-block>
-      <p>Inline one-off fields with a built-in type, such as <code>field "request_id" { type = "UUID" }</code>. The <a href="/reference.html">reference</a> lists available types and flags.</p>
+      <p>For a one-off field, write a built-in type inline, for example <code>field "request_id" { type = "UUID" }</code>. The <a href="/reference.html">reference</a> lists the available types and flags.</p>
 
       <h2>Field shorthand</h2>
-      <p>A plain <code>field</code> can infer a same-named <code>field_type</code>. A <code>fields</code> list adds reusable fields when no per-field override is needed:</p>
+      <p>A plain <code>field</code> can infer the <code>field_type</code> with the same name. A <code>fields</code> list adds reusable fields if you need no per-field override:</p>
       <code-block lang="hcl">
         bounded_context "pet_management" {
           field_type "pet_id" {
@@ -187,11 +187,11 @@
           }
         }
       </code-block>
-      <p>Examples are native HCL literals, and the validator checks that examples match the effective type.</p>
+      <p>Examples are native HCL literals. The validator checks that examples match the effective type.</p>
 
       <h2>One edge, one canonical declaration</h2>
       <p>Each edge has one canonical spelling.</p>
-      <p><strong>Rule 1: workflow-local source.</strong> Write <code>to</code> on the source.</p>
+      <p>Rule 1, workflow-local source: write <code>to</code> on the source.</p>
       <code-block lang="hcl">
         bounded_context "pet_management" {
           event "pet_added" {
@@ -208,9 +208,9 @@
           }
         }
       </code-block>
-      <p><strong>Rule 2: catalog Event source.</strong> Write <code>from</code> on the receiving workflow element.</p>
+      <p>Rule 2, catalog Event source: write <code>from</code> on the receiving workflow element.</p>
 
-      <p>Here is what happens when a Command reverses the first rule and puts <code>from</code> on itself instead of <code>to</code> on the Screen:</p>
+      <p>Here is what happens if a Command reverses the first rule. The Command puts <code>from</code> on itself instead of <code>to</code> on the Screen:</p>
       <code-block lang="hcl">
         bounded_context "example" {
           event "pet_created" {
@@ -232,7 +232,7 @@
       <code-block lang="text">reverse-flow.em.hcl:11:13: Error EM201: Invalid flow reference: command.from has no canonical flow targets in a state_change workflow. You referenced: screen.form.</code-block>
 
       <callout kind="rule">
-        <p><strong>Quick check:</strong> who is the source? Use <code>to</code> on a workflow source. Use <code>from</code> on the receiver when the source is a catalog Event.</p>
+        <p>To check an edge, find the source. Use <code>to</code> on a workflow source. Use <code>from</code> on the receiver if the source is a catalog Event.</p>
       </callout>
 
     </div>

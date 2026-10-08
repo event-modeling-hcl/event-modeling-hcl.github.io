@@ -11,16 +11,29 @@ vendored models in `examples/models/`.
 
 ## Design system
 
-`assets/site.css` and `assets/site.js` hold every shared token and component —
-color/type/spacing tokens, `<site-nav>`, `<site-footer>`, `<code-block>`,
-`callout`, and the light/dark/system theme toggle. `assets/hcl-highlight.js`
-is a small dependency-free HCL syntax highlighter used by `<code-block lang="hcl">`.
-Fonts (IBM Plex Sans / Sans Condensed / Mono) are self-hosted under
-`assets/fonts/` under the OFL (see `assets/fonts/OFL.txt`).
+`assets/site.css` and `assets/site.js` hold every shared token and component:
+the color, type, and spacing tokens, `<site-nav>`, `<site-footer>`,
+`<code-block>`, `callout`, and the light/dark/system theme toggle.
+`assets/hcl-highlight.js` is a small HCL syntax highlighter without
+dependencies. `<code-block lang="hcl">` uses it.
 
-[`styleguide.html`](styleguide.html) renders every shared component on one
-page — not linked from navigation, but the place to check a design-system
-change in both themes before it ships to a real page.
+The design is a research-journal style. Pages use warm ivory paper and
+near-black ink. One clay accent marks eyebrows, rules, and the primary button.
+Emphasis comes from type and underlines. The design uses no shadows and no
+rounded corners, except the rounded bottom of the primary button. The class
+`section-dark` gives a near-black section with serif headings. The element
+colors (`--event`, `--command`, and the others) match the diagram canvases, so
+do not change them on their own.
+
+All copy follows plain English rules based on ASD-STE100: short sentences,
+active voice, no em dashes, no contractions, and no "should" or "may".
+
+IBM Plex Sans and IBM Plex Mono are self-hosted under `assets/fonts/` under the
+OFL (see `assets/fonts/OFL.txt`). Serif headings use the system serif fonts.
+
+[`styleguide.html`](styleguide.html) shows every shared component on one page.
+Navigation does not link to it. Use it to examine a design change in both
+themes before the change goes to a real page.
 
 `assets/img/hero-canvas.png` is a real screenshot of
 `emhcl diagram examples/minimal.em.hcl`, not a mockup — captured
@@ -76,11 +89,25 @@ as a call to action. The hamburger breakpoint is 960px, not the more typical
 
 ## Local preview
 
+Run the local server with Python 3. It uses only the Python standard library.
+
 ```bash
-python3 -m http.server 8000
+make serve
 ```
 
-Then open <http://localhost:8000/>.
+Open <http://127.0.0.1:8000/> in a browser. Set `PORT` to use another port:
+
+```bash
+make serve PORT=8080
+```
+
+By default, the server accepts connections only from this computer. To open it from another device on your network, run:
+
+```bash
+make serve HOST=0.0.0.0
+```
+
+Open the computer's network address on port `8000` from the other device.
 
 ## Deploy
 

@@ -11,10 +11,10 @@
   } catch (e) {}
 </script>
 <title>Event Modeling in HCL</title>
-<meta name="description" content="Keep an Event Model in git, validate it, and render it to HTML with emhcl.">
+<meta name="description" content="Write an Event Model in HCL, keep it in git, validate it, and render it to HTML with emhcl.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Event Modeling in HCL">
-<meta property="og:description" content="Keep an Event Model in git, validate it, and render it to HTML.">
+<meta property="og:description" content="Write an Event Model in HCL, keep it in git, validate it, and render it to HTML.">
 <meta property="og:image" content="/assets/img/og-default.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -33,8 +33,8 @@
       <div class="prose">
         <div class="eyebrow">A small language and CLI</div>
         <h1>Event Modeling in HCL</h1>
-        <p class="lede">Keep an Event Model in git, validate it, and render it to HTML.</p>
-        <p><code>.em.hcl</code> is an HCL-based language for Event Modeling.</p>
+        <p class="lede"><code>.em.hcl</code> is a language for writing Event Models in HCL.</p>
+        <p>The emhcl tool validates, formats, and renders these models.</p>
         <div class="btn-row" style="justify-content: center;">
           <a class="btn btn-primary" href="/examples/minimal.html">See an example</a>
           <a class="btn" href="/start.html">Install the CLI</a>
@@ -48,7 +48,7 @@
       <div class="section-head"><h2>A small example</h2></div>
       <div class="split">
         <div class="shot">
-          <img src="/assets/img/hero-canvas.png" alt="Event Model showing Add Pet Form flowing to Add Pet and then Pet Added." width="700" height="745">
+          <img src="/assets/img/hero-canvas.png" alt="Event Model showing Add Pet Form flowing to Add Pet and then Pet Added." width="708" height="635">
         </div>
         <div>
           <code-block lang="hcl">
@@ -76,23 +76,23 @@
     </div>
   </section>
 
-  <section class="section section-alt">
+  <section class="section section-dark">
     <div class="wrap">
       <div class="section-head"><h2>What the tool does</h2></div>
       <div class="card-grid">
         <div class="card"><h3>Validate</h3><p>Checks references, workflow rules, scenarios, and model structure. A model is one <code>.em.hcl</code> file or a folder of them.</p></div>
         <div class="card"><h3>Format</h3><p>Keeps <code>.em.hcl</code> files consistent.</p></div>
         <div class="card"><h3>Render</h3><p>Produces a self-contained HTML Event Model with switchable Model, Compact, Storming (Event Storming-like), and Context Map views.</p></div>
-        <div class="card"><h3>Convert</h3><p>Imports and exports slice-based Event Modeling JSON, and warns about each detail that the other format cannot hold.</p></div>
+        <div class="card"><h3>Convert</h3><p>Imports and exports slice-based Event Modeling JSON. Warns about each detail that the other format cannot hold.</p></div>
       </div>
     </div>
   </section>
 
   <section class="section">
     <div class="wrap prose" style="margin: 0 auto;">
-      <h2>Why it was created</h2>
-      <p>There was a need for Event Models that could live beside the code, survive code review, and be checked by tooling. HCL happened to fit the shape quite nicely.</p>
-      <p>The validated typed model can also feed documentation or coding-agent workflows.</p>
+      <h2>Why it exists</h2>
+      <p>Event Models needed to live beside the code, pass code review, and work with automated checks. HCL fits this need.</p>
+      <p>The validator produces a typed model. That model can feed documentation or coding-agent workflows.</p>
     </div>
   </section>
 
@@ -100,12 +100,12 @@
     <div class="wrap">
       <div class="section-head">
         <h2>Examples</h2>
-        <p>Each diagram is generated from the <code>.em.hcl</code> source in the repository.</p>
+        <p>The tool generates each diagram from the <code>.em.hcl</code> source in the repository.</p>
       </div>
       <div class="card-grid">
-        <a class="path-card" href="/examples/minimal.html"><h3>Minimal</h3><p>One Event and one State Change.</p><span class="path-go">Open example →</span></a>
-        <a class="path-card" href="/examples/course-subscriptions.html"><h3>Course subscriptions</h3><p>Translation, State Changes, and State Views for course enrollment.</p><span class="path-go">Open example →</span></a>
-        <a class="path-card" href="/examples/appointments-and-weather.html"><h3>Appointments &amp; weather</h3><p>All four workflow patterns.</p><span class="path-go">Open example →</span></a>
+        <a class="path-card" href="/examples/minimal.html"><h3>Minimal</h3><p>This example has one Event and one State Change.</p><span class="path-go">Open example →</span></a>
+        <a class="path-card" href="/examples/course-subscriptions.html"><h3>Course subscriptions</h3><p>This example covers Translation, State Changes, and State Views for course enrollment.</p><span class="path-go">Open example →</span></a>
+        <a class="path-card" href="/examples/appointments-and-weather.html"><h3>Appointments &amp; weather</h3><p>This example shows all four workflow patterns.</p><span class="path-go">Open example →</span></a>
       </div>
       <div class="btn-row"><a class="btn" href="/examples/index.html">All examples</a></div>
     </div>
@@ -114,8 +114,8 @@
   <section class="section">
     <div class="wrap prose" style="margin: 0 auto;">
       <h2>Why HCL?</h2>
-      <p>It allows an Event to be an <code>event</code> block rather than an object with <code>kind: event</code>. HCL also provides traversal expressions that the <code>.em.hcl</code> validator can check as references.</p>
-      <p>The downside is more custom tooling. YAML is easier to adopt, and JSON has a broader interchange ecosystem. For this project, HCL gives a good tradeoff.</p>
+      <p>HCL lets an Event be an <code>event</code> block instead of an object with <code>kind: event</code>. HCL also has traversal expressions, and the <code>.em.hcl</code> validator checks them as references.</p>
+      <p>The cost is more custom tooling. YAML is easier to adopt, and JSON has a broader interchange ecosystem. This project accepts that cost.</p>
       <div class="btn-row"><a class="btn" href="/why-hcl.html">More about the choice</a></div>
     </div>
   </section>
@@ -125,13 +125,13 @@
       <div class="section-head"><h2>About this project</h2></div>
       <div class="split">
         <div class="prose">
-          <p>This project builds on Event Modeling and work by Adam Dymitruk, Martin Dilger, EmLang, ESDM, and others in the Event Modeling community.</p>
-          <p><code>.em.hcl</code> is not a new Event Modeling method. It is one textual representation plus a validator, formatter, and renderer.</p>
+          <p>This project builds on Event Modeling and on work by Adam Dymitruk, Martin Dilger, EmLang, ESDM, and others in the Event Modeling community.</p>
+          <p><code>.em.hcl</code> is not a new Event Modeling method. It is one text format with a validator, formatter, and renderer.</p>
         </div>
         <div class="card">
           <h3>Project status</h3>
           <p><strong>Status:</strong> experimental<br><strong>Current spec:</strong> v0.4.0<br><strong>CLI:</strong> v0.9.0</p>
-          <p>Syntax may still change before 1.0.</p>
+          <p>Syntax can still change before 1.0.</p>
         </div>
       </div>
     </div>
@@ -140,7 +140,7 @@
   <section class="section">
     <div class="wrap prose" style="margin: 0 auto; text-align: center;">
       <h2>Try the example</h2>
-      <p>Install the CLI, validate a small model, and open the generated diagram.</p>
+      <p>Install the CLI. Validate a small model. Open the generated diagram.</p>
       <div class="btn-row" style="justify-content: center;">
         <a class="btn btn-primary" href="/start.html">Get started</a>
         <a class="btn" href="https://github.com/event-modeling-hcl/eventmodeling-hcl">GitHub</a>

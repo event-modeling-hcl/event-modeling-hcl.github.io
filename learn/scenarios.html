@@ -11,10 +11,10 @@
   } catch (e) {}
 </script>
 <title>Scenarios</title>
-<meta name="description" content="Pattern-specific Given/When/Then scenario grammar in .em.hcl: State Change, State View, and Automation/Translation each have a different shape.">
+<meta name="description" content="The Given/When/Then scenario grammar in .em.hcl. State Change, State View, and Automation/Translation each have a different shape.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Scenarios — Learn Event Modeling HCL">
-<meta property="og:description" content="Pattern-specific Given/When/Then scenario grammar, with a faded exercise to complete yourself.">
+<meta property="og:title" content="Scenarios | Learn Event Modeling HCL">
+<meta property="og:description" content="The Given/When/Then scenario grammar for each pattern, with an exercise that you complete yourself.">
 <meta property="og:image" content="/assets/img/og-default.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -34,7 +34,7 @@
       <div class="prose" style="margin: 0;">
         <div class="eyebrow">Learn · 04 of 5</div>
         <h1>Scenarios: make the slice testable</h1>
-        <p class="lede">A scenario lives beside its workflow and describes one business rule using typed steps.</p>
+        <p class="lede">A scenario sits beside its workflow. It describes one business rule with typed steps.</p>
       </div>
     </div>
   </section>
@@ -46,7 +46,7 @@
           <thead><tr><th>Workflow</th><th>Given</th><th>When</th><th>Then</th><th>Cardinality</th></tr></thead>
           <tbody>
             <tr><td>State Change</td><td>Event</td><td>Command</td><td>Event or Error</td><td>zero or more <code>given</code>, one <code>when</code>, one or more <code>then</code></td></tr>
-            <tr><td>State View</td><td>Event</td><td><strong>none</strong></td><td>Read Model or Error</td><td>one or more <code>given</code>, <strong>zero <code>when</code></strong>, one or more <code>then</code></td></tr>
+            <tr><td>State View</td><td>Event</td><td>none</td><td>Read Model or Error</td><td>one or more <code>given</code>, zero <code>when</code>, one or more <code>then</code></td></tr>
             <tr><td>Automation / Translation</td><td>Event or Read Model</td><td>Processor or Command</td><td>Event or Error</td><td>one <code>when</code>, one or more <code>then</code></td></tr>
           </tbody>
         </table>
@@ -148,11 +148,11 @@ Then  Read Model or Error</code-block>
           }
         }
       </code-block>
-      <callout kind="rule"><p><strong>State View:</strong> one or more Event <code>given</code> steps, no <code>when</code>, and one or more Read Model or Error <code>then</code> steps.</p></callout>
-      <p>Working from an older draft? See the <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/migrating-v0.2.md">migration guide</a> for the removed Query form.</p>
+      <callout kind="rule"><p>A State View has one or more Event <code>given</code> steps, no <code>when</code>, and one or more Read Model or Error <code>then</code> steps.</p></callout>
+      <p>If you work from an older draft, read the <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/migrating-v0.2.md">migration guide</a> for the removed Query form.</p>
 
       <h2>Automation / Translation scenarios</h2>
-      <p><code>given</code> targets an Event or Read Model, <code>when</code> targets a Processor or Command, and <code>then</code> targets an Event or Error.</p>
+      <p>The <code>given</code> step targets an Event or Read Model. The <code>when</code> step targets a Processor or Command. The <code>then</code> step targets an Event or Error.</p>
       <code-block lang="hcl">
         bounded_context "appointments" {
           event "appointment_added" {
@@ -197,7 +197,7 @@ Then  Read Model or Error</code-block>
     <div class="wrap">
       <div class="section-head">
         <h2>Faded exercise: complete a State View</h2>
-        <p>Fill in each <code>???</code> before opening the answer.</p>
+        <p>Fill in each <code>???</code>, then open the answer.</p>
       </div>
       <code-block lang="text">
         state_view "show_pet_details" {
