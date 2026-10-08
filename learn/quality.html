@@ -69,17 +69,17 @@
   <section class="section section-alt">
     <div class="wrap prose">
       <h2>What the validator rejects outright</h2>
-      <p>The default profile rejects invalid HCL and unknown syntax, missing required semantic attributes, wrong literal types and invalid examples, duplicate identities, unresolved or wrong-kind references, non-canonical flow directions, invalid pattern-specific scenario structure, non-contiguous chapters, and incorrect Automation/Translation externality. Diagnostics use stable <code>EMxxx</code> codes — <code>EM0xx</code> structural, <code>EM1xx</code> references, <code>EM2xx</code> flow, <code>EM3xx</code> scenarios, <code>EM4xx</code> modeling judgment.</p>
+      <p>The default profile rejects invalid HCL and unknown syntax, missing required semantic attributes, wrong literal types and invalid examples, duplicate identities, unresolved or wrong-kind references, non-canonical flow directions, invalid pattern-specific scenario structure, non-contiguous chapters in a one-file model, and incorrect Automation/Translation externality. In a folder model, it also rejects chapters in several files and a workflow in two chapters. Diagnostics use stable <code>EMxxx</code> codes — <code>EM0xx</code> structural, <code>EM1xx</code> references, <code>EM2xx</code> flow, <code>EM3xx</code> scenarios, <code>EM4xx</code> modeling judgment.</p>
 
       <h2>What it leaves to human judgment</h2>
-      <p>Some checks need judgment rather than hard rejection: a Command with no incoming flow, API endpoint, or trigger (<code>EM404</code>); the four anti-patterns above; an open hotspot (<code>EM406</code>). Three profiles decide how strict that judgment is:</p>
+      <p>Some checks need judgment rather than hard rejection: a Command with no incoming flow, API endpoint, or trigger (<code>EM404</code>); the four anti-patterns above; an open hotspot (<code>EM406</code>); a workflow in no chapter in a folder model (<code>EM407</code>). Three profiles decide how strict that judgment is:</p>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Profile</th><th>Judgment diagnostics (EM404, EM406, the four smells)</th></tr></thead>
+          <thead><tr><th>Profile</th><th>Judgment diagnostics (EM404, EM406, EM407, the four smells)</th></tr></thead>
           <tbody>
             <tr><td><code>workshop</code></td><td>Informational — incomplete discovery stays easy to work with</td></tr>
             <tr><td><code>valid</code> (default)</td><td>Warnings</td></tr>
-            <tr><td><code>strict</code></td><td><code>EM404</code> and <code>EM406</code> become errors; the four smells stay non-blocking judgment signals</td></tr>
+            <tr><td><code>strict</code></td><td><code>EM404</code>, <code>EM406</code>, and <code>EM407</code> become errors; the four smells stay non-blocking judgment signals</td></tr>
           </tbody>
         </table>
       </div>

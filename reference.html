@@ -32,7 +32,7 @@
   <section class="hero" style="padding-bottom: 8px;">
     <div class="wrap">
       <div class="prose" style="margin: 0 auto;">
-        <div class="eyebrow">Reference for .em.hcl v0.3.0</div>
+        <div class="eyebrow">Reference for .em.hcl v0.4.0</div>
         <h1>The cheat sheet</h1>
         <p class="lede">Blocks, attributes, values, and commands in one page. The <a href="https://github.com/event-modeling-hcl/spec">normative specification</a> remains authoritative.</p>
       </div>
@@ -54,7 +54,7 @@
             <tr><td><code>state_view</code></td><td>Workflow</td><td>Event → Read Model → Screen</td></tr>
             <tr><td><code>automation</code></td><td>Workflow</td><td>Internal Event → Processor → Command → Event</td></tr>
             <tr><td><code>translation</code></td><td>Workflow</td><td>External Event → Processor → Command → internal Event</td></tr>
-            <tr><td><code>chapter</code></td><td>Workshop notation</td><td>Groups a contiguous range of workflows</td></tr>
+            <tr><td><code>chapter</code></td><td>Workshop notation</td><td>Groups workflows. In one file, the list is a contiguous range. In a folder model, the list sets the board order.</td></tr>
             <tr><td><code>hotspot</code></td><td>Workshop notation</td><td>An unresolved question or blocker</td></tr>
           </tbody>
         </table>
@@ -150,11 +150,11 @@
       <div class="section-head"><h2>Validation profiles</h2></div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Profile</th><th>Judgment diagnostics (EM404, EM406, the four smells)</th></tr></thead>
+          <thead><tr><th>Profile</th><th>Judgment diagnostics (EM404, EM406, EM407, the four smells)</th></tr></thead>
           <tbody>
             <tr><td><code>workshop</code></td><td>Informational</td></tr>
             <tr><td><code>valid</code> (default)</td><td>Warnings</td></tr>
-            <tr><td><code>strict</code></td><td><code>EM404</code> / <code>EM406</code> become errors; the four smells stay non-blocking</td></tr>
+            <tr><td><code>strict</code></td><td><code>EM404</code> / <code>EM406</code> / <code>EM407</code> become errors; the four smells stay non-blocking</td></tr>
           </tbody>
         </table>
       </div>
@@ -172,7 +172,7 @@
           </tbody>
         </table>
       </div>
-      <p class="prose">Diagnostics print as <code>file:line:column: Severity EMxxx: message</code>.</p>
+      <p class="prose">Diagnostics print as <code>file:line:column: Severity EMxxx: message</code>. In a folder model, <code>file</code> is the member file that the diagnostic points at.</p>
     </div>
   </section>
 
@@ -183,10 +183,13 @@
         <table>
           <thead><tr><th>Command</th><th>Does</th></tr></thead>
           <tbody>
-            <tr><td><code>emhcl validate &lt;model.em.hcl&gt;</code></td><td>Validates with the default <code>valid</code> profile</td></tr>
-            <tr><td><code>emhcl validate --profile &lt;workshop|valid|strict&gt; &lt;model.em.hcl&gt;</code></td><td>Validates with an explicit profile</td></tr>
-            <tr><td><code>emhcl diagram &lt;model.em.hcl&gt; -o &lt;file&gt;</code></td><td>Renders a self-contained interactive HTML canvas with switchable Model, Storming, and Context Map views (or writes to stdout without <code>-o</code>)</td></tr>
-            <tr><td><code>emhcl fmt -w &lt;model.em.hcl&gt;</code></td><td>Canonicalizes whitespace and attribute order in place</td></tr>
+            <tr><td><code>emhcl validate &lt;model.em.hcl | folder&gt;</code></td><td>Validates with the default <code>valid</code> profile</td></tr>
+            <tr><td><code>emhcl validate --profile &lt;workshop|valid|strict&gt; &lt;model.em.hcl | folder&gt;</code></td><td>Validates with an explicit profile</td></tr>
+            <tr><td><code>emhcl diagram &lt;model.em.hcl | folder&gt; -o &lt;file&gt;</code></td><td>Renders a self-contained interactive HTML canvas with switchable Model, Compact, Storming, and Context Map views (or writes to stdout without <code>-o</code>)</td></tr>
+            <tr><td><code>emhcl serve &lt;model.em.hcl | folder&gt;</code></td><td>Serves the canvas on <code>127.0.0.1:8080</code> and reloads the page when a model file changes. Options: <code>--addr</code>, <code>--port</code> (<code>0</code> picks a free port), <code>--profile</code></td></tr>
+            <tr><td><code>emhcl fmt -w &lt;model.em.hcl&gt;</code></td><td>Canonicalizes whitespace and attribute order in place. Formats one file. It refuses a folder.</td></tr>
+            <tr><td><code>emhcl export &lt;model.em.hcl | folder&gt; -o &lt;file.json&gt;</code></td><td>Converts a valid model to slice-based Event Modeling JSON (or writes to stdout without <code>-o</code>). Refuses an <code>-o</code> target that ends in <code>.em.hcl</code></td></tr>
+            <tr><td><code>emhcl import &lt;file.json&gt; -o &lt;model.em.hcl&gt;</code></td><td>Converts Event Modeling JSON to one formatted <code>.em.hcl</code> file and validates it (or writes to stdout without <code>-o</code>)</td></tr>
             <tr><td><code>emhcl version</code></td><td>Prints the installed version</td></tr>
           </tbody>
         </table>
@@ -194,7 +197,47 @@
     </div>
   </section>
 
+  <section class="section section-alt" id="folder-models">
+    <div class="wrap prose">
+      <h2>Folder models</h2>
+      <p>A model is one <code>.em.hcl</code> file or a folder of <code>.em.hcl</code> files. Use a folder when one file becomes too large to read, or when different people own different contexts or workflows. Folder models need specification v0.4.0 and emhcl v0.9.0 or newer.</p>
+      <ul>
+        <li>Every regular file directly in the folder whose name ends in <code>.em.hcl</code> and does not start with <code>.</code> is a member file. The tool ignores subfolders and other files.</li>
+        <li>The tool sorts the member files by name, byte by byte. Model order is file order, then source order in each file. A number prefix such as <code>10-</code> only sets the file order.</li>
+        <li>A reference in one file can point to a block in any other member file. IDs are global, so the same ID in two files is error <code>EM002</code>. Its detail names the first declaration as <code>file:line:column</code>.</li>
+        <li>A block cannot span files. A <code>bounded_context</code> with all its events, aggregates, and field types is in one file.</li>
+        <li>All <code>chapter</code> blocks are in one file (else error <code>EM013</code>). A workflow in two chapters is error <code>EM014</code>. The chapter lists set the workflow order on the board.</li>
+        <li>A workflow in no chapter gives <code>EM407</code>. It is information in <code>workshop</code>, a warning in <code>valid</code>, and an error in <code>strict</code>. The board shows it after all chaptered workflows.</li>
+        <li>A folder with no member file is error <code>EM001</code>. A folder with one member file behaves like that file.</li>
+      </ul>
+      <p>The language has no <code>include</code> or <code>import</code> block, no subfolder members, and no references across folders. The <a href="/examples/pet-clinic.html">pet clinic example</a> shows one layout:</p>
+      <code-block lang="text">
+        pet-clinic/
+          00-catalog.em.hcl       # bounded_context, actor, team, system
+          01-chapters.em.hcl      # every chapter block
+          10-register-pet.em.hcl  # one workflow per file
+          11-pet-directory.em.hcl
+          12-notify-owner.em.hcl
+          13-import-partner-pet.em.hcl
+          90-hotspots.em.hcl
+      </code-block>
+    </div>
+  </section>
+
   <section class="section">
+    <div class="wrap prose">
+      <h2>JSON import and export</h2>
+      <p><code>emhcl import</code> and <code>emhcl export</code> convert between <code>.em.hcl</code> and slice-based <a href="https://github.com/dilgerma/event-modeling-spec">Event Modeling JSON</a>. JSON conversion is a tool feature. It is not part of the language specification.</p>
+      <ul>
+        <li>Both commands check the JSON against the published schema. An error names the JSON path of the fault.</li>
+        <li>The conversion is not lossless. Each command writes a warning for each detail that the other format cannot hold. Export drops chapters, hotspots, teams, systems, and read-model questions. Import drops the original canvas IDs and field-name spellings.</li>
+        <li>Both commands fail when a workflow or slice has two or more actors. They do not choose an actor for you.</li>
+        <li>If the imported model has validation errors, <code>import</code> still writes the source for repair and exits with code 1.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section-alt">
     <div class="wrap">
       <div class="section-head"><h2>Diagram views</h2></div>
       <div class="table-wrap">
@@ -202,16 +245,17 @@
           <thead><tr><th>View</th><th>Shows</th></tr></thead>
           <tbody>
             <tr><td><code>Model</code></td><td>Left-to-right Event Model with screen, processor, model, and event swimlanes and typed flow arrows</td></tr>
+            <tr><td><code>Compact</code></td><td>The same slices and cards as Model, with one events row. Each bounded context is a dashed, colored box around its events; external contexts are pink. The aggregate is a sticky note on top of its event</td></tr>
             <tr><td><code>Storming</code></td><td>An Event Model in an Event Storming-inspired visual style: one row per workflow with sticky notes for screens, commands, aggregates, events, automations/translations, and read models</td></tr>
             <tr><td><code>Context Map</code> (experimental)</td><td>Bounded-context map derived from cross-context event consumption, with upstream/downstream relationships</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="prose">One generated file carries all three; switch between them from the canvas masthead.</p>
+      <p class="prose">One generated file carries all four; switch between them from the canvas masthead. The Model and Storming views zoom with the toolbar, with Ctrl/⌘ + scroll, or with the <code>+</code>, <code>-</code>, <code>0</code>, and <code>F</code> keys.</p>
     </div>
   </section>
 
-  <section class="section section-alt">
+  <section class="section">
     <div class="wrap">
       <div class="section-head"><h2>More</h2></div>
       <div class="btn-row">

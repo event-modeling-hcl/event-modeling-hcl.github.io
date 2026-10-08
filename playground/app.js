@@ -1,7 +1,10 @@
 (function () {
   "use strict";
 
-  var DRAFT_KEY = "eventmodeling-hcl.playground.source.v1";
+  // LEGACY_DRAFT_KEY held the one-file draft before the playground had file
+  // tabs. It is read once as the initial model.em.hcl, then removed.
+  var LEGACY_DRAFT_KEY = "eventmodeling-hcl.playground.source.v1";
+  var FILES_KEY = "eventmodeling-hcl.playground.files.v1";
   var PROFILE_KEY = "eventmodeling-hcl.playground.profile.v1";
   var SPLIT_KEY = "eventmodeling-hcl.playground.split.v1";
   var ZOOM_KEY = "eventmodeling-hcl.playground.zoom.v1";
@@ -14,6 +17,12 @@
   var diagnostics = document.getElementById("diagnostics");
   var zoom = Number(localStorage.getItem(ZOOM_KEY)) || 100;
   var cm;
+  // fileSources maps each tab name to its text. editor.js owns the tabs and
+  // only reports names (eventmodeling:files), so the text of the active tab
+  // is copied from CodeMirror after each change.
+  var fileSources = {};
+  var activeName = "";
+  var resetting = false;
 
   CodeMirror.defineMode("emhcl", function () {
     var blocks = /^(bounded_context|aggregate|field_type|event|state_change|state_view|automation|translation|screen|command|readmodel|processor|scenario|given|when|then|actor|system|hotspot|chapter|field|subfield|comment)\b/;
@@ -39,11 +48,60 @@
     getValue: function () { return cm.getValue(); },
     setValue: function (value) { cm.setValue(value); },
     setDisabled: function (disabled) { cm.setOption("readOnly", disabled ? "nocursor" : false); },
-    onChange: function (listener) { cm.on("change", function () { localStorage.setItem(DRAFT_KEY, cm.getValue()); listener(); }); }
+    onChange: function (listener) { cm.on("change", listener); }
   };
 
-  var savedDraft = localStorage.getItem(DRAFT_KEY);
-  if (savedDraft) window.EventModelingInitialSource = savedDraft;
+  function saveFiles() {
+    if (resetting) return;
+    var list = Object.keys(fileSources).map(function (name) { return { name: name, source: fileSources[name] }; });
+    localStorage.setItem(FILES_KEY, JSON.stringify(list));
+    localStorage.removeItem(LEGACY_DRAFT_KEY);
+  }
+
+  function storedFiles() {
+    try {
+      var list = JSON.parse(localStorage.getItem(FILES_KEY) || "null");
+      return Array.isArray(list) && list.length > 0 ? list : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  var savedFiles = storedFiles();
+  if (savedFiles) {
+    window.EventModelingInitialFiles = savedFiles;
+    savedFiles.forEach(function (file) { if (file && typeof file.name === "string") fileSources[file.name] = String(file.source); });
+  } else {
+    var legacyDraft = localStorage.getItem(LEGACY_DRAFT_KEY);
+    if (legacyDraft) window.EventModelingInitialSource = legacyDraft;
+  }
+
+  // editor.js replaces the editor text (setValue) before it reports the new
+  // active tab, so the copy waits until the current event finishes.
+  cm.on("change", function () {
+    setTimeout(function () {
+      if (!activeName) return;
+      fileSources[activeName] = cm.getValue();
+      saveFiles();
+    }, 0);
+  });
+
+  document.addEventListener("eventmodeling:files", function (event) {
+    var names = event.detail.files;
+    var active = event.detail.active;
+    var next = {};
+    // A name not seen before is a new tab, the first tabs at start-up, or a
+    // renamed tab. A rename always applies to the active tab (the first click
+    // of the double-click selects it), so the editor holds its text.
+    names.forEach(function (name) {
+      if (Object.prototype.hasOwnProperty.call(fileSources, name)) next[name] = fileSources[name];
+      else next[name] = name === active ? cm.getValue() : "";
+    });
+    fileSources = next;
+    activeName = active;
+    saveFiles();
+  });
+
   var savedProfile = localStorage.getItem(PROFILE_KEY);
   if (savedProfile) profile.value = savedProfile;
   profile.addEventListener("change", function () { localStorage.setItem(PROFILE_KEY, profile.value); });
@@ -62,9 +120,11 @@
   applyZoom();
 
   document.getElementById("reset-btn").addEventListener("click", function () {
-    localStorage.removeItem(DRAFT_KEY);
-    cm.setValue(window.EVENT_MODELING_SEED || "");
-    cm.focus();
+    if (Object.keys(fileSources).length > 1 && !window.confirm("Reset to the example? All files are replaced.")) return;
+    resetting = true;
+    localStorage.removeItem(FILES_KEY);
+    localStorage.removeItem(LEGACY_DRAFT_KEY);
+    location.reload();
   });
   document.getElementById("btn-clear").addEventListener("click", function () {
     diagnostics.innerHTML = "";

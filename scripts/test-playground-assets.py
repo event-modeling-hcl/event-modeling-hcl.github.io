@@ -33,6 +33,7 @@ class PlaygroundAssetsTest(unittest.TestCase):
         self.assertIn('id="resize-handle"', page)
         self.assertIn('id="btn-zoom-in"', page)
         self.assertIn('id="console-body"', page)
+        self.assertIn('id="files"', page)
         self.assertNotIn("<site-nav>", page)
         self.assertNotIn("<site-footer>", page)
 

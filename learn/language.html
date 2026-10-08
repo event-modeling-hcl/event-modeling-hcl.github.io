@@ -42,8 +42,9 @@
   <section class="section">
     <div class="wrap prose">
 
-      <h2>The document model</h2>
-      <p>A document contains domain catalogs, workshop notation, and workflows. Catalogs define contexts, actors, ownership, Events, aggregates, and field types. Workflows describe behavior. Chapters and hotspots retain workshop context.</p>
+      <h2>The model</h2>
+      <p>A model contains domain catalogs, workshop notation, and workflows. Catalogs define contexts, actors, ownership, Events, aggregates, and field types. Workflows describe behavior. Chapters and hotspots retain workshop context.</p>
+      <p>A model is one <code>.em.hcl</code> file or a folder of <code>.em.hcl</code> files. In a folder, each file holds whole top-level blocks, and a reference in one file can point to a block in another file. See <a href="/reference.html#folder-models">Folder models</a>.</p>
       <p>After validation, downstream tools use a normalized typed model with derived titles and source-to-target edges.</p>
 
       <h2>Identities and derived titles</h2>
@@ -59,7 +60,7 @@
           }
         }
       </code-block>
-      <p>The formatter leaves derived titles implicit. Source order is model order, so keep workflows in business-time order.</p>
+      <p>The formatter leaves derived titles implicit. Source order is model order, so keep workflows in business-time order. In a folder model, the files are read in name order, and the chapter lists set the workflow order.</p>
 
       <h2>Typed references: the most important syntax habit</h2>
       <p>Quoted values are data. Unquoted traversals are references. For example, <code>to = [event.pet_management.pet_added]</code> resolves a relationship; quoting that traversal turns it into an invalid string.</p>

@@ -43,7 +43,7 @@
     <div class="wrap">
       <div class="section-head">
         <h2>The rendered canvas</h2>
-        <p>Generated with <code>emhcl diagram examples/course_subscriptions.em.hcl</code>. Use the view switcher for Model, Storming, and Context Map; click a slice for its scenarios.</p>
+        <p>Generated with <code>emhcl diagram examples/course_subscriptions.em.hcl</code>. Use the view switcher for Model, Compact, Storming, and Context Map; click a slice for its scenarios.</p>
       </div>
       <div class="canvas-embed tall">
         <iframe src="/examples/canvas/course_subscriptions.html" loading="lazy" title="Course subscriptions interactive canvas"></iframe>
@@ -55,8 +55,8 @@
   <section class="section section-alt">
     <div class="wrap prose">
       <h2>What it covers</h2>
-      <p>An external Registrar event is translated into the Course Subscriptions context. A course manager registers courses and changes capacity. A student views the catalogue, subscribes, reviews their subscriptions, and unsubscribes.</p>
-      <p>The model contains two bounded contexts, two actors, seven workflows, and 24 scenarios. The external Registrar event also shows the renderer's external-event notation.</p>
+      <p>An external Registrar event is translated into the Course Subscriptions context. A course manager registers courses, views the course catalog, and changes capacity. A student views the available courses, subscribes, reviews their subscriptions, and unsubscribes. The manager view and the student view are separate workflows.</p>
+      <p>The model contains two bounded contexts, two actors, eight workflows, and 28 scenarios. The external Registrar event also shows the renderer's external-event notation.</p>
       <div class="btn-row"><a class="btn btn-primary" href="/examples/models/course_subscriptions.em.hcl">View source</a></div>
     </div>
   </section>

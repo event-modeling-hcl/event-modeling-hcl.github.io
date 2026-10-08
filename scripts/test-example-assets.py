@@ -46,6 +46,8 @@ class ExampleAssetsTest(unittest.TestCase):
     def test_vendored_models_are_the_published_set(self):
         names = {path.stem.removesuffix(".em") for path in MODELS.glob("*.em.hcl")}
         self.assertEqual(names, EXPECTED_MODELS)
+        folders = {path.name for path in MODELS.iterdir() if path.is_dir()}
+        self.assertEqual(folders, {"pet-clinic"})
 
     def test_every_vendored_model_has_published_links(self):
         gallery = (EXAMPLES / "index.html").read_text()
@@ -72,8 +74,8 @@ class ExampleAssetsTest(unittest.TestCase):
 
     def test_install_page_uses_the_current_release(self):
         start = (ROOT / "start.html").read_text()
-        self.assertIn("emhcl_0.7.0_linux_amd64.tar.gz", start)
-        self.assertIn("go install github.com/event-modeling-hcl/eventmodeling-hcl/cmd/emhcl@v0.7.0", start)
+        self.assertIn("emhcl_0.9.0_linux_amd64.tar.gz", start)
+        self.assertIn("go install github.com/event-modeling-hcl/eventmodeling-hcl/cmd/emhcl@v0.9.0", start)
         self.assertIn("emhcl version", start)
         self.assertNotIn("eventmodeling-hcl_0.5.0_linux_amd64.tar.gz", start)
 
@@ -86,6 +88,26 @@ class ExampleAssetsTest(unittest.TestCase):
                 (MODELS / f"{model}.em.hcl").read_text(),
                 detail_name,
             )
+
+    def test_folder_model_page_shows_every_member_file(self):
+        page_path = EXAMPLES / "pet-clinic.html"
+        page = page_path.read_text()
+        gallery = (EXAMPLES / "index.html").read_text()
+        members = sorted((MODELS / "pet-clinic").glob("*.em.hcl"))
+        blocks = [
+            textwrap.dedent(html.unescape(block)).strip() + "\n"
+            for block in re.findall(
+                r'<code-block lang="hcl">(.*?)</code-block>', page, re.DOTALL
+            )
+        ]
+
+        self.assertEqual(blocks, [member.read_text() for member in members])
+        for member in members:
+            self.assertIn(f'href="/examples/models/pet-clinic/{member.name}"', page)
+        self.assertIn('href="/examples/canvas/pet-clinic.html"', page)
+        self.assertIn('href="/examples/canvas/pet-clinic.html"', gallery)
+        self.assertIn('href="/examples/pet-clinic.html"', gallery)
+        self.assertIn("/examples/pet-clinic.html", SITEMAP.read_text())
 
 
 if __name__ == "__main__":
