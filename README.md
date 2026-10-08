@@ -45,18 +45,21 @@ with `chromium --headless --screenshot` and cropped to the canvas card. If the
 tool's rendered output changes, regenerate it the same way rather than editing
 the PNG by hand.
 
-**Content accuracy:** when porting language/spec content onto this site,
-always pull from the currently *published* source
-(`github.com/event-modeling-hcl/spec`, and the tool repo's own `main`), never
-from a locally cached copy — both have moved since this site started (the
-spec went from draft to v0.4.0; the tool repo reached `v0.9.0` on `main`),
-and a stale copy will teach
-constructs the current validator rejects. Every `<code-block lang="hcl">` on
-the Learn pages is a complete, independently valid `.em.hcl` document (or a
-deliberate negative example, verified to fail with its expected `EMxxx`
-code). `scripts/validate-learn-snippets.py` checks this by extracting every
-such block and running the real CLI's `validate` against it — CI runs it on
-every deploy, but re-run it yourself after editing any Learn page:
+The website documents Event Modeling HCL Specification v0.4.0 and emhcl v0.9.0.
+Use the [published specification](https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md)
+for language rules. Use the [v0.9.0 tool changelog](https://github.com/event-modeling-hcl/eventmodeling-hcl/blob/v0.9.0/CHANGELOG.md)
+for released tool behavior.
+
+Use the [methodology guide](https://github.com/event-modeling-hcl/spec/blob/main/guides/EVENT_MODELING_METHODOLOGY.md)
+for business discovery and model review. The guide describes concepts that HCL
+does not encode directly. Keep method advice separate from grammar rules.
+If they differ, the specification defines legal HCL.
+
+Every `<code-block lang="hcl">` on a Learn page is a complete `.em.hcl` document
+or a deliberate invalid example with an expected `EMxxx` diagnostic.
+`scripts/validate-learn-snippets.py` runs `emhcl validate` on each block.
+CI runs this script on every deploy.
+After you edit a Learn page, run the script with the real CLI:
 
 ```bash
 go build -o /tmp/emhcl ./cmd/emhcl   # in the tool checkout

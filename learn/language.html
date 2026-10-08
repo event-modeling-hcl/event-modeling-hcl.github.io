@@ -44,7 +44,8 @@
 
       <h2>The model</h2>
       <p>A model contains domain catalogs (lists of shared definitions), workshop notation, and workflows. Catalogs define contexts, actors, ownership, Events, aggregates, and field types. Workflows describe behavior. Chapters and hotspots keep workshop context.</p>
-      <p>A model is one <code>.em.hcl</code> file or a folder of <code>.em.hcl</code> files. In a folder, each file holds whole top-level blocks, and a reference in one file can point to a block in another file. See <a href="/reference.html#folder-models">Folder models</a>.</p>
+      <p><a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md">Specification v0.4.0</a> defines a model as one <code>.em.hcl</code> file or a folder of member files. A folder includes only direct <code>.em.hcl</code> files whose names do not start with a dot. It does not include subfolders.</p>
+      <p>Each file holds whole top-level blocks and must parse on its own. References resolve across member files without changing ID scopes. Each bounded context and its domain contracts stay in one file. See <a href="/reference.html#folder-models">Folder models</a>.</p>
       <p>After validation, downstream tools use a normalized typed model that has derived titles and source-to-target edges.</p>
 
       <h2>Identities and derived titles</h2>
@@ -60,7 +61,8 @@
           }
         }
       </code-block>
-      <p>The formatter leaves derived titles implicit. Source order is model order, so keep workflows in business-time order. In a folder model, the tool reads files in name order, and the chapter lists set the workflow order.</p>
+      <p>The formatter leaves derived titles implicit and formats one file at a time. A one-file model uses source order, so keep workflows in business-time order.</p>
+      <p>With two or more member files, model order is bytewise file-name order, then source order. Chapters must stay in one file. Chapter order, then each chapter's <code>workflows</code> list, sets workflow order. Workflows outside chapters follow in model order and produce <code>EM407</code>. A folder with one member file keeps the one-file rules.</p>
 
       <h2>Typed references</h2>
       <p>Quoted values are data. Unquoted traversals are references. For example, <code>to = [event.pet_management.pet_added]</code> resolves a relationship. If you quote that traversal, it becomes an invalid string.</p>

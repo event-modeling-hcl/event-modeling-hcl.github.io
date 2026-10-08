@@ -80,7 +80,8 @@
       <code-block lang="hcl">event.school.student_registered</code-block>
       <div class="prose">
         <p>HCL parses this as a traversal expression. HCL does not know that it refers to an Event.</p>
-        <p>The <code>.em.hcl</code> validator supplies that meaning. It checks the reference kind, scope, and existence. Then it produces a typed model for the formatter, renderer, and other tools.</p>
+        <p>The <code>.em.hcl</code> validator supplies that meaning. It checks the reference kind, scope, and existence. A validated model becomes a typed model for the renderer and other tools. The formatter works on one source file at a time.</p>
+        <p>These checks do not establish business completeness. Review who triggers each action, where each field comes from, and what happens when a decision fails. HCL records the model; it does not replace that review.</p>
       </div>
     </div>
   </section>
@@ -140,8 +141,8 @@
   <section class="section">
     <div class="wrap prose" style="margin: 0 auto;">
       <h2>Use the format that fits</h2>
-      <p>Event Modeling does not require HCL. This project explores HCL as one tradeoff.</p>
-      <p>If JSON or YAML suits your tooling better, use that.</p>
+      <p>Event Modeling does not require HCL. Start with business facts, decisions, and the information people need, not a choice of syntax. This project explores HCL as one tradeoff.</p>
+      <p>If JSON or YAML suits your tooling better, use that. The CLI can import and export slice-based Event Modeling JSON, but conversion is not a lossless canvas copy. It warns about details the other format cannot hold.</p>
       <div class="btn-row">
         <a class="btn btn-primary" href="/examples/minimal.html">See an example</a>
         <a class="btn" href="/">Back to overview</a>

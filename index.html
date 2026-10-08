@@ -81,7 +81,7 @@
       <div class="section-head"><h2>What the tool does</h2></div>
       <div class="card-grid">
         <div class="card"><h3>Validate</h3><p>Checks references, workflow rules, scenarios, and model structure. A model is one <code>.em.hcl</code> file or a folder of them.</p></div>
-        <div class="card"><h3>Format</h3><p>Keeps <code>.em.hcl</code> files consistent.</p></div>
+        <div class="card"><h3>Format</h3><p>Keeps <code>.em.hcl</code> files consistent. Formats one file at a time, including files that belong to a folder model.</p></div>
         <div class="card"><h3>Render</h3><p>Produces a self-contained HTML Event Model with switchable Model, Compact, Storming (Event Storming-like), and Context Map views.</p></div>
         <div class="card"><h3>Convert</h3><p>Imports and exports slice-based Event Modeling JSON. Warns about each detail that the other format cannot hold.</p></div>
       </div>
@@ -91,8 +91,9 @@
   <section class="section">
     <div class="wrap prose" style="margin: 0 auto;">
       <h2>Why it exists</h2>
-      <p>Event Models needed to live beside the code, pass code review, and work with automated checks. HCL fits this need.</p>
-      <p>The validator produces a typed model. That model can feed documentation or coding-agent workflows.</p>
+      <p>Start with the business process without software. Identify who acts, what facts they record, and what information they need. Then describe that flow in HCL.</p>
+      <p>Event Models needed to live beside the code, pass code review, and work with automated checks. HCL fits this need. The validator produces a typed model for documentation and coding-agent workflows.</p>
+      <p>A valid file does not prove that the business process is complete. Review field origins, missing decisions, failure paths, and scenarios with domain experts. See the <a href="/learn/index.html">method and core concepts</a>.</p>
     </div>
   </section>
 

@@ -56,8 +56,11 @@
         <div class="card"><h3>5. Review</h3><p>A person checks whether it describes the business.</p></div>
       </div>
       <callout kind="warn">
-        <p>Validation has limits. It catches language and model-structure errors. It does not tell you whether the business model is correct.</p>
+        <p>Validation catches language and model-structure errors. The default <code>valid</code> profile permits modeling warnings. Even <code>strict</code> validation does not prove that a model follows the method or describes the business correctly.</p>
       </callout>
+      <p class="prose">Give the agent <a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md">Specification v0.4.0</a> for syntax and the <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/EVENT_MODELING_METHODOLOGY.md">methodology guide</a> for human review. The methodology is conceptual, not another grammar. Do not invent <code>query</code>, <code>storyline</code>, or <code>linked_copy</code> blocks. Field <code>mapping</code> records metadata, not executable lineage checks.</p>
+      <p class="prose">For a folder model, validate the folder, not each file in isolation. Use the diagnostic's file, line, column, and code to fix the source. Keep whole blocks intact, keep chapters in one file, and format each member file separately.</p>
+      <p class="prose">Workflow <code>status</code> records progress: <code>created</code>, <code>planned</code>, <code>assigned</code>, <code>in_progress</code>, <code>review</code>, <code>blocked</code>, <code>done</code>, or <code>informational</code>. A status is not a validator verdict. Do not mark a workflow <code>done</code> only because validation passes.</p>
     </div>
   </section>
 
@@ -75,7 +78,7 @@
       <ul class="prompt-list">
         <li>
           <strong>Draft a model</strong>
-          <code-block lang="text">Here are the business Events for {domain}: {list}. Draft a valid .em.hcl model. Choose a workflow pattern for each slice and add scenarios.</code-block>
+          <code-block lang="text">Here are the business Events for {domain}: {list}. Draft a .em.hcl model using Specification v0.4.0. Choose a workflow pattern for each slice and add native scenarios. Run emhcl validate on the whole model. Report warnings, assumptions, and open business questions for human review.</code-block>
         </li>
         <li>
           <strong>Fix a validator error</strong>

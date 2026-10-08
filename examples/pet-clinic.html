@@ -56,9 +56,9 @@
   <section class="section section-alt">
     <div class="wrap prose">
       <h2>How the files join</h2>
-      <p>Every <code>.em.hcl</code> file directly in the folder is part of the model. The tool sorts the files by name, so the number prefixes set the reading order. The prefixes are not part of the language.</p>
+      <p>Every regular <code>.em.hcl</code> file directly in the folder whose name does not start with a dot is part of the model. Subfolders and other files are ignored. The tool sorts member files by name, so the number prefixes set the reading order. The prefixes are not part of the language.</p>
       <p>A reference in one file can point to a block in any other file. For example, <code>10-register-pet.em.hcl</code> uses events that <code>00-catalog.em.hcl</code> declares. Each block stays whole in one file.</p>
-      <p>All <code>chapter</code> blocks are in one file. In a folder model, the chapter list sets the order of the workflows on the board. A workflow that is in no chapter gives warning <code>EM407</code>. See <a href="/reference.html#folder-models">Folder models</a> for all rules.</p>
+      <p>All <code>chapter</code> blocks are in one file. In this seven-file model, the chapter list sets the order of the workflows on the board. A workflow that is in no chapter gives diagnostic <code>EM407</code>: a warning by default, information in <code>workshop</code>, and an error in <code>strict</code>. See <a href="/reference.html#folder-models">Folder models</a> for all rules.</p>
       <code-block lang="text">
         emhcl validate examples/pet-clinic
         emhcl diagram examples/pet-clinic -o pet-clinic.html

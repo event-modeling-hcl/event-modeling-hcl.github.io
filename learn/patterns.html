@@ -49,12 +49,13 @@
           <tbody>
             <tr><td>State Change</td><td>What does someone want to change?</td><td>Screen/API → Command → Event</td><td>Often</td><td>No requirement</td><td><code>state_change</code></td></tr>
             <tr><td>State View</td><td>What does someone need to know?</td><td>Event → Read Model → Screen</td><td>Often</td><td>No requirement</td><td><code>state_view</code></td></tr>
-            <tr><td>Automation</td><td>What must the system do next by itself?</td><td>Internal Event → Read Model/Processor → Command → Event</td><td>No</td><td>No external Event input</td><td><code>automation</code></td></tr>
-            <tr><td>Translation</td><td>How does the system turn a fact from another context into the language of this model?</td><td>External Event → Read Model/Processor → Command → Internal Event</td><td>No</td><td>Yes</td><td><code>translation</code></td></tr>
+            <tr><td>Automation</td><td>What must the system do next by itself?</td><td>Internal Event → Todo-list Read Model → Processor → Command → Event</td><td>No</td><td>No external Event input</td><td><code>automation</code></td></tr>
+            <tr><td>Translation</td><td>How does the system turn a fact from another context into the language of this model?</td><td>External Event → Todo-list Read Model → Processor → Command → Internal Event</td><td>No</td><td>Yes</td><td><code>translation</code></td></tr>
           </tbody>
         </table>
       </div>
       <p class="prose">Quick check: which pattern turns intent into fact, and which pattern turns facts into an answer?</p>
+      <p class="prose">Use one workflow per pattern-sized capability. Placing an order and showing its details are separate State Change and State View workflows, not one combined capability.</p>
     </div>
   </section>
 
@@ -137,7 +138,8 @@
         automation "add_weather_forecast" {
           readmodel "appointments_without_weather_forecast" {
             question = "Which appointments still need a weather forecast?"
-            from     = [event.appointments.appointment_added]
+            description = "Appointment Added adds pending work. Weather Predicted for Appointment removes the matching item."
+            from     = [event.appointments.appointment_added, event.weather.weather_predicted_for_appointment]
             to       = [processor.weather_processor]
           }
 
@@ -151,10 +153,12 @@
         }
       </code-block>
       <p>An Automation consumes internal Events. External input belongs in a Translation.</p>
+      <p>Design the pending-work list with its Processor. Opening Events add items. Completion Events remove them. Document business failure and technical retry behavior.</p>
+      <p>List membership means work is pending. Do not replace it with a done flag. In this example, the forecast Event closes the appointment's pending item.</p>
 
       <h2>Translation</h2>
       <p>Another context or external system uses its own language. A Translation takes an external fact and turns it into a Command and an Event in the language of the receiving context.</p>
-      <code-block lang="text">External Event -> Read Model / Processor -> Command -> Internal Event</code-block>
+      <code-block lang="text">External Event -> Todo-list Read Model -> Processor -> Command -> Internal Event</code-block>
       <code-block lang="hcl">
         system "weather_provider" {
           external = true
@@ -189,7 +193,12 @@
           }
         }
       </code-block>
-      <p>A Translation consumes an Event from an external bounded context. If no Read Model is needed, a Processor can receive that Event directly.</p>
+      <p>A Translation consumes an Event from an external bounded context. Legal HCL also permits direct Event input to a Processor. The method still requires a todo list.</p>
+      <p>A translation list has no completion edge. It relays external facts rather than tracking a worker's finished tasks.</p>
+      <p>Recover the internal business identity before recording the internal fact. Convert foreign units and data shapes, and keep external identifiers only for correlation or duplicate detection.</p>
+      <p>Specify missing correlation, invalid data, repeated delivery, and out-of-order arrival. Repeated delivery must not record the same business fact twice.</p>
+      <p>Add a worker after translation only when it makes a new business decision. Otherwise, project views directly from the translated Event.</p>
+      <p>See <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/EVENT_MODELING_METHODOLOGY.md#6-deep-dive-automations-and-todo-lists">todo-list guidance</a> and <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/EVENT_MODELING_METHODOLOGY.md#7-deep-dive-translating-external-events">translation guidance</a> for discovery questions and review steps.</p>
 
     </div>
   </section>

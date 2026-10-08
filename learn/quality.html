@@ -56,13 +56,26 @@
         </div>
         <div class="card">
           <h3>Bed</h3>
-          <p><code>1 Screen → many Commands</code>. Check whether the Screen combines unrelated user intents.</p>
+          <p><code>1 Screen → many Commands</code>. Split any second action into another Screen state, even when the intents are related.</p>
         </div>
         <div class="card">
           <h3>Shelf</h3>
           <p><code>1 workflow → many scenarios, others → none</code>. Check which workflows still rely on implicit rules.</p>
         </div>
       </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Shape</th><th>Validator warning threshold</th><th>Methodology review threshold</th></tr></thead>
+          <tbody>
+            <tr><td>Bed</td><td><code>EM401</code>: more than one Command from a Screen</td><td>Any second Command is an anti-pattern.</td></tr>
+            <tr><td>Left chair</td><td><code>EM402</code>: more than one Event from a Command</td><td>More than two Events is a candidate for review.</td></tr>
+            <tr><td>Right chair</td><td><code>EM403</code>: more than one source Event for a Read Model</td><td>More than three Events prompts field-by-field review.</td></tr>
+            <tr><td>Shelf</td><td><code>EM405</code>: at least two scenarios, all in one workflow, with another workflow present</td><td>Noticeably more scenarios than neighboring workflows. No fixed count.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="prose">Chair and shelf counts start a review, not an automatic split. Inspect the actual rules and fields. Explain justified fan-in or fan-out.</p>
+      <p class="prose">Use plain business language with stakeholders. The shape nicknames are internal shorthand.</p>
     </div>
   </section>
 
@@ -107,6 +120,24 @@ pet-management-detailed.em.hcl valid</code-block>
       <callout kind="rule">
         <p>To make an agent-ready model more explicit, use strictness. Do not use permissiveness to hide uncertainty. Put unknown business facts in <code>hotspot</code> blocks, not in silence.</p>
       </callout>
+
+      <h2>Review information completeness</h2>
+      <p>Walk the full business journey, including cancellation, failure, and compensation. Inspect the current fields, connections, and scenarios rather than relying on memory.</p>
+      <ul>
+        <li>Trace each Event field to Command input or a documented domain calculation or generated value.</li>
+        <li>Trace each displayed Read Model field to connected Events and explain derived values.</li>
+        <li>Trace each required Command input to its human or machine issuer. Explain inputs that do not reach resulting business state.</li>
+        <li>Review consumer needs, identity, and ownership across context boundaries. Inspect existing sources before declaring data missing.</li>
+      </ul>
+      <p>A passing validator does not prove that these sources or business rules are complete. Keep genuine unknowns as attached <code>hotspot</code> blocks. Do not invent answers to pass strict validation.</p>
+      <p>Review structure and business meaning separately. Record findings before making changes. A model with a material open question is not implementation-ready.</p>
+
+      <h2>Respect workflow ownership</h2>
+      <p>HCL workflow statuses are <code>created</code>, <code>planned</code>, <code>assigned</code>, <code>in_progress</code>, <code>review</code>, <code>blocked</code>, <code>done</code>, and <code>informational</code>.</p>
+      <p>Under the methodology, edit freely only when status is absent or <code>created</code>. Every other status requires explicit permission for the named workflow and proposed changes.</p>
+      <p>A field rename across a chain can touch locked work. Do not treat permission for one workflow as permission for its neighbors. Editing <code>done</code> work reopens it.</p>
+      <p>These edit locks are collaboration rules, not a claim that the HCL validator enforces permission.</p>
+      <p>The <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/EVENT_MODELING_METHODOLOGY.md#12-quality-shapes-completeness-validation">methodology quality review</a> and <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/EVENT_MODELING_METHODOLOGY.md#13-collaboration-facilitation-and-governance">governance guidance</a> provide the full checklists.</p>
     </div>
   </section>
 

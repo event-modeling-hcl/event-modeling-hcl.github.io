@@ -90,6 +90,8 @@
         }
       </code-block>
       <p>A Command needs an incoming flow, an <code>api_endpoint</code>, or <code>external_trigger</code>. If it has none of these, the validator reports <code>EM404</code>.</p>
+      <p>The method requires exactly one issuer for each Command. Identify the human decision or machine reaction, not just a validator reason.</p>
+      <p>A Command checks its documented preconditions against prior facts about its subject, not a Read Model. A refused intent records no Event. A tracked business failure can record a failure Event.</p>
 
       <h2>Read Model: an answer to a concrete question</h2>
       <p>A Read Model answers one concrete question.</p>
@@ -139,6 +141,8 @@
         }
       </code-block>
       <p>Actors are reusable catalog declarations. You reference them with traversals such as <code>actor.calendar_user</code>.</p>
+      <p>Model one committed decision per Screen state. If a page offers several actions, use separate Screen states, even when those actions are related.</p>
+      <p>Use a Processor when no human acts. Give human roles domain names and document what each role can and cannot do.</p>
 
       <h2>Automation (gear): a machine reaction</h2>
       <p>On the visual cheat sheet, the gear means that the computer reacts instead of a human.</p>
@@ -160,7 +164,8 @@
         automation "add_weather_forecast" {
           readmodel "appointments_without_weather_forecast" {
             question = "Which appointments still need a weather forecast?"
-            from     = [event.appointments.appointment_added]
+            description = "Appointment Added adds pending work. Weather Predicted for Appointment removes the matching item."
+            from     = [event.appointments.appointment_added, event.weather.weather_predicted_for_appointment]
             to       = [processor.weather_processor]
           }
 
@@ -174,6 +179,14 @@
         }
       </code-block>
       <p>The <code>automation</code> block is a top-level workflow kind. Its machine reaction is a <code>processor</code>.</p>
+      <p>Every automation needs a todo-list Read Model under the method, including a simple relay. A worker list contains pending items, not completed records with a status flag. Its completion Events remove items.</p>
+
+      <h2>Fields need a source</h2>
+      <p>Trace each field across the connected flow: Screen input, Command, Event, Read Model, and displayed output. Keep names consistent or document a rename.</p>
+      <p>Document calculations and system-filled values with <code>description</code>. Use <code>generated = true</code> for system-filled values, not user input.</p>
+      <p>The method uses mapping vocabulary to explain lineage. It is not a validated HCL mini-language. Do not encode <code>session:</code>, <code>latest:</code>, or <code>derived:</code> expressions in a <code>mapping</code> attribute.</p>
+      <p>If a source is missing, inspect connected fields before adding data. Record a genuine unknown as a <code>hotspot</code>.</p>
+      <p>See <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/EVENT_MODELING_METHODOLOGY.md#2-building-blocks--elements-naming-fields">the methodology on elements and fields</a> for the full review.</p>
 
     </div>
   </section>

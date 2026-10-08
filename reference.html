@@ -34,7 +34,7 @@
       <div class="prose" style="margin: 0 auto;">
         <div class="eyebrow">Reference for .em.hcl v0.4.0</div>
         <h1>The cheat sheet</h1>
-        <p class="lede">Blocks, attributes, values, and commands in one page. The <a href="https://github.com/event-modeling-hcl/spec">normative specification</a> is authoritative.</p>
+        <p class="lede">Blocks, attributes, values, and commands in one page. <a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md">Specification v0.4.0</a> defines the language.</p>
       </div>
     </div>
   </section>
@@ -54,7 +54,7 @@
             <tr><td><code>state_view</code></td><td>Workflow</td><td>Event → Read Model → Screen</td></tr>
             <tr><td><code>automation</code></td><td>Workflow</td><td>Internal Event → Processor → Command → Event</td></tr>
             <tr><td><code>translation</code></td><td>Workflow</td><td>External Event → Processor → Command → internal Event</td></tr>
-            <tr><td><code>chapter</code></td><td>Workshop notation</td><td>Groups workflows. In one file the list is a contiguous range. In a folder model the list sets the board order.</td></tr>
+            <tr><td><code>chapter</code></td><td>Workshop notation</td><td>Groups workflows. In a one-file model the list is a contiguous range. With two or more member files, chapter lists set the board order.</td></tr>
             <tr><td><code>hotspot</code></td><td>Workshop notation</td><td>An unresolved question or blocker</td></tr>
           </tbody>
         </table>
@@ -186,14 +186,16 @@
             <tr><td><code>emhcl validate &lt;model.em.hcl | folder&gt;</code></td><td>Validates with the default <code>valid</code> profile</td></tr>
             <tr><td><code>emhcl validate --profile &lt;workshop|valid|strict&gt; &lt;model.em.hcl | folder&gt;</code></td><td>Validates with an explicit profile</td></tr>
             <tr><td><code>emhcl diagram &lt;model.em.hcl | folder&gt; -o &lt;file&gt;</code></td><td>Renders a self-contained interactive HTML canvas with switchable Model, Compact, Storming, and Context Map views (or writes to stdout without <code>-o</code>)</td></tr>
-            <tr><td><code>emhcl serve &lt;model.em.hcl | folder&gt;</code></td><td>Serves the canvas on <code>127.0.0.1:8080</code> and reloads the page when a model file changes. Options: <code>--addr</code>, <code>--port</code> (<code>0</code> picks a free port), <code>--profile</code></td></tr>
+            <tr><td><code>emhcl serve &lt;model.em.hcl | folder&gt;</code></td><td>Serves the canvas on <code>127.0.0.1:8080</code> and reloads when the model file changes. For a folder, reloads when you add, remove, rename, or edit a member file. An empty folder shows <code>EM001</code>. Options: <code>--addr</code>, <code>--port</code> (<code>0</code> picks a free port), <code>--profile</code></td></tr>
             <tr><td><code>emhcl fmt -w &lt;model.em.hcl&gt;</code></td><td>Canonicalizes whitespace and attribute order in place. Formats one file. It refuses a folder.</td></tr>
-            <tr><td><code>emhcl export &lt;model.em.hcl | folder&gt; -o &lt;file.json&gt;</code></td><td>Converts a valid model to slice-based Event Modeling JSON (or writes to stdout without <code>-o</code>). Refuses an <code>-o</code> target that ends in <code>.em.hcl</code></td></tr>
+            <tr><td><code>emhcl export &lt;model.em.hcl | folder&gt; -o &lt;file.json&gt;</code></td><td>Converts a valid model to slice-based Event Modeling JSON. Without <code>-o</code>, writes to stdout. Refuses a target that ends in <code>.em.hcl</code> or is the source file (exit code 2).</td></tr>
             <tr><td><code>emhcl import &lt;file.json&gt; -o &lt;model.em.hcl&gt;</code></td><td>Converts Event Modeling JSON to one formatted <code>.em.hcl</code> file and validates it (or writes to stdout without <code>-o</code>)</td></tr>
             <tr><td><code>emhcl version</code></td><td>Prints the installed version</td></tr>
           </tbody>
         </table>
       </div>
+      <p class="prose">JSON conversion is a projection, not a lossless canvas copy. Both commands check the published JSON schema and report faults by JSON path. Warnings identify data with no equivalent, such as layout, canvas IDs, catalog metadata, and hotspots.</p>
+      <p class="prose">Import keeps the declared <code>sliceType</code> and warns when it omits unsupported children or scenarios. IDs, field names, and reusable types can change. Import rejects a slice with two or more actors, even without screens. Export rejects a workflow whose screens reference two or more actors. Neither command chooses an actor for you.</p>
     </div>
   </section>
 
@@ -202,12 +204,12 @@
       <h2>Folder models</h2>
       <p>A model is one <code>.em.hcl</code> file or a folder of <code>.em.hcl</code> files. Folder models need specification v0.4.0 and emhcl v0.9.0 or newer. Use a folder when one file becomes too large or when different people own different contexts or workflows.</p>
       <ul>
-        <li>Every regular file directly in the folder that ends in <code>.em.hcl</code> and does not start with <code>.</code> is a member file. The tool ignores subfolders and other files.</li>
+        <li>Every regular file directly in the folder that ends in <code>.em.hcl</code> and does not start with <code>.</code> is a member file. A symlink to a file counts. The tool ignores subfolders and other files.</li>
         <li>The tool sorts member files by name, byte by byte. Model order is file order, then source order in each file. A number prefix such as <code>10-</code> only sets the file order.</li>
-        <li>A reference in one file can point to a block in any other member file. IDs are global, so the same ID in two files produces error <code>EM002</code>. The <code>EM002</code> detail names the first declaration as <code>file:line:column</code>.</li>
-        <li>A block cannot span files. A <code>bounded_context</code> with all its events, aggregates, and field types is in one file.</li>
-        <li>All <code>chapter</code> blocks are in one file (error <code>EM013</code> if split). A workflow in two chapters is error <code>EM014</code>. The chapter lists set the workflow order on the board.</li>
-        <li>A workflow in no chapter produces <code>EM407</code> (information in <code>workshop</code>, warning in <code>valid</code>, error in <code>strict</code>). The board shows it after all chaptered workflows.</li>
+        <li>References resolve across member files. IDs keep their existing scopes, with no file namespace. Duplicate IDs in the same top-level ID space produce <code>EM002</code>. Its detail names the first declaration as <code>file:line:column</code>. Workflow children and fields keep their local scopes.</li>
+        <li>Each file must parse on its own. A block cannot span files. A <code>bounded_context</code> with all its events, aggregates, and field types is in one file.</li>
+        <li>With two or more member files, all <code>chapter</code> blocks are in one file. Splitting them produces <code>EM013</code>. A workflow in two chapters produces <code>EM014</code>. Chapter source order, then each <code>workflows</code> list, sets board order. The contiguous-range rule <code>EM006</code> does not apply.</li>
+        <li>With two or more member files, a workflow in no chapter produces <code>EM407</code>. It is information in <code>workshop</code>, a warning in <code>valid</code>, and an error in <code>strict</code>. These workflows follow all chaptered workflows in model order, even when no chapters exist.</li>
         <li>A folder with no member file is error <code>EM001</code>. A folder with one member file behaves like that file.</li>
       </ul>
       <p>The language has no <code>include</code> or <code>import</code> block, no subfolder members, and no references across folders. The <a href="/examples/pet-clinic.html">pet clinic example</a> shows one layout:</p>

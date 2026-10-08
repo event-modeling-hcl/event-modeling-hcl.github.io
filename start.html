@@ -130,7 +130,9 @@
       <code-block lang="text">wrote pet.html</code-block>
       <p><code>pet.html</code> is one self-contained file. It has no external dependencies and needs no build step. Open it in a browser.</p>
       <p>To render again each time you save the file, run <code>emhcl serve pet.em.hcl</code>. Then open the URL that it prints.</p>
-      <p>If one file becomes too large to read, you can split the model into a folder of <code>.em.hcl</code> files. Then give the folder path to <code>validate</code>, <code>diagram</code>, and <code>serve</code>. See <a href="/reference.html#folder-models">Folder models</a>.</p>
+      <p>If one file becomes too large to read, split whole top-level blocks into a folder of <code>.em.hcl</code> files. The <code>validate</code>, <code>diagram</code>, <code>serve</code>, and <code>export</code> commands accept the folder path. Format each member file with <code>emhcl fmt -w</code>. The formatter refuses a folder. See <a href="/reference.html#folder-models">Folder models</a>.</p>
+      <p>For a folder model, <code>serve</code> reloads when you add, remove, rename, or edit a member file. Diagnostics name the file that needs attention.</p>
+      <p>In the <a href="/playground.html">browser playground</a>, use file tabs to add, rename, or remove files. All tabs form one model. Select a diagnostic to open its file.</p>
 
     </div>
   </section>
