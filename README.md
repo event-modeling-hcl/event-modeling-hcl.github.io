@@ -25,6 +25,10 @@ rounded corners, except the rounded bottom of the primary button. The class
 colors (`--event`, `--command`, and the others) match the diagram canvases, so
 do not change them on their own.
 
+The `--radius-primary` token controls the bottom corners of primary actions.
+Secondary actions and tool controls stay square. Focus outlines do not change
+the shape of a control. Disabled controls do not respond to hover.
+
 All copy follows plain English rules based on ASD-STE100: short sentences,
 active voice, no em dashes, no contractions, and no "should" or "may".
 

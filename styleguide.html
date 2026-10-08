@@ -80,11 +80,12 @@
 
     <section class="sg-section">
       <h2>Buttons</h2>
-      <p>The primary button has a flat top and rounded bottom corners. Other buttons have square corners.</p>
+      <p>The primary button has a flat top and rounded bottom corners. Other buttons have square corners. Keyboard focus adds an outline without changing the shape. Disabled buttons do not change on hover.</p>
       <div class="btn-row">
         <a class="btn btn-primary" href="#main">Primary action</a>
         <a class="btn" href="#main">Secondary action</a>
         <button class="btn" type="button" disabled>Disabled action</button>
+        <button class="btn btn-primary" type="button" disabled>Disabled primary action</button>
         <button class="theme-toggle" data-theme-toggle type="button"></button>
       </div>
     </section>
@@ -214,6 +215,8 @@
           <div class="btn-row">
             <a class="btn btn-primary" href="#main">Primary action</a>
             <a class="btn" href="#main">Secondary action</a>
+            <button class="btn btn-primary" type="button" disabled>Disabled primary action</button>
+            <button class="btn" type="button" disabled>Disabled secondary action</button>
           </div>
         </div>
       </div>
