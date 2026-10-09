@@ -45,9 +45,9 @@ with `chromium --headless --screenshot` and cropped to the canvas card. If the
 tool's rendered output changes, regenerate it the same way rather than editing
 the PNG by hand.
 
-The website documents Event Modeling HCL Specification v0.4.0 and emhcl v0.9.0.
+The website documents Event Modeling HCL Specification v0.4.0 and emhcl v0.10.0.
 Use the [published specification](https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md)
-for language rules. Use the [v0.9.0 tool changelog](https://github.com/event-modeling-hcl/eventmodeling-hcl/blob/v0.9.0/CHANGELOG.md)
+for language rules. Use the [v0.10.0 tool changelog](https://github.com/event-modeling-hcl/eventmodeling-hcl/blob/v0.10.0/CHANGELOG.md)
 for released tool behavior.
 
 Use the [methodology guide](https://github.com/event-modeling-hcl/spec/blob/main/guides/EVENT_MODELING_METHODOLOGY.md)
@@ -119,7 +119,7 @@ Open the computer's network address on port `8000` from the other device.
 ## Deploy
 
 Pushes to `main` run [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml),
-which checks out the tool's immutable `v0.9.0` tag, builds the `emhcl` CLI,
+which checks out the tool's immutable `v0.10.0` tag, builds the `emhcl` CLI,
 renders the example canvases, and publishes to GitHub Pages. An example in
 `examples/models/` is a `.em.hcl` file or a folder of `.em.hcl` files (a folder
 model). Both render to `examples/canvas/<name>.html`. One-time repo

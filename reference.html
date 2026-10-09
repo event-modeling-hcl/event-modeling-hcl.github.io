@@ -185,7 +185,7 @@
           <tbody>
             <tr><td><code>emhcl validate &lt;model.em.hcl | folder&gt;</code></td><td>Validates with the default <code>valid</code> profile</td></tr>
             <tr><td><code>emhcl validate --profile &lt;workshop|valid|strict&gt; &lt;model.em.hcl | folder&gt;</code></td><td>Validates with an explicit profile</td></tr>
-            <tr><td><code>emhcl diagram &lt;model.em.hcl | folder&gt; -o &lt;file&gt;</code></td><td>Renders a self-contained interactive HTML canvas with switchable Model, Compact, Storming, and Context Map views (or writes to stdout without <code>-o</code>)</td></tr>
+            <tr><td><code>emhcl diagram &lt;model.em.hcl | folder&gt; -o &lt;file&gt;</code></td><td>Renders a self-contained interactive HTML canvas with chapter navigation and switchable Model, Compact, Storming, and Context Map views (or writes to stdout without <code>-o</code>)</td></tr>
             <tr><td><code>emhcl serve &lt;model.em.hcl | folder&gt;</code></td><td>Serves the canvas on <code>127.0.0.1:8080</code> and reloads when the model file changes. For a folder, reloads when you add, remove, rename, or edit a member file. An empty folder shows <code>EM001</code>. Options: <code>--addr</code>, <code>--port</code> (<code>0</code> picks a free port), <code>--profile</code></td></tr>
             <tr><td><code>emhcl fmt -w &lt;model.em.hcl&gt;</code></td><td>Canonicalizes whitespace and attribute order in place. Formats one file. It refuses a folder.</td></tr>
             <tr><td><code>emhcl export &lt;model.em.hcl | folder&gt; -o &lt;file.json&gt;</code></td><td>Converts a valid model to slice-based Event Modeling JSON. Without <code>-o</code>, writes to stdout. Refuses a target that ends in <code>.em.hcl</code> or is the source file (exit code 2).</td></tr>
@@ -246,14 +246,14 @@
         <table>
           <thead><tr><th>View</th><th>Shows</th></tr></thead>
           <tbody>
-            <tr><td><code>Model</code></td><td>Left-to-right Event Model with screen, processor, model, and event swimlanes and typed flow arrows</td></tr>
+            <tr><td><code>Model</code></td><td>Left-to-right Event Model of the selected chapter with screen, processor, model, and event swimlanes and typed flow arrows</td></tr>
             <tr><td><code>Compact</code></td><td>Same slices and cards as Model, with one events row. Dashed colored boxes show bounded contexts (pink shows external contexts). The aggregate sticky note sits on top of its event.</td></tr>
             <tr><td><code>Storming</code></td><td>Event Model in Event Storming style: one row per workflow with sticky notes for screens, commands, aggregates, events, automations or translations, and read models</td></tr>
-            <tr><td><code>Context Map</code> (experimental)</td><td>Bounded-context map from cross-context event consumption, with upstream and downstream relationships</td></tr>
+            <tr><td><code>Context Map</code> (experimental)</td><td>Whole-model bounded-context map from cross-context event consumption, with upstream and downstream relationships</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="prose">One generated file carries all four views. Switch between them from the canvas masthead. The Model and Storming views support zoom. Zoom with the toolbar, Ctrl/⌘ + scroll, or the <code>+</code>, <code>-</code>, <code>0</code>, and <code>F</code> keys.</p>
+      <p class="prose">One generated file carries all four views. Chapters are the top-level navigation: a model with several chapters opens an <strong>All chapters</strong> overview, the chapter picker and its previous and next arrows switch chapters, and Model, Compact, and Storming show only the selected chapter. A model without chapters shows the whole model. Status, context, and field-detail options are under <strong>Filters</strong>. The Model and Storming views support zoom. Zoom with the toolbar, Ctrl/⌘ + scroll, or the <code>+</code>, <code>-</code>, <code>0</code>, and <code>F</code> keys.</p>
     </div>
   </section>
 
