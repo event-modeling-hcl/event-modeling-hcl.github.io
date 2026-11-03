@@ -49,13 +49,14 @@
           <tbody>
             <tr><td>State Change</td><td>What does someone want to change?</td><td>Screen/API → Command → Event</td><td>Often</td><td>No requirement</td><td><code>state_change</code></td></tr>
             <tr><td>State View</td><td>What does someone need to know?</td><td>Event → Read Model → Screen</td><td>Often</td><td>No requirement</td><td><code>state_view</code></td></tr>
-            <tr><td>Automation</td><td>What must the system do next by itself?</td><td>Internal Event → Todo-list Read Model → Processor → Command → Event</td><td>No</td><td>No external Event input</td><td><code>automation</code></td></tr>
-            <tr><td>Translation</td><td>How does the system turn a fact from another context into the language of this model?</td><td>External Event → Todo-list Read Model → Processor → Command → Internal Event</td><td>No</td><td>Yes</td><td><code>translation</code></td></tr>
+            <tr><td>Automation</td><td>What must the system do next by itself?</td><td>Internal Event → Todo-list Read Model → Processor → Command → Event</td><td>No</td><td>Not required</td><td><code>automation</code></td></tr>
+            <tr><td>Translation</td><td>How does the system turn a fact from another context into the language of this model?</td><td>External Event → Todo-list Read Model → Processor → Command → Internal Event</td><td>No</td><td>Yes</td><td><code>automation</code> that consumes an external Event</td></tr>
           </tbody>
         </table>
       </div>
       <p class="prose">Quick check: which pattern turns intent into fact, and which pattern turns facts into an answer?</p>
       <p class="prose">Use one workflow per pattern-sized capability. Placing an order and showing its details are separate State Change and State View workflows, not one combined capability.</p>
+      <p class="prose">Every model has exactly one <code>board</code> block. Its <code>workflows</code> list sets the story order. A model without a board, or with two boards, fails with <code>EM015</code>. Each example on this page is a complete model, so each one has a board.</p>
     </div>
   </section>
 
@@ -66,6 +67,10 @@
       <p>A user or another trigger wants something to happen. The system evaluates the Command. If the system accepts the Command, one or more Events record the resulting facts.</p>
       <code-block lang="text">Screen / API -> Command -> Event</code-block>
       <code-block lang="hcl">
+        board {
+          workflows = [workflow.schedule_appointment]
+        }
+
         actor "scheduler" {
           auth_required = true
         }
@@ -76,6 +81,15 @@
 
           event "appointment_added" {
             aggregate = aggregate.appointment
+
+            field "appointment_id" {
+              type         = "UUID"
+              id_attribute = true
+            }
+
+            field "starts_at" {
+              type = "DateTime"
+            }
           }
         }
 
@@ -85,18 +99,35 @@
             to    = [command.add_appointment]
           }
 
+          screen "schedule_appointment_request" {
+            kind         = "api"
+            api_endpoint = "POST /appointments"
+            actor        = actor.scheduler
+            to           = [command.add_appointment]
+          }
+
           command "add_appointment" {
             aggregate = aggregate.appointments.appointment
             to        = [event.appointments.appointment_added]
+
+            field "starts_at" {
+              type = "DateTime"
+            }
           }
         }
       </code-block>
-      <p>The bounded context owns the Event. A bounded context is a part of the system with its own language. The workflow references the Event. A Command that an API triggers can use <code>api_endpoint</code> instead of a Screen.</p>
+      <p>The bounded context owns the Event. A bounded context is a part of the system with its own language. The workflow references the Event.</p>
+      <p>Every <code>field</code> must have a <code>type</code>. The tool does not guess a type from the field name. A field without a valid type fails with <code>EM009</code>.</p>
+      <p>A <code>screen</code> is the interface at one step. Its optional <code>kind</code> is <code>"ui"</code> or <code>"api"</code>. The default is <code>"ui"</code>. A Command that a client sends through an API gets an API screen as its issuer. An <code>api_endpoint</code> on the Command only records where the code receives it. It does not give the Command a reason.</p>
 
       <h2>State View</h2>
       <p>The facts already exist. A Read Model is an answer to one question. It folds or interprets those facts so that a user or an API can get the answer.</p>
       <code-block lang="text">Event -> Read Model -> Screen</code-block>
       <code-block lang="hcl">
+        board {
+          workflows = [workflow.view_calendar]
+        }
+
         actor "calendar_user" {
           auth_required = true
         }
@@ -110,21 +141,31 @@
           readmodel "calendar" {
             question = "Which appointments are on the calendar?"
             from     = [event.appointments.appointment_added]
-            to       = [screen.calendar_ui]
+            to       = [screen.calendar_ui, screen.calendar_response]
           }
 
           screen "calendar_ui" {
             actor = actor.calendar_user
           }
+
+          screen "calendar_response" {
+            kind         = "api"
+            api_endpoint = "GET /calendar"
+            actor        = actor.calendar_user
+          }
         }
       </code-block>
-      <p>You write the flow from a catalog Event to a Read Model as <code>readmodel.from</code>. You write the flow from a Read Model to a Screen as <code>readmodel.to</code>.</p>
+      <p>You write the flow from a catalog Event to a Read Model as <code>readmodel.from</code>. You write the flow from a Read Model to a Screen as <code>readmodel.to</code>. An API screen in a State View is the response that a client reads.</p>
       <callout kind="rule"><p>Scenario: GIVEN Event(s) → THEN Read Model.</p></callout>
 
       <h2>Automation</h2>
       <p>The system reacts to its own internal facts. It issues a new Command without a user screen. A Processor is the machine step that issues the Command.</p>
       <code-block lang="text">Internal Event -> Read Model -> Processor -> Command -> Event</code-block>
       <code-block lang="hcl">
+        board {
+          workflows = [workflow.add_weather_forecast]
+        }
+
         bounded_context "appointments" {
           event "appointment_added" {
           }
@@ -152,14 +193,18 @@
           }
         }
       </code-block>
-      <p>An Automation consumes internal Events. External input belongs in a Translation.</p>
+      <p>This Automation consumes internal Events. An Automation can also consume Events from an external bounded context. That case is a Translation.</p>
       <p>Design the pending-work list with its Processor. Opening Events add items. Completion Events remove them. Document business failure and technical retry behavior.</p>
       <p>List membership means work is pending. Do not replace it with a done flag. In this example, the forecast Event closes the appointment's pending item.</p>
 
       <h2>Translation</h2>
-      <p>Another context or external system uses its own language. A Translation takes an external fact and turns it into a Command and an Event in the language of the receiving context.</p>
+      <p>Another context or external system uses its own language. A Translation takes an external fact and turns it into a Command and an Event in the language of the receiving context. The language has no <code>translation</code> keyword. You write a Translation as an <code>automation</code> that consumes at least one Event of an <code>external = true</code> bounded context.</p>
       <code-block lang="text">External Event -> Todo-list Read Model -> Processor -> Command -> Internal Event</code-block>
       <code-block lang="hcl">
+        board {
+          workflows = [workflow.translate_weather_change]
+        }
+
         system "weather_provider" {
           external = true
         }
@@ -177,7 +222,7 @@
           }
         }
 
-        translation "translate_weather_change" {
+        automation "translate_weather_change" {
           readmodel "changed_predictions" {
             question = "Which external weather predictions changed?"
             from     = [event.weather_provider.weather_forecast_changed]
@@ -193,7 +238,7 @@
           }
         }
       </code-block>
-      <p>A Translation consumes an Event from an external bounded context. Legal HCL also permits direct Event input to a Processor. The method still requires a todo list.</p>
+      <p>This Automation consumes an Event from an external bounded context. The typed model marks each edge from an external Event, so tools can show the workflow as a Translation. Legal HCL also permits direct Event input to a Processor. The method still requires a todo list.</p>
       <p>A translation list has no completion edge. It relays external facts rather than tracking a worker's finished tasks.</p>
       <p>Recover the internal business identity before recording the internal fact. Convert foreign units and data shapes, and keep external identifiers only for correlation or duplicate detection.</p>
       <p>Specify missing correlation, invalid data, repeated delivery, and out-of-order arrival. Repeated delivery must not record the same business fact twice.</p>

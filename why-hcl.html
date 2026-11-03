@@ -55,16 +55,37 @@
       <div class="compare-strip">
         <code-block lang="json">
           {
-            "kind": "event",
-            "name": "student_registered"
+            "board": { "workflows": [] },
+            "contexts": [
+              {
+                "name": "school",
+                "children": [
+                  {
+                    "kind": "event",
+                    "name": "student_registered"
+                  }
+                ]
+              }
+            ]
           }
         </code-block>
         <code-block lang="text">
-          kind: event
-          name: student_registered
+          board:
+            workflows: []
+          contexts:
+            - name: school
+              children:
+                - kind: event
+                  name: student_registered
         </code-block>
         <code-block lang="hcl">
-          event "student_registered" {
+          board {
+            workflows = []
+          }
+
+          bounded_context "school" {
+            event "student_registered" {
+            }
           }
         </code-block>
       </div>
@@ -77,9 +98,28 @@
       <div class="section-head">
         <h2>References and validation</h2>
       </div>
-      <code-block lang="hcl">event.school.student_registered</code-block>
+      <code-block lang="hcl">
+        board {
+          workflows = [workflow.register_student]
+        }
+
+        bounded_context "school" {
+          event "student_registered" {
+          }
+        }
+
+        state_change "register_student" {
+          screen "registration_form" {
+            to = [command.register_student]
+          }
+
+          command "register_student" {
+            to = [event.school.student_registered]
+          }
+        }
+      </code-block>
       <div class="prose">
-        <p>HCL parses this as a traversal expression. HCL does not know that it refers to an Event.</p>
+        <p>HCL parses <code>event.school.student_registered</code> as a traversal expression. HCL does not know that it refers to an Event.</p>
         <p>The <code>.em.hcl</code> validator supplies that meaning. It checks the reference kind, scope, and existence. A validated model becomes a typed model for the renderer and other tools. The formatter works on one source file at a time.</p>
         <p>These checks do not establish business completeness. Review who triggers each action, where each field comes from, and what happens when a decision fails. HCL records the model; it does not replace that review.</p>
       </div>

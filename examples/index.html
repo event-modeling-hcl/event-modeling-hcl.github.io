@@ -38,7 +38,7 @@
         <div class="eyebrow">Generated from source</div>
         <h1>Examples</h1>
         <p class="lede">Each canvas has switchable Model, Compact, Storming (Event Storming-like), and Context Map views.</p>
-        <p>The source models are <code>.em.hcl</code> files in the <a href="https://github.com/event-modeling-hcl/eventmodeling-hcl/tree/v0.10.0/examples">emhcl v0.10.0 tool repository</a>. A model can be one file or a folder of files.</p>
+        <p>The source models are <code>.em.hcl</code> files in the <a href="https://github.com/event-modeling-hcl/eventmodeling-hcl/tree/v0.16.0/examples">emhcl v0.16.0 tool repository</a>. A model can be one file or a folder of files.</p>
         <p>These examples show language and workflow patterns. They are not proof of a complete business process. Review field origins, failure paths, and scenarios with domain experts before using a model for implementation.</p>
       </div>
     </div>
@@ -66,8 +66,8 @@
           </div>
           <div class="example-card-body">
             <h3>Complete</h3>
-            <p>All four workflows, ownership, a chapter, and a hotspot in one file.</p>
-            <div class="pattern-pills"><code>state_change</code><code>state_view</code><code>automation</code><code>translation</code></div>
+            <p>Four workflows, ownership, a chapter, and a hotspot in one file.</p>
+            <div class="pattern-pills"><code>state_change</code><code>state_view</code><code>automation</code></div>
             <div class="btn-row"><a href="/examples/models/complete.em.hcl">View source</a><a href="/examples/canvas/complete.html" target="_blank" rel="noopener">Open diagram</a></div>
           </div>
         </article>
@@ -90,8 +90,8 @@
           </div>
           <div class="example-card-body">
             <h3>Course subscriptions</h3>
-            <p>Registrar translation, course administration, and student subscriptions.</p>
-            <div class="pattern-pills"><code>translation</code><code>state_change</code><code>state_view</code></div>
+            <p>Registrar event import, course administration, and student subscriptions.</p>
+            <div class="pattern-pills"><code>automation</code><code>state_change</code><code>state_view</code></div>
             <div class="btn-row"><a href="/examples/models/course_subscriptions.em.hcl">View source</a><a href="/examples/canvas/course_subscriptions.html" target="_blank" rel="noopener">Open diagram</a><a href="/examples/course-subscriptions.html">Open example</a></div>
           </div>
         </article>
@@ -102,8 +102,8 @@
           </div>
           <div class="example-card-body">
             <h3>Appointments &amp; weather</h3>
-            <p>All four workflow patterns.</p>
-            <div class="pattern-pills"><code>state_change</code><code>state_view</code><code>automation</code><code>translation</code></div>
+            <p>All three workflow kinds, with one automation that translates an external event.</p>
+            <div class="pattern-pills"><code>state_change</code><code>state_view</code><code>automation</code></div>
             <div class="btn-row"><a href="/examples/models/appointment-weather-patterns.em.hcl">View source</a><a href="/examples/canvas/appointment-weather-patterns.html" target="_blank" rel="noopener">Open diagram</a></div>
           </div>
         </article>
@@ -115,8 +115,20 @@
           <div class="example-card-body">
             <h3>Pet clinic folder model</h3>
             <p>The complete model, split into a folder of seven files.</p>
-            <div class="pattern-pills"><code>state_change</code><code>state_view</code><code>automation</code><code>translation</code></div>
+            <div class="pattern-pills"><code>state_change</code><code>state_view</code><code>automation</code></div>
             <div class="btn-row"><a href="/examples/pet-clinic.html">View source</a><a href="/examples/canvas/pet-clinic.html" target="_blank" rel="noopener">Open diagram</a></div>
+          </div>
+        </article>
+
+        <article class="example-card">
+          <div class="canvas-embed preview">
+            <iframe src="/examples/canvas/api-screens.html" loading="lazy" title="API screens example canvas preview" tabindex="-1" scrolling="no"></iframe>
+          </div>
+          <div class="example-card-body">
+            <h3>API screens</h3>
+            <p>A request screen and a response screen with <code>kind = "api"</code>.</p>
+            <div class="pattern-pills"><code>state_change</code><code>state_view</code></div>
+            <div class="btn-row"><a href="/examples/models/api-screens.em.hcl">View source</a><a href="/examples/canvas/api-screens.html" target="_blank" rel="noopener">Open diagram</a><a href="/examples/api-screens.html">Open example</a></div>
           </div>
         </article>
 

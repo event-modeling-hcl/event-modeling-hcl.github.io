@@ -1,15 +1,18 @@
 state_change "register_pet" {
+  title       = "Register Pet"
   description = "Register a new pet for an owner."
   owner       = bounded_context.clinic
   status      = "created"
 
   screen "pet_screen" {
     title  = "Pet screen"
+    kind   = "ui"
     actor  = actor.clinic_staff
     fields = [field_type.clinic.pet_name]
     to     = [command.register_pet_command]
 
     field "pet_id" {
+      type = field_type.clinic.pet_id
     }
   }
 

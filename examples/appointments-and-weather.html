@@ -34,8 +34,8 @@
       <div class="prose" style="margin: 0;">
         <div class="eyebrow">Examples</div>
         <h1>Appointments & weather</h1>
-        <p class="lede">All four workflow patterns in an appointments-and-weather domain.</p>
-        <div class="pattern-pills-standalone" style="margin-top: 6px;"><code>state_change</code><code>state_view</code><code>automation</code><code>translation</code></div>
+        <p class="lede">All three workflow kinds in an appointments-and-weather domain. One automation translates an external weather event.</p>
+        <div class="pattern-pills-standalone" style="margin-top: 6px;"><code>state_change</code><code>state_view</code><code>automation</code></div>
       </div>
     </div>
   </section>
@@ -60,7 +60,16 @@
         <p>Source file: <code>examples/appointment-weather-patterns.em.hcl</code>.</p>
       </div>
       <code-block lang="hcl">
-        # Appointment scheduling with state change, state view, automation, and translation workflows.
+        # Appointment scheduling with state change, state view, and automation workflows, including an automation that translates external facts.
+
+        board {
+          workflows = [
+            workflow.schedule_appointment,
+            workflow.view_calendar,
+            workflow.add_weather_forecast,
+            workflow.translate_weather_change,
+          ]
+        }
 
         actor "scheduler" {
           title         = "Scheduler"
@@ -81,6 +90,7 @@
           title = "Appointments"
 
           aggregate "appointment" {
+            title = "Appointment"
           }
 
           field_type "appointment_id" {
@@ -110,6 +120,7 @@
           title = "Weather"
 
           aggregate "weather_forecast" {
+            title = "Weather Forecast"
           }
 
           field_type "forecast" {
@@ -360,7 +371,7 @@
           }
         }
 
-        translation "translate_weather_change" {
+        automation "translate_weather_change" {
           title = "Translate Changed Weather"
 
           readmodel "changed_predictions" {

@@ -11,7 +11,7 @@
   } catch (e) {}
 </script>
 <title>The Language</title>
-<meta name="description" content="The .em.hcl document model, derived titles, typed references, bounded-context ownership, reusable field types, and the rule of one canonical edge.">
+<meta name="description" content="The .em.hcl document model, the board, literal titles, typed references, bounded-context ownership, typed fields, and the rule of one canonical edge.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="The Language | Learn Event Modeling HCL">
 <meta property="og:description" content="Identities, typed references, bounded-context ownership, field types, and the rule of one canonical edge.">
@@ -43,26 +43,38 @@
     <div class="wrap prose">
 
       <h2>The model</h2>
-      <p>A model contains domain catalogs (lists of shared definitions), workshop notation, and workflows. Catalogs define contexts, actors, ownership, Events, aggregates, and field types. Workflows describe behavior. Chapters and hotspots keep workshop context.</p>
-      <p><a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md">Specification v0.4.0</a> defines a model as one <code>.em.hcl</code> file or a folder of member files. A folder includes only direct <code>.em.hcl</code> files whose names do not start with a dot. It does not include subfolders.</p>
-      <p>Each file holds whole top-level blocks and must parse on its own. References resolve across member files without changing ID scopes. Each bounded context and its domain contracts stay in one file. See <a href="/reference.html#folder-models">Folder models</a>.</p>
-      <p>After validation, downstream tools use a normalized typed model that has derived titles and source-to-target edges.</p>
+      <p>A model contains domain catalogs (lists of shared definitions), one board, workshop notation, and workflows. Catalogs define contexts, actors, ownership, Events, aggregates, and field types. Workflows describe behavior. Chapters and hotspots keep workshop context.</p>
+      <p><a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md">Specification v0.7.0</a> defines a model as one <code>.em.hcl</code> file or a folder of member files. A folder includes only direct <code>.em.hcl</code> files whose names do not start with a dot. It does not include subfolders.</p>
+      <p>Each file holds whole top-level blocks and must parse on its own. References resolve across member files without changing ID scopes. A block never spans files, so each bounded context and its domain contracts stay in one file. File names and block order have no meaning. If you move blocks between files, the model does not change. See <a href="/reference.html#folder-models">Folder models</a>.</p>
+      <p>After validation, downstream tools use a normalized typed model that has literal titles and source-to-target edges.</p>
 
-      <h2>Identities and derived titles</h2>
+      <h2>The board sets the story order</h2>
+      <p>A model has exactly one top-level <code>board</code> block. Its <code>workflows</code> list is the complete story order for diagrams:</p>
       <code-block lang="hcl">
+        board {
+          workflows = [workflow.add_pet]
+        }
+
         state_change "add_pet" {
         }
       </code-block>
-      <p>The identity is <code>add_pet</code>, and its derived display title is <code>Add Pet</code>. Labels use <code>lower_snake_case</code>. Write <code>title</code> only for different wording:</p>
+      <p>A missing or repeated board is error <code>EM015</code>. A repeated entry in the list is error <code>EM016</code>. The list can omit workflows. An omitted workflow is off-board. It stays part of the model and passes every rule, but it is not in the story order.</p>
+      <p>Chapters are membership sets. A chapter lists its workflows, but it does not set order. A workflow in two chapters is error <code>EM014</code>. An empty chapter is error <code>EM005</code>.</p>
+
+      <h2>Identities and literal titles</h2>
+      <p>In the block above, the identity is <code>add_pet</code>. Labels use <code>lower_snake_case</code>. A title is a literal string. If you omit <code>title</code>, the model has no title. Tools never derive a title from the label. A tool can show the identity instead.</p>
       <code-block lang="hcl">
+        board {
+          workflows = []
+        }
+
         bounded_context "billing" {
           event "payment_failed" {
             title = "Card Payment Was Declined"
           }
         }
       </code-block>
-      <p>The formatter leaves derived titles implicit and formats one file at a time. A one-file model uses source order, so keep workflows in business-time order.</p>
-      <p>With two or more member files, model order is bytewise file-name order, then source order. Chapters must stay in one file. Chapter order, then each chapter's <code>workflows</code> list, sets workflow order. Workflows outside chapters follow in model order and produce <code>EM407</code>. A folder with one member file keeps the one-file rules.</p>
+      <p>The formatter never writes a title and formats one file at a time.</p>
 
       <h2>Typed references</h2>
       <p>Quoted values are data. Unquoted traversals are references. For example, <code>to = [event.pet_management.pet_added]</code> resolves a relationship. If you quote that traversal, it becomes an invalid string.</p>
@@ -90,6 +102,10 @@
       <h2>Bounded contexts own domain contracts</h2>
       <p>Events, aggregates, and field types belong to a bounded context:</p>
       <code-block lang="hcl">
+        board {
+          workflows = []
+        }
+
         bounded_context "pet_management" {
           aggregate "pet" {
           }
@@ -114,6 +130,10 @@
       <h2>Aggregates</h2>
       <p>An aggregate is a consistency boundary that a context owns:</p>
       <code-block lang="hcl">
+        board {
+          workflows = []
+        }
+
         bounded_context "pet_management" {
           aggregate "pet" {
             title       = "Pet"
@@ -126,6 +146,10 @@
       <h2>Reusable field types</h2>
       <p>Use a <code>field_type</code> when the same business term appears in several contracts:</p>
       <code-block lang="hcl">
+        board {
+          workflows = []
+        }
+
         bounded_context "owner_management" {
           field_type "owner_id" {
             type         = "Int"
@@ -142,9 +166,13 @@
       </code-block>
       <p>For a one-off field, write a built-in type inline, for example <code>field "request_id" { type = "UUID" }</code>. The <a href="/reference.html">reference</a> lists the available types and flags.</p>
 
-      <h2>Field shorthand</h2>
-      <p>A plain <code>field</code> can infer the <code>field_type</code> with the same name. A <code>fields</code> list adds reusable fields if you need no per-field override:</p>
+      <h2>The fields list</h2>
+      <p>Every <code>field</code> and <code>subfield</code> must set <code>type</code>. A missing type is error <code>EM009</code>. The language never infers a type from the field name. A <code>fields</code> list adds several typed fields at once. Each entry adds one field, named for the last part of the reference:</p>
       <code-block lang="hcl">
+        board {
+          workflows = []
+        }
+
         bounded_context "pet_management" {
           field_type "pet_id" {
             type = "UUID"
@@ -158,15 +186,20 @@
             fields = [field_type.pet_id]
 
             field "pet_name" {
+              type = field_type.pet_name
             }
           }
         }
       </code-block>
-      <p>The shorthand applies only to <code>field</code> blocks. A <code>field_type</code> must still declare an explicit built-in <code>type</code>.</p>
+      <p>The list takes no per-field overrides. Use a <code>field</code> block for those. A <code>field_type</code> must declare a built-in <code>type</code>.</p>
 
       <h2>Lists and structured data</h2>
       <p>A custom reusable field type can carry nested subfields:</p>
       <code-block lang="hcl">
+        board {
+          workflows = []
+        }
+
         bounded_context "owner_management" {
           field_type "owner_pets" {
             type        = "Custom"
@@ -195,6 +228,10 @@
       <p>Each edge has one canonical spelling.</p>
       <p>Rule 1, workflow-local source: write <code>to</code> on the source.</p>
       <code-block lang="hcl">
+        board {
+          workflows = [workflow.add_pet]
+        }
+
         bounded_context "pet_management" {
           event "pet_added" {
           }
@@ -214,6 +251,10 @@
 
       <p>Here is what happens if a Command reverses the first rule. The Command puts <code>from</code> on itself instead of <code>to</code> on the Screen:</p>
       <code-block lang="hcl">
+        board {
+          workflows = [workflow.create_pet]
+        }
+
         bounded_context "example" {
           event "pet_created" {
           }
@@ -231,7 +272,7 @@
         }
       </code-block>
       <p>The validator rejects the reverse form:</p>
-      <code-block lang="text">reverse-flow.em.hcl:11:13: Error EM201: Invalid flow reference: command.from has no canonical flow targets in a state_change workflow. You referenced: screen.form.</code-block>
+      <code-block lang="text">reverse-flow.em.hcl:16:13: Error EM201: Invalid flow reference: command.from has no canonical flow targets in a state_change workflow. You referenced: screen.form.</code-block>
 
       <callout kind="rule">
         <p>To check an edge, find the source. Use <code>to</code> on a workflow source. Use <code>from</code> on the receiver if the source is a catalog Event.</p>

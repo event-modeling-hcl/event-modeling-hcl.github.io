@@ -35,7 +35,7 @@
         <div class="eyebrow">Examples</div>
         <h1>Complete reference</h1>
         <p class="lede">A language reference with all four workflows, ownership, an external system, a chapter, and a hotspot. The name describes syntax coverage, not business completeness.</p>
-        <div class="pattern-pills-standalone" style="margin-top: 6px;"><code>state_change</code><code>state_view</code><code>automation</code><code>translation</code></div>
+        <div class="pattern-pills-standalone" style="margin-top: 6px;"><code>state_change</code><code>state_view</code><code>automation</code></div>
       </div>
     </div>
   </section>
@@ -61,6 +61,15 @@
       </div>
       <code-block lang="hcl">
         # Complete executable reference for Event Modeling HCL with bounded contexts.
+
+        board {
+          workflows = [
+            workflow.register_pet,
+            workflow.pet_directory,
+            workflow.notify_owner,
+            workflow.import_partner_pet,
+          ]
+        }
 
         team "clinic_team" {
           title = "Clinic team"
@@ -183,12 +192,15 @@
           }
 
           event "external_pet_imported" {
+            title = "External Pet Imported"
+
             field "pet_id" {
               type = field_type.pet_id
             }
           }
 
           event "owner_registered" {
+            title = "Owner Registered"
           }
         }
 
@@ -207,17 +219,20 @@
         }
 
         state_change "register_pet" {
+          title       = "Register Pet"
           description = "Register a new pet for an owner."
           owner       = bounded_context.clinic
           status      = "created"
 
           screen "pet_screen" {
             title  = "Pet screen"
+            kind   = "ui"
             actor  = actor.clinic_staff
             fields = [field_type.clinic.pet_name]
             to     = [command.register_pet_command]
 
             field "pet_id" {
+              type = field_type.clinic.pet_id
             }
           }
 
@@ -345,7 +360,7 @@
           }
         }
 
-        translation "import_partner_pet" {
+        automation "import_partner_pet" {
           title       = "Import partner pet"
           description = "Translate the partner contract into the clinic language."
 
@@ -371,7 +386,7 @@
           question = "Which notification channel should be used?"
           on       = processor.notify_owner.pet_notification
         }
-</code-block>
+      </code-block>
     </div>
   </section>
 

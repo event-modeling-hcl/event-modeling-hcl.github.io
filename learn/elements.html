@@ -52,12 +52,16 @@
       </p>
       <p>In <code>.em.hcl</code>, a bounded context owns each Event. A bounded context is a part of the system with its own language. The Event is the canonical contract:</p>
       <code-block lang="hcl">
+        board {
+          workflows = []
+        }
+
         bounded_context "appointments" {
           event "appointment_added" {
           }
         }
       </code-block>
-      <p>The label is the identity. The label <code>appointment_added</code> gets the derived title <code>Appointment Added</code>. To use different wording, add <code>title</code>.</p>
+      <p>The label <code>appointment_added</code> is the identity. A title is optional and literal. Tools never derive it from the label. To show different wording, add <code>title</code>.</p>
       <callout kind="note"><p>Rule of thumb: if the system can still reject the thing, it is probably not an Event yet.</p></callout>
 
       <h2>Command: an intent to make something happen</h2>
@@ -69,6 +73,10 @@
       </p>
       <p>Commands live inside workflows. A workflow is one flow of elements. Each Command points to the Events that it can produce:</p>
       <code-block lang="hcl">
+        board {
+          workflows = [workflow.schedule_appointment]
+        }
+
         bounded_context "appointments" {
           aggregate "appointment" {
           }
@@ -89,7 +97,7 @@
           }
         }
       </code-block>
-      <p>A Command needs an incoming flow, an <code>api_endpoint</code>, or <code>external_trigger</code>. If it has none of these, the validator reports <code>EM404</code>.</p>
+      <p>A Command needs an incoming flow or an <code>external_trigger</code>. If it has neither, the validator reports <code>EM404</code>. An <code>api_endpoint</code> on a Command records where the code receives it. It does not give the Command a reason. A Command that a client sends through an API gets an API Screen as its issuer.</p>
       <p>The method requires exactly one issuer for each Command. Identify the human decision or machine reaction, not just a validator reason.</p>
       <p>A Command checks its documented preconditions against prior facts about its subject, not a Read Model. A refused intent records no Event. A tracked business failure can record a failure Event.</p>
 
@@ -98,6 +106,10 @@
       <callout kind="rule"><p>No question, no Read Model.</p></callout>
       <p>The language requires <code>question</code> to enforce this rule:</p>
       <code-block lang="hcl">
+        board {
+          workflows = [workflow.view_calendar]
+        }
+
         bounded_context "appointments" {
           event "appointment_added" {
           }
@@ -116,9 +128,18 @@
       </code-block>
       <p><code>"What data is needed?"</code> is vague. <code>"Which appointments do not yet have a weather forecast?"</code> defines the projection. A projection is a view that the system builds from Events.</p>
 
-      <h2>Screen: where an actor sees or starts behavior</h2>
-      <p>A Screen is a UI, a rough wireframe, or another point where a human interacts with the system.</p>
+      <h2>Screen: the interface at one step</h2>
+      <p>A Screen is the interface of the modeled system at one step of a workflow. It shows what one actor sees or sends at that step. The optional <code>kind</code> attribute states the form of the interface:</p>
+      <ul>
+        <li><code>kind = "ui"</code>: a state of a user interface that a person uses directly. This is the default.</li>
+        <li><code>kind = "api"</code>: a request to an API, or a response from an API, that a client program uses.</li>
+      </ul>
+      <p>Here is a UI Screen:</p>
       <code-block lang="hcl">
+        board {
+          workflows = [workflow.view_calendar]
+        }
+
         bounded_context "appointments" {
           event "appointment_added" {
           }
@@ -141,8 +162,37 @@
         }
       </code-block>
       <p>Actors are reusable catalog declarations. You reference them with traversals such as <code>actor.calendar_user</code>.</p>
-      <p>Model one committed decision per Screen state. If a page offers several actions, use separate Screen states, even when those actions are related.</p>
-      <p>Use a Processor when no human acts. Give human roles domain names and document what each role can and cannot do.</p>
+      <p>An API Screen uses the same flow edges as a UI Screen. In a <code>state_change</code>, the Screen is the request that a client sends. In a <code>state_view</code>, it is the response that a client reads. Put the route in <code>api_endpoint</code> on the Screen:</p>
+      <code-block lang="hcl">
+        board {
+          workflows = [workflow.book_appointment]
+        }
+
+        bounded_context "appointments" {
+          event "appointment_added" {
+          }
+        }
+
+        actor "partner_system" {
+          auth_required = true
+        }
+
+        state_change "book_appointment" {
+          screen "book_appointment_request" {
+            kind         = "api"
+            api_endpoint = "POST /appointments"
+            actor        = actor.partner_system
+            to           = [command.add_appointment]
+          }
+
+          command "add_appointment" {
+            to = [event.appointments.appointment_added]
+          }
+        }
+      </code-block>
+      <p>Any other <code>kind</code> string is error <code>EM008</code>. A value that is not a string is error <code>EM007</code>. A fact that another system reports, for example a payment webhook, is not an API Screen. Model it as an Event of an <code>external = true</code> bounded context, and consume it with an <code>automation</code>.</p>
+      <p>Model one committed decision per Screen. If a page offers several actions, use one Screen for each action, even when those actions are related.</p>
+      <p>Use a Processor when the system starts the work without a caller. Give human roles domain names and document what each role can and cannot do.</p>
 
       <h2>Automation (gear): a machine reaction</h2>
       <p>On the visual cheat sheet, the gear means that the computer reacts instead of a human.</p>
@@ -151,6 +201,10 @@
         Automation pattern → <code>automation</code> workflow block.</p>
       </callout>
       <code-block lang="hcl">
+        board {
+          workflows = [workflow.add_weather_forecast]
+        }
+
         bounded_context "appointments" {
           event "appointment_added" {
           }

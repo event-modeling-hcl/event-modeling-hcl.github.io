@@ -35,7 +35,7 @@
         <div class="eyebrow">Examples</div>
         <h1>Pet clinic folder model</h1>
         <p class="lede">The <a href="/examples/complete.html">complete reference</a> model, split into a folder of seven <code>.em.hcl</code> files. The tool reads the folder as one model.</p>
-        <div class="pattern-pills-standalone" style="margin-top: 6px;"><code>state_change</code><code>state_view</code><code>automation</code><code>translation</code></div>
+        <div class="pattern-pills-standalone" style="margin-top: 6px;"><code>state_change</code><code>state_view</code><code>automation</code></div>
       </div>
     </div>
   </section>
@@ -56,9 +56,9 @@
   <section class="section section-alt">
     <div class="wrap prose">
       <h2>How the files join</h2>
-      <p>Every regular <code>.em.hcl</code> file directly in the folder whose name does not start with a dot is part of the model. Subfolders and other files are ignored. The tool sorts member files by name, so the number prefixes set the reading order. The prefixes are not part of the language.</p>
+      <p>Every regular <code>.em.hcl</code> file directly in the folder whose name does not start with a dot is part of the model. Subfolders and other files are ignored. The tool sorts member files by name, so the number prefixes set the order in which you read the files. The prefixes are not part of the language, and they do not change the model.</p>
       <p>A reference in one file can point to a block in any other file. For example, <code>10-register-pet.em.hcl</code> uses events that <code>00-catalog.em.hcl</code> declares. Each block stays whole in one file.</p>
-      <p>All <code>chapter</code> blocks are in one file. In this seven-file model, the chapter list sets the order of the workflows on the board. A workflow that is in no chapter gives diagnostic <code>EM407</code>: a warning by default, information in <code>workshop</code>, and an error in <code>strict</code>. See <a href="/reference.html#folder-models">Folder models</a> for all rules.</p>
+      <p>The <code>board</code> block in <code>00-catalog.em.hcl</code> sets the order of the workflows on the board. File names and block order do not change the story order. A chapter is a set of workflows. It does not set an order. See <a href="/reference.html#folder-models">Folder models</a> for all rules.</p>
       <code-block lang="text">
         emhcl validate examples/pet-clinic
         emhcl diagram examples/pet-clinic -o pet-clinic.html
@@ -72,8 +72,17 @@
       <h2>The source files</h2>
       <p>Source folder: <code>examples/pet-clinic/</code>.</p>
       <h3 id="00-catalog"><code>00-catalog.em.hcl</code></h3>
-      <p>Catalog: the team, the partner system, the actor, and both bounded contexts with their events, aggregates, and field types. <a href="/examples/models/pet-clinic/00-catalog.em.hcl">Raw file</a>.</p>
+      <p>Catalog: the board, the team, the partner system, the actor, and both bounded contexts with their events, aggregates, and field types. <a href="/examples/models/pet-clinic/00-catalog.em.hcl">Raw file</a>.</p>
       <code-block lang="hcl">
+        board {
+          workflows = [
+            workflow.register_pet,
+            workflow.pet_directory,
+            workflow.notify_owner,
+            workflow.import_partner_pet,
+          ]
+        }
+
         team "clinic_team" {
           title = "Clinic team"
         }
@@ -195,12 +204,15 @@
           }
 
           event "external_pet_imported" {
+            title = "External Pet Imported"
+
             field "pet_id" {
               type = field_type.pet_id
             }
           }
 
           event "owner_registered" {
+            title = "Owner Registered"
           }
         }
 
@@ -219,7 +231,7 @@
         }
       </code-block>
       <h3 id="01-chapters"><code>01-chapters.em.hcl</code></h3>
-      <p>The one chapter. Its list sets the order of the workflows on the board. <a href="/examples/models/pet-clinic/01-chapters.em.hcl">Raw file</a>.</p>
+      <p>The one chapter. It groups the four workflows. <a href="/examples/models/pet-clinic/01-chapters.em.hcl">Raw file</a>.</p>
       <code-block lang="hcl">
         chapter "registration" {
           title     = "Registration"
@@ -230,17 +242,20 @@
       <p>The <code>register_pet</code> state change, with its scenario. <a href="/examples/models/pet-clinic/10-register-pet.em.hcl">Raw file</a>.</p>
       <code-block lang="hcl">
         state_change "register_pet" {
+          title       = "Register Pet"
           description = "Register a new pet for an owner."
           owner       = bounded_context.clinic
           status      = "created"
 
           screen "pet_screen" {
             title  = "Pet screen"
+            kind   = "ui"
             actor  = actor.clinic_staff
             fields = [field_type.clinic.pet_name]
             to     = [command.register_pet_command]
 
             field "pet_id" {
+              type = field_type.clinic.pet_id
             }
           }
 
@@ -372,12 +387,24 @@
             aggregate = aggregate.clinic.owner
             to        = [event.clinic.external_pet_imported]
           }
+
+          scenario "registered_pet_needs_notification" {
+            title = "Registered pet needs notification"
+
+            given {
+              event = event.clinic.pet_registered
+            }
+
+            then {
+              readmodel = readmodel.pets_needing_notification
+            }
+          }
         }
       </code-block>
       <h3 id="13-import-partner-pet"><code>13-import-partner-pet.em.hcl</code></h3>
-      <p>The <code>import_partner_pet</code> translation. <a href="/examples/models/pet-clinic/13-import-partner-pet.em.hcl">Raw file</a>.</p>
+      <p>The <code>import_partner_pet</code> automation. It translates an event from the external partner context. <a href="/examples/models/pet-clinic/13-import-partner-pet.em.hcl">Raw file</a>.</p>
       <code-block lang="hcl">
-        translation "import_partner_pet" {
+        automation "import_partner_pet" {
           title       = "Import partner pet"
           description = "Translate the partner contract into the clinic language."
 

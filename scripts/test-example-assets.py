@@ -19,6 +19,7 @@ EXPECTED_MODELS = {
     "pet-management-detailed",
     "appointment-weather-patterns",
     "course_subscriptions",
+    "api-screens",
 }
 
 PUBLISHED_EXAMPLES = {
@@ -30,6 +31,7 @@ PUBLISHED_EXAMPLES = {
         "appointment-weather-patterns",
     ),
     "course_subscriptions": ("course-subscriptions", "course_subscriptions"),
+    "api-screens": ("api-screens", "api-screens"),
 }
 
 
@@ -74,8 +76,8 @@ class ExampleAssetsTest(unittest.TestCase):
 
     def test_install_page_uses_the_current_release(self):
         start = (ROOT / "start.html").read_text()
-        self.assertIn("emhcl_0.10.0_linux_amd64.tar.gz", start)
-        self.assertIn("go install github.com/event-modeling-hcl/eventmodeling-hcl/cmd/emhcl@v0.10.0", start)
+        self.assertIn("emhcl_0.16.0_linux_amd64.tar.gz", start)
+        self.assertIn("go install github.com/event-modeling-hcl/eventmodeling-hcl/cmd/emhcl@v0.16.0", start)
         self.assertIn("emhcl version", start)
         self.assertNotIn("eventmodeling-hcl_0.5.0_linux_amd64.tar.gz", start)
 

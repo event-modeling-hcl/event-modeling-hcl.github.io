@@ -32,9 +32,9 @@
   <section class="hero" style="padding-bottom: 8px;">
     <div class="wrap">
       <div class="prose" style="margin: 0 auto;">
-        <div class="eyebrow">Reference for .em.hcl v0.4.0</div>
+        <div class="eyebrow">Reference for .em.hcl v0.7.0 and emhcl v0.16.0</div>
         <h1>The cheat sheet</h1>
-        <p class="lede">Blocks, attributes, values, and commands in one page. <a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md">Specification v0.4.0</a> defines the language.</p>
+        <p class="lede">Blocks, attributes, values, diagnostics, and commands in one page. <a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md">Specification v0.7.0</a> defines the language. emhcl v0.16.0 implements it.</p>
       </div>
     </div>
   </section>
@@ -46,19 +46,20 @@
         <table>
           <thead><tr><th>Block</th><th>Category</th><th>Purpose</th></tr></thead>
           <tbody>
-            <tr><td><code>bounded_context</code></td><td>Catalog</td><td>Owns aggregates, field types, and Events</td></tr>
-            <tr><td><code>actor</code></td><td>Catalog</td><td>A reusable human or system actor</td></tr>
+            <tr><td><code>board</code></td><td>Story</td><td>Required. One per model, with no label. Its <code>workflows</code> list sets the story order.</td></tr>
+            <tr><td><code>bounded_context</code></td><td>Catalog</td><td>Owns aggregates, field types, and Events. <code>external = true</code> marks contracts outside the modeled system.</td></tr>
+            <tr><td><code>actor</code></td><td>Catalog</td><td>A reusable human or system actor. Requires <code>auth_required</code>.</td></tr>
             <tr><td><code>team</code></td><td>Catalog</td><td>A reusable owning team</td></tr>
             <tr><td><code>system</code></td><td>Catalog</td><td>A reusable external or internal system</td></tr>
-            <tr><td><code>state_change</code></td><td>Workflow</td><td>Screen/API → Command → Event</td></tr>
+            <tr><td><code>state_change</code></td><td>Workflow</td><td>Screen → Command → Event</td></tr>
             <tr><td><code>state_view</code></td><td>Workflow</td><td>Event → Read Model → Screen</td></tr>
-            <tr><td><code>automation</code></td><td>Workflow</td><td>Internal Event → Processor → Command → Event</td></tr>
-            <tr><td><code>translation</code></td><td>Workflow</td><td>External Event → Processor → Command → internal Event</td></tr>
-            <tr><td><code>chapter</code></td><td>Workshop notation</td><td>Groups workflows. In a one-file model the list is a contiguous range. With two or more member files, chapter lists set the board order.</td></tr>
-            <tr><td><code>hotspot</code></td><td>Workshop notation</td><td>An unresolved question or blocker</td></tr>
+            <tr><td><code>automation</code></td><td>Workflow</td><td>Event → Read Model or Processor → Command → Event. An automation that consumes an Event of an external context is a translation.</td></tr>
+            <tr><td><code>chapter</code></td><td>Workshop notation</td><td>A named set of workflows. The list order has no meaning. A workflow is in one chapter at most.</td></tr>
+            <tr><td><code>hotspot</code></td><td>Workshop notation</td><td>An open or resolved question or blocker</td></tr>
           </tbody>
         </table>
       </div>
+      <p class="prose">The language has no <code>translation</code> block. The block order and the file layout have no meaning. Only the board sets the story order. A workflow that the board does not list is off-board. It is valid and gets no diagnostic.</p>
 
       <div class="section-head" style="margin-top: 36px;"><h2>Inside a <code>bounded_context</code></h2></div>
       <div class="table-wrap">
@@ -66,7 +67,7 @@
           <thead><tr><th>Block</th><th>Purpose</th></tr></thead>
           <tbody>
             <tr><td><code>aggregate</code></td><td>A context-owned consistency boundary</td></tr>
-            <tr><td><code>field_type</code></td><td>A reusable field from the ubiquitous language</td></tr>
+            <tr><td><code>field_type</code></td><td>A reusable field from the ubiquitous language. Requires a built-in <code>type</code>.</td></tr>
             <tr><td><code>event</code></td><td>A canonical past-tense fact with <code>field</code> children</td></tr>
           </tbody>
         </table>
@@ -77,16 +78,29 @@
         <table>
           <thead><tr><th>Block</th><th>Used by</th><th>Purpose</th></tr></thead>
           <tbody>
-            <tr><td><code>screen</code></td><td>State Change, State View</td><td>A human-facing interaction surface</td></tr>
+            <tr><td><code>screen</code></td><td>State Change, State View</td><td>The interface of the system at one step. Optional <code>kind</code> is <code>"ui"</code> (default) or <code>"api"</code>. Can name an <code>actor</code>.</td></tr>
             <tr><td><code>screen_image</code></td><td>Any workflow</td><td>A presentation-only rough wireframe or mockup with a <code>url</code></td></tr>
-            <tr><td><code>command</code></td><td>State Change, Automation, Translation</td><td>An intent that can succeed or fail. Needs a reason (<code>to</code>-flow, <code>api_endpoint</code>, or <code>external_trigger</code>).</td></tr>
-            <tr><td><code>readmodel</code></td><td>State View, Automation, Translation</td><td>Requires <code>question</code></td></tr>
-            <tr><td><code>processor</code></td><td>Automation, Translation</td><td>A machine reaction (the "gear")</td></tr>
+            <tr><td><code>command</code></td><td>State Change, Automation</td><td>An intent that can succeed or fail. Needs a reason: an incoming flow or <code>external_trigger = true</code>. Without one, it gets <code>EM404</code>.</td></tr>
+            <tr><td><code>readmodel</code></td><td>State View, Automation</td><td>Requires <code>question</code></td></tr>
+            <tr><td><code>processor</code></td><td>Automation</td><td>A machine reaction (the "gear")</td></tr>
             <tr><td><code>table</code></td><td>Any workflow</td><td>Presentation-only illustrative tabular or example data</td></tr>
             <tr><td><code>scenario</code></td><td>Any workflow</td><td>Pattern-specific Given/When/Then (see below)</td></tr>
           </tbody>
         </table>
       </div>
+
+      <div class="section-head" style="margin-top: 36px;"><h2>Canonical flow</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Workflow</th><th>Edge spellings</th></tr></thead>
+          <tbody>
+            <tr><td><code>state_change</code></td><td><code>screen.to → command</code>, <code>command.to → event</code></td></tr>
+            <tr><td><code>state_view</code></td><td><code>event → readmodel.from</code>, <code>readmodel.to → screen</code></td></tr>
+            <tr><td><code>automation</code></td><td><code>event → readmodel.from</code> or <code>processor.from</code>, <code>readmodel.to → processor</code>, <code>processor.to → command</code>, <code>command.to → event</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="prose">The source element uses <code>to</code>. A catalog Event flows through the <code>from</code> list of the receiver. The reverse spellings produce <code>EM201</code>.</p>
     </div>
   </section>
 
@@ -99,10 +113,12 @@
           <tbody>
             <tr><td>State Change</td><td>Event, zero or more</td><td>one Command</td><td>Event or Error, one or more</td></tr>
             <tr><td>State View</td><td>Event, one or more</td><td><strong>none</strong></td><td>Read Model or Error, one or more</td></tr>
-            <tr><td>Automation / Translation</td><td>Event or Read Model</td><td>one Processor or Command</td><td>Event or Error, one or more</td></tr>
+            <tr><td>Automation, action form</td><td>Event or Read Model, zero or more</td><td>one Processor or Command</td><td>Event or Error, one or more</td></tr>
+            <tr><td>Automation, view form</td><td>Event, one or more</td><td><strong>none</strong></td><td>Read Model of the same automation, or Error, one or more</td></tr>
           </tbody>
         </table>
       </div>
+      <p class="prose">The number of <code>when</code> steps selects the form of an automation scenario. A view form scenario states the content of a read model, for example a to-do list. <code>expect_empty_list = true</code> on a <code>then</code> step states that the read model is empty.</p>
       <div class="section-head" style="margin-top: 36px;"><h2>Reference forms</h2></div>
       <div class="table-wrap">
         <table>
@@ -110,7 +126,7 @@
           <tbody>
             <tr><td>Bounded context</td><td><code>bounded_context.clinic</code></td></tr>
             <tr><td>Actor / Team / System</td><td><code>actor.clinic_staff</code> / <code>team.clinic_team</code> / <code>system.partner</code></td></tr>
-            <tr><td>Workflow</td><td><code>workflow.add_pet</code></td></tr>
+            <tr><td>Workflow (board, chapter)</td><td><code>workflow.add_pet</code></td></tr>
             <tr><td>Event</td><td><code>event.pet_management.pet_added</code></td></tr>
             <tr><td>Aggregate</td><td><code>aggregate.pet_management.pet</code> (or <code>aggregate.pet</code> inside its own context)</td></tr>
             <tr><td>Field type</td><td><code>field_type.pet_management.pet_id</code> (or <code>field_type.pet_id</code> inside its own context)</td></tr>
@@ -119,29 +135,83 @@
           </tbody>
         </table>
       </div>
+      <p class="prose">References are HCL traversals, not strings. Each reference is an exact lookup. Interpolation, functions, and variables are invalid.</p>
     </div>
   </section>
 
   <section class="section">
     <div class="wrap">
-      <div class="section-head"><h2>Field types and flags</h2></div>
+      <div class="section-head"><h2>Fields, types, and flags</h2></div>
+      <p class="prose">Every <code>field</code> and <code>subfield</code> requires <code>type</code>. A missing or invalid type is <code>EM009</code>. The tool does not infer a type from a field name. The value is a built-in type string or a <code>field_type</code> reference: <code>field_type.&lt;context&gt;.&lt;id&gt;</code>, or <code>field_type.&lt;id&gt;</code> inside the owning context.</p>
       <p class="prose">Built-in types: <code>String</code>, <code>Boolean</code>, <code>Double</code>, <code>Decimal</code>, <code>Long</code>, <code>Custom</code>, <code>Date</code>, <code>DateTime</code>, <code>UUID</code>, <code>Int</code>.</p>
-      <p class="prose">A <code>field</code> can omit <code>type</code> when a same-named <code>field_type</code> can be inferred. Use <code>fields = [field_type.context.name]</code> to add several reusable fields without per-field overrides. A <code>field_type</code> always declares its built-in <code>type</code>.</p>
+      <p class="prose"><code>fields = [field_type.clinic.pet_id, field_type.clinic.pet_name]</code> adds one typed field for each entry, named for the last part of the reference. The list takes no per-field overrides. Use a <code>field</code> block for those.</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Attribute</th><th>Meaning</th></tr></thead>
           <tbody>
+            <tr><td><code>type = ...</code></td><td>Required. A built-in type string or a <code>field_type</code> reference</td></tr>
             <tr><td><code>id_attribute = true</code></td><td>This field identifies the record</td></tr>
             <tr><td><code>optional = true</code></td><td>The field can be absent (fields are required by default)</td></tr>
             <tr><td><code>pii = true</code></td><td>Personally identifiable information</td></tr>
-            <tr><td><code>cardinality = "List"</code></td><td>The field is list-valued</td></tr>
-            <tr><td><code>example = ...</code></td><td>A native HCL literal, checked against the effective type</td></tr>
+            <tr><td><code>cardinality = "Single"</code> or <code>"List"</code></td><td>The field holds one value or a list</td></tr>
+            <tr><td><code>example = ...</code></td><td>A native HCL literal, checked against the effective type and cardinality (<code>EM010</code>)</td></tr>
           </tbody>
         </table>
       </div>
 
-      <div class="section-head" style="margin-top: 36px;"><h2>Workflow status values</h2></div>
-      <p class="prose"><code>created</code>, <code>planned</code>, <code>assigned</code>, <code>in_progress</code>, <code>review</code>, <code>blocked</code>, <code>done</code>, <code>informational</code>.</p>
+      <div class="section-head" style="margin-top: 36px;"><h2>Titles</h2></div>
+      <p class="prose"><code>title</code> is optional literal text. When you omit it, the element has no title. The tool does not make a title from the label, and views show the ID instead. An empty string is a title.</p>
+
+      <div class="section-head" style="margin-top: 36px;"><h2>Screen kinds</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th><code>kind</code></th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><code>"ui"</code> (default)</td><td>A state of a user interface. A person uses it directly.</td></tr>
+            <tr><td><code>"api"</code></td><td>A request to an API, or a response from an API. A client program calls it.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="prose">Another string is <code>EM008</code>. A value that is not a string is <code>EM007</code>. <code>kind</code> on a block other than <code>screen</code> is <code>EM000</code>. An API screen uses the same edges as a UI screen. On an API screen, <code>actor</code> names the actor that calls the API, and <code>api_endpoint</code> is the route. On a command, <code>api_endpoint</code> is not a reason. To give such a command a reason, add an API screen that flows to it:</p>
+      <code-block lang="hcl">
+        board {
+          workflows = [workflow.register_pet]
+        }
+
+        bounded_context "clinic" {
+          event "pet_registered" {
+            field "pet_name" {
+              type = "String"
+            }
+          }
+        }
+
+        actor "clinic_staff" {
+          auth_required = true
+        }
+
+        state_change "register_pet" {
+          screen "register_pet_request" {
+            kind         = "api"
+            api_endpoint = "POST /pets"
+            actor        = actor.clinic_staff
+            to           = [command.register_pet]
+          }
+
+          command "register_pet" {
+            to = [event.clinic.pet_registered]
+
+            field "pet_name" {
+              type = "String"
+            }
+          }
+        }
+      </code-block>
+      <p class="prose">The typed model stores the effective kind of each screen in the field <code>screen_kind</code>. A fact that another system reports, such as a payment webhook, is not an API screen. Model it as an Event of an <code>external = true</code> context and translate it with an <code>automation</code>.</p>
+
+      <div class="section-head" style="margin-top: 36px;"><h2>Status values</h2></div>
+      <p class="prose">Workflow <code>status</code>: <code>created</code>, <code>planned</code>, <code>assigned</code>, <code>in_progress</code>, <code>review</code>, <code>blocked</code>, <code>done</code>, <code>informational</code>.</p>
+      <p class="prose">Hotspot <code>status</code>: <code>open</code> (default) or <code>resolved</code>. An open hotspot produces <code>EM406</code>.</p>
     </div>
   </section>
 
@@ -150,73 +220,106 @@
       <div class="section-head"><h2>Validation profiles</h2></div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Profile</th><th>Judgment diagnostics (EM404, EM406, EM407, the four smells)</th></tr></thead>
+          <thead><tr><th>Profile</th><th><code>EM401</code>–<code>EM403</code>, <code>EM405</code></th><th><code>EM404</code>, <code>EM406</code></th></tr></thead>
           <tbody>
-            <tr><td><code>workshop</code></td><td>Informational</td></tr>
-            <tr><td><code>valid</code> (default)</td><td>Warnings</td></tr>
-            <tr><td><code>strict</code></td><td><code>EM404</code> / <code>EM406</code> / <code>EM407</code> become errors. The four smells stay non-blocking.</td></tr>
+            <tr><td><code>workshop</code></td><td>Information</td><td>Information</td></tr>
+            <tr><td><code>valid</code> (default)</td><td>Warning</td><td>Warning</td></tr>
+            <tr><td><code>strict</code></td><td>Warning</td><td>Error</td></tr>
           </tbody>
         </table>
       </div>
+      <p class="prose">Core diagnostics (<code>EM000</code> to <code>EM303</code>) are errors in every profile, and they stop the typed model. A profile sets only the severity of the judgment signals <code>EM401</code> to <code>EM406</code>. When a model has no core errors, the tool builds the typed model in every profile. A <code>strict</code> error still makes <code>validate</code> exit with code 1.</p>
 
-      <div class="section-head" style="margin-top: 36px;"><h2>Diagnostic families</h2></div>
+      <div class="section-head" style="margin-top: 36px;"><h2>Diagnostic codes</h2></div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Prefix</th><th>Category</th></tr></thead>
+          <thead><tr><th>Code</th><th>Kind</th><th>Condition</th></tr></thead>
           <tbody>
-            <tr><td><code>EM0xx</code></td><td>Structural</td></tr>
-            <tr><td><code>EM1xx</code></td><td>References</td></tr>
-            <tr><td><code>EM2xx</code></td><td>Flow</td></tr>
-            <tr><td><code>EM3xx</code></td><td>Scenarios</td></tr>
-            <tr><td><code>EM4xx</code></td><td>Modeling judgment</td></tr>
+            <tr><td><code>EM000</code></td><td>Core</td><td>HCL syntax or schema error, such as an unsupported block (for example <code>translation</code>), an unsupported attribute, or a missing required attribute</td></tr>
+            <tr><td><code>EM001</code></td><td>Core</td><td>A model file cannot be read, or a folder has no member file</td></tr>
+            <tr><td><code>EM002</code></td><td>Core</td><td>A duplicate identity, or a repeated entry in one chapter</td></tr>
+            <tr><td><code>EM003</code></td><td>Core</td><td>A label is not lower snake case</td></tr>
+            <tr><td><code>EM004</code></td><td>Core</td><td>A block is not allowed in its workflow kind</td></tr>
+            <tr><td><code>EM005</code></td><td>Core</td><td>A chapter lists no workflow</td></tr>
+            <tr><td><code>EM007</code></td><td>Core</td><td>An attribute value has the wrong kind</td></tr>
+            <tr><td><code>EM008</code></td><td>Core</td><td>An enum attribute has an unknown value</td></tr>
+            <tr><td><code>EM009</code></td><td>Core</td><td>A field or subfield has no type or an invalid type, or a <code>field_type</code> has no built-in type</td></tr>
+            <tr><td><code>EM010</code></td><td>Core</td><td>An example does not match its field type or cardinality</td></tr>
+            <tr><td><code>EM014</code></td><td>Core</td><td>A workflow is in two or more chapters</td></tr>
+            <tr><td><code>EM015</code></td><td>Core</td><td>The model has no <code>board</code> block, or more than one</td></tr>
+            <tr><td><code>EM016</code></td><td>Core</td><td>The board lists a workflow more than once</td></tr>
+            <tr><td><code>EM101</code></td><td>Core</td><td>A reference has the wrong form or targets the wrong kind</td></tr>
+            <tr><td><code>EM102</code></td><td>Core</td><td>A reference names no declared element</td></tr>
+            <tr><td><code>EM201</code></td><td>Core</td><td>A flow edge uses a non-canonical spelling or a target kind that the pattern does not allow</td></tr>
+            <tr><td><code>EM301</code></td><td>Core</td><td>A scenario has the wrong number of <code>given</code>, <code>when</code>, or <code>then</code> steps for its pattern or form</td></tr>
+            <tr><td><code>EM302</code></td><td>Core</td><td>A scenario step does not set one target</td></tr>
+            <tr><td><code>EM303</code></td><td>Core</td><td>A scenario step target kind is not allowed for its pattern, form, and step</td></tr>
+            <tr><td><code>EM401</code></td><td>Judgment</td><td>Bed: a screen connects to several commands</td></tr>
+            <tr><td><code>EM402</code></td><td>Judgment</td><td>Left chair: a command emits several events</td></tr>
+            <tr><td><code>EM403</code></td><td>Judgment</td><td>Right chair: a read model consumes several events</td></tr>
+            <tr><td><code>EM404</code></td><td>Judgment</td><td>A command has no reason: no incoming flow and no <code>external_trigger</code></td></tr>
+            <tr><td><code>EM405</code></td><td>Judgment</td><td>Shelf: with two or more workflows, one workflow holds every scenario and the others hold none</td></tr>
+            <tr><td><code>EM406</code></td><td>Judgment</td><td>A hotspot is open</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="prose">Diagnostics print as <code>file:line:column: Severity EMxxx: message</code>. In a folder model, <code>file</code> is the member file that the diagnostic points to.</p>
+      <p class="prose"><code>EM006</code>, <code>EM011</code>, <code>EM012</code>, <code>EM013</code>, and <code>EM407</code> are retired. The tool does not use these codes again. The families are <code>EM0xx</code> structure, <code>EM1xx</code> references, <code>EM2xx</code> flow, <code>EM3xx</code> scenarios, and <code>EM4xx</code> modeling judgment.</p>
+      <p class="prose">Diagnostics print as <code>file:line:column: Severity EMxxx: Summary: Detail</code>. In a folder model, <code>file</code> is the member file that the diagnostic points to.</p>
     </div>
   </section>
 
   <section class="section">
     <div class="wrap">
       <div class="section-head"><h2>CLI commands</h2></div>
+      <p class="prose">In this table, <code>&lt;model&gt;</code> is a <code>.em.hcl</code> file or a folder of <code>.em.hcl</code> files.</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Command</th><th>Does</th></tr></thead>
           <tbody>
-            <tr><td><code>emhcl validate &lt;model.em.hcl | folder&gt;</code></td><td>Validates with the default <code>valid</code> profile</td></tr>
-            <tr><td><code>emhcl validate --profile &lt;workshop|valid|strict&gt; &lt;model.em.hcl | folder&gt;</code></td><td>Validates with an explicit profile</td></tr>
-            <tr><td><code>emhcl diagram &lt;model.em.hcl | folder&gt; -o &lt;file&gt;</code></td><td>Renders a self-contained interactive HTML canvas with chapter navigation and switchable Model, Compact, Storming, and Context Map views (or writes to stdout without <code>-o</code>)</td></tr>
-            <tr><td><code>emhcl serve &lt;model.em.hcl | folder&gt;</code></td><td>Serves the canvas on <code>127.0.0.1:8080</code> and reloads when the model file changes. For a folder, reloads when you add, remove, rename, or edit a member file. An empty folder shows <code>EM001</code>. Options: <code>--addr</code>, <code>--port</code> (<code>0</code> picks a free port), <code>--profile</code></td></tr>
-            <tr><td><code>emhcl fmt -w &lt;model.em.hcl&gt;</code></td><td>Canonicalizes whitespace and attribute order in place. Formats one file. It refuses a folder.</td></tr>
-            <tr><td><code>emhcl export &lt;model.em.hcl | folder&gt; -o &lt;file.json&gt;</code></td><td>Converts a valid model to slice-based Event Modeling JSON. Without <code>-o</code>, writes to stdout. Refuses a target that ends in <code>.em.hcl</code> or is the source file (exit code 2).</td></tr>
-            <tr><td><code>emhcl import &lt;file.json&gt; -o &lt;model.em.hcl&gt;</code></td><td>Converts Event Modeling JSON to one formatted <code>.em.hcl</code> file and validates it (or writes to stdout without <code>-o</code>)</td></tr>
-            <tr><td><code>emhcl version</code></td><td>Prints the installed version</td></tr>
+            <tr><td><code>emhcl validate [--profile workshop|valid|strict] [--format text|json] &lt;model&gt;</code></td><td>Validates the model. The default profile is <code>valid</code>. A valid model prints <code>&lt;path&gt; valid</code>. <code>--format json</code> writes one object with the keys <code>path</code>, <code>profile</code>, <code>has_errors</code>, <code>has_core_errors</code>, and <code>diagnostics</code>.</td></tr>
+            <tr><td><code>emhcl fmt [-w | --check] &lt;model&gt;</code></td><td>Canonicalizes whitespace and attribute order. Without a flag, prints the result. <code>-w</code> rewrites only the files that change. <code>--check</code> writes no file, prints each file that needs formatting, and exits with code 1 when there is one. On a folder, formats each member file. A syntax error in any member changes no file.</td></tr>
+            <tr><td><code>emhcl migrate [-w] &lt;model&gt;</code></td><td>Converts a specification v0.4.0 model to the current language. Adds a <code>board</code>, writes each field type and derived title, and rewrites each <code>translation</code> as <code>automation</code>. Without <code>-w</code>, prints the result. With <code>-w</code>, rewrites the changed files.</td></tr>
+            <tr><td><code>emhcl diff [--format text|json] &lt;base&gt; &lt;head&gt;</code></td><td>Lists the declarations that a change added, removed, or changed, for example <code>changed workflow.register_pet</code>. Compares the typed models, so a moved block or a new layout gives no line. Exits with code 1 when a model has a core error.</td></tr>
+            <tr><td><code>emhcl diagram [--title &lt;text&gt;] &lt;model&gt; -o &lt;file&gt;</code></td><td>Renders a self-contained interactive HTML canvas with chapter navigation and Model, Compact, Storming, Slides, and Context Map views. Without <code>-o</code>, writes to stdout. <code>--title</code> sets the page title. Core errors stop the output. Modeling judgment does not.</td></tr>
+            <tr><td><code>emhcl serve [--addr &lt;host&gt;] [--port &lt;n&gt;] [--profile &lt;p&gt;] &lt;model&gt;</code></td><td>Serves the canvas on <code>127.0.0.1:8080</code> and reloads when the model changes. For a folder, reloads when you add, remove, rename, or edit a member file. <code>--port 0</code> picks a free port. With <code>--profile strict</code>, a banner lists the policy errors.</td></tr>
+            <tr><td><code>emhcl import &lt;file.json&gt; [-o &lt;model.em.hcl&gt;]</code></td><td>Converts Event Modeling JSON to one formatted <code>.em.hcl</code> file and validates it. Without <code>-o</code>, writes to stdout.</td></tr>
+            <tr><td><code>emhcl export &lt;model&gt; [-o &lt;file.json&gt;]</code></td><td>Converts a valid model to slice-based Event Modeling JSON. Without <code>-o</code>, writes to stdout. Refuses a target that ends in <code>.em.hcl</code> or is the source file (exit code 2).</td></tr>
+            <tr><td><code>emhcl version [--format text|json]</code></td><td>Prints the installed version, for example <code>emhcl v0.16.0</code>. <code>--format json</code> prints <code>{"tool": ..., "spec": ...}</code>, where <code>spec</code> is the specification version that the tool implements.</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="prose">JSON conversion is a projection, not a lossless canvas copy. Both commands check the published JSON schema and report faults by JSON path. Warnings identify data with no equivalent, such as layout, canvas IDs, catalog metadata, and hotspots.</p>
-      <p class="prose">Import keeps the declared <code>sliceType</code> and warns when it omits unsupported children or scenarios. IDs, field names, and reusable types can change. Import rejects a slice with two or more actors, even without screens. Export rejects a workflow whose screens reference two or more actors. Neither command chooses an actor for you.</p>
+
+      <div class="section-head" style="margin-top: 36px;"><h2>Exit codes</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><code>0</code></td><td>Success</td></tr>
+            <tr><td><code>1</code></td><td>The model has problems: a core error, a <code>strict</code> policy error, or a file that <code>fmt --check</code> reports</td></tr>
+            <tr><td><code>2</code></td><td>The tool cannot read the command line, for example an unknown flag or profile</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
 
   <section class="section section-alt" id="folder-models">
     <div class="wrap prose">
-      <h2>Folder models</h2>
-      <p>A model is one <code>.em.hcl</code> file or a folder of <code>.em.hcl</code> files. Folder models need specification v0.4.0 and emhcl v0.9.0 or newer. Use a folder when one file becomes too large or when different people own different contexts or workflows.</p>
+      <h2>Board, chapters, and folder models</h2>
+      <p>A model is one <code>.em.hcl</code> file or a folder of <code>.em.hcl</code> files. One-file models and folder models use the same rules. File names and the position of blocks do not change the meaning of a model. Use a folder when one file becomes too large or when different people own different contexts or workflows.</p>
       <ul>
+        <li>Every model has one <code>board</code> block. A missing or repeated board is <code>EM015</code>. A workflow listed twice on the board is <code>EM016</code>. The board can omit workflows. An omitted workflow is off-board: it is valid, and the diagram lists it separately.</li>
+        <li>A <code>chapter</code> is a set of workflows. Its list order has no meaning. An empty chapter is <code>EM005</code>. A workflow in two chapters is <code>EM014</code>. Chapter blocks can be in any member file. Chapters do not change the board, and the board does not change chapters.</li>
         <li>Every regular file directly in the folder that ends in <code>.em.hcl</code> and does not start with <code>.</code> is a member file. A symlink to a file counts. The tool ignores subfolders and other files.</li>
-        <li>The tool sorts member files by name, byte by byte. Model order is file order, then source order in each file. A number prefix such as <code>10-</code> only sets the file order.</li>
-        <li>References resolve across member files. IDs keep their existing scopes, with no file namespace. Duplicate IDs in the same top-level ID space produce <code>EM002</code>. Its detail names the first declaration as <code>file:line:column</code>. Workflow children and fields keep their local scopes.</li>
+        <li>References resolve across member files. IDs keep their existing scopes, with no file namespace. Duplicate IDs in the same top-level ID space produce <code>EM002</code>. Its detail names the first declaration as <code>file:line:column</code>.</li>
         <li>Each file must parse on its own. A block cannot span files. A <code>bounded_context</code> with all its events, aggregates, and field types is in one file.</li>
-        <li>With two or more member files, all <code>chapter</code> blocks are in one file. Splitting them produces <code>EM013</code>. A workflow in two chapters produces <code>EM014</code>. Chapter source order, then each <code>workflows</code> list, sets board order. The contiguous-range rule <code>EM006</code> does not apply.</li>
-        <li>With two or more member files, a workflow in no chapter produces <code>EM407</code>. It is information in <code>workshop</code>, a warning in <code>valid</code>, and an error in <code>strict</code>. These workflows follow all chaptered workflows in model order, even when no chapters exist.</li>
         <li>A folder with no member file is error <code>EM001</code>. A folder with one member file behaves like that file.</li>
       </ul>
-      <p>The language has no <code>include</code> or <code>import</code> block, no subfolder members, and no references across folders. The <a href="/examples/pet-clinic.html">pet clinic example</a> shows one layout:</p>
+      <p>The language has no <code>include</code> or <code>import</code> block, no subfolder members, and no references across folders. The <a href="/examples/pet-clinic.html">pet clinic example</a> shows one layout. The number prefixes only keep the files in reading order for people:</p>
       <code-block lang="text">
         pet-clinic/
-          00-catalog.em.hcl       # bounded_context, actor, team, system
-          01-chapters.em.hcl      # every chapter block
+          00-catalog.em.hcl       # board, bounded_context, actor, team, system
+          01-chapters.em.hcl      # chapter blocks
           10-register-pet.em.hcl  # one workflow per file
           11-pet-directory.em.hcl
           12-notify-owner.em.hcl
@@ -232,7 +335,9 @@
       <p><code>emhcl import</code> and <code>emhcl export</code> convert between <code>.em.hcl</code> and slice-based <a href="https://github.com/dilgerma/event-modeling-spec">Event Modeling JSON</a>. JSON conversion is a tool feature, not part of the language specification.</p>
       <ul>
         <li>Both commands check the JSON against the published schema. An error names the JSON path of the fault.</li>
-        <li>The conversion is not lossless. Export drops chapters, hotspots, teams, systems, and read-model questions. Import drops original canvas IDs and field-name spellings. Each command writes warnings for each detail the other format cannot hold.</li>
+        <li>Import writes a <code>board</code> that lists every slice in document order. Slice type <code>TRANSLATION</code> becomes an <code>automation</code>.</li>
+        <li>Export writes the board workflows in board order, then the off-board workflows in ID order, with a warning that names them. An <code>automation</code> with an edge from an Event of an external context exports as <code>TRANSLATION</code>.</li>
+        <li>The conversion is not lossless. Export drops chapters, hotspots, teams, systems, read-model questions, <code>external_trigger</code>, and screen <code>kind = "api"</code>. Import drops original canvas IDs and field-name spellings. Each command writes a warning for each detail that the other format cannot hold.</li>
         <li>Both commands fail when a workflow or slice has two or more actors. They do not choose an actor for you.</li>
         <li>If the imported model has validation errors, <code>import</code> still writes the source for repair and exits with code 1.</li>
       </ul>
@@ -248,12 +353,13 @@
           <tbody>
             <tr><td><code>Model</code></td><td>Left-to-right Event Model of the selected chapter with screen, processor, model, and event swimlanes and typed flow arrows</td></tr>
             <tr><td><code>Compact</code></td><td>Same slices and cards as Model, with one events row. Dashed colored boxes show bounded contexts (pink shows external contexts). The aggregate sticky note sits on top of its event.</td></tr>
-            <tr><td><code>Storming</code></td><td>Event Model in Event Storming style: one row per workflow with sticky notes for screens, commands, aggregates, events, automations or translations, and read models</td></tr>
+            <tr><td><code>Storming</code></td><td>Event Model in Event Storming style: one row per workflow with sticky notes for screens, commands, aggregates, events, automations, and read models</td></tr>
+            <tr><td><code>Slides</code></td><td>One slice per slide for readers who do not know Event Modeling: the screen, the scenarios as Given / When / Then examples, open hotspots, and the elements with their fields</td></tr>
             <tr><td><code>Context Map</code> (experimental)</td><td>Whole-model bounded-context map from cross-context event consumption, with upstream and downstream relationships</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="prose">One generated file carries all four views. Chapters are the top-level navigation: a model with several chapters opens an <strong>All chapters</strong> overview, the chapter picker and its previous and next arrows switch chapters, and Model, Compact, and Storming show only the selected chapter. A model without chapters shows the whole model. Status, context, and field-detail options are under <strong>Filters</strong>. The Model and Storming views support zoom. Zoom with the toolbar, Ctrl/⌘ + scroll, or the <code>+</code>, <code>-</code>, <code>0</code>, and <code>F</code> keys.</p>
+      <p class="prose">One generated file carries all five views. Model, Compact, Storming, and Slides follow the board order. Off-board workflows are listed separately under <strong>Off-board workflows</strong>. Chapters are the top-level navigation: a model with several chapters opens an <strong>All chapters</strong> overview, and the chapter picker and its previous and next arrows switch chapters. A model without chapters shows the whole board in every view. An API screen shows its route instead of a wireframe. Status, context, and field-detail options are under <strong>Filters</strong>. The Model and Storming views support zoom. Zoom with the toolbar, Ctrl/⌘ + scroll, or the <code>+</code>, <code>-</code>, <code>0</code>, and <code>F</code> keys.</p>
     </div>
   </section>
 
@@ -262,6 +368,7 @@
       <div class="section-head"><h2>More</h2></div>
       <div class="btn-row">
         <a class="btn btn-primary" href="https://github.com/event-modeling-hcl/spec">Normative specification</a>
+        <a class="btn" href="https://github.com/event-modeling-hcl/spec/blob/main/guides/migrating-v0.4.md">Migrate a v0.4.0 model</a>
         <a class="btn" href="https://github.com/event-modeling-hcl/eventmodeling-hcl">Tool repository</a>
         <a class="btn" href="https://github.com/event-modeling-hcl/eventmodeling-hcl/releases">Downloads</a>
       </div>

@@ -11,10 +11,10 @@
   } catch (e) {}
 </script>
 <title>Course subscriptions</title>
-<meta name="description" content="A .em.hcl model for registrar translation, course administration, and student course subscriptions.">
+<meta name="description" content="A .em.hcl model for registrar event import, course administration, and student course subscriptions.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Course subscriptions (emhcl examples)">
-<meta property="og:description" content="Registrar translation, course administration, and student subscriptions in one Event Model.">
+<meta property="og:description" content="Registrar event import, course administration, and student subscriptions in one Event Model.">
 <meta property="og:image" content="/assets/img/og-default.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -33,8 +33,8 @@
       <div class="prose" style="margin: 0;">
         <div class="eyebrow">Examples</div>
         <h1>Course subscriptions</h1>
-        <p class="lede">Registrar translation, course administration, and student subscriptions.</p>
-        <div class="pattern-pills-standalone" style="margin-top: 6px;"><code>translation</code><code>state_change</code><code>state_view</code></div>
+        <p class="lede">Registrar event import, course administration, and student subscriptions.</p>
+        <div class="pattern-pills-standalone" style="margin-top: 6px;"><code>automation</code><code>state_change</code><code>state_view</code></div>
       </div>
     </div>
   </section>
@@ -55,7 +55,7 @@
   <section class="section section-alt">
     <div class="wrap prose">
       <h2>What it covers</h2>
-      <p>An external Registrar event is translated into the Course Subscriptions context. A course manager registers courses, views the course catalog, and changes capacity. A student views the available courses, subscribes, reviews their subscriptions, and unsubscribes. The manager view and the student view are separate workflows.</p>
+      <p>An automation consumes an event from the external Registrar context and translates it into the Course Subscriptions context. A course manager registers courses, views the course catalog, and changes capacity. A student views the available courses, subscribes, reviews their subscriptions, and unsubscribes. The manager view and the student view are separate workflows.</p>
       <p>The model contains two bounded contexts, two actors, eight workflows, and 28 scenarios. The external Registrar event also shows the renderer's external-event notation.</p>
       <div class="btn-row"><a class="btn btn-primary" href="/examples/models/course_subscriptions.em.hcl">View source</a></div>
     </div>

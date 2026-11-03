@@ -62,6 +62,16 @@
       <code-block lang="hcl">
         # Pet-management model using bounded-context-owned events and reusable field types.
 
+        board {
+          workflows = [
+            workflow.list_pet_types,
+            workflow.add_pet,
+            workflow.load_pet_details,
+            workflow.edit_pet,
+            workflow.show_owner_details,
+          ]
+        }
+
         actor "clinic_staff" {
           title         = "Clinic staff"
           auth_required = true
@@ -71,6 +81,7 @@
           title = "Owner Management"
 
           aggregate "owner" {
+            title = "Owner"
           }
 
           field_type "owner_id" {
@@ -113,6 +124,7 @@
           title = "Pet Management"
 
           aggregate "pet" {
+            title = "Pet"
           }
 
           field_type "pet_id" {
@@ -222,6 +234,7 @@
           title = "Pet Type Catalog"
 
           aggregate "pet_type" {
+            title = "Pet Type"
           }
 
           field_type "pet_type_id" {

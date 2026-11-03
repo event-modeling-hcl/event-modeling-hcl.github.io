@@ -82,22 +82,26 @@
   <section class="section section-alt">
     <div class="wrap prose">
       <h2>What the validator rejects outright</h2>
-      <p>The default profile rejects these problems: invalid HCL and unknown syntax, missing required semantic attributes, wrong literal types, invalid examples, duplicate identities, unresolved references, and references of the wrong kind. It also rejects non-canonical flow directions, invalid pattern-specific scenario structure, non-contiguous chapters in a one-file model, and incorrect Automation/Translation externality. In a folder model, it also rejects chapters in several files and a workflow in two chapters. Diagnostics use stable <code>EMxxx</code> codes. <code>EM0xx</code> codes report structure, <code>EM1xx</code> references, <code>EM2xx</code> flow, <code>EM3xx</code> scenarios, and <code>EM4xx</code> modeling judgment.</p>
+      <p>All profiles reject these core problems: invalid HCL and unknown syntax, missing required semantic attributes, wrong literal types, invalid examples, duplicate identities, unresolved references, and references of the wrong kind. They also reject a missing or repeated <code>board</code> (<code>EM015</code>), a workflow listed twice on the board (<code>EM016</code>), and a field without a valid type (<code>EM009</code>). Other core problems are non-canonical flow directions, invalid pattern-specific scenario structure, an empty chapter (<code>EM005</code>), and a workflow in two chapters (<code>EM014</code>). File layout and block order have no meaning. A workflow that is not on the board is valid. Diagnostics use stable <code>EMxxx</code> codes. <code>EM0xx</code> codes report structure, <code>EM1xx</code> references, <code>EM2xx</code> flow, <code>EM3xx</code> scenarios, and <code>EM4xx</code> modeling judgment. The codes <code>EM006</code>, <code>EM011</code>, <code>EM012</code>, <code>EM013</code>, and <code>EM407</code> are retired.</p>
 
       <h2>What it leaves to human judgment</h2>
-      <p>Some checks need judgment, not hard rejection. These are a Command with no incoming flow, API endpoint, or trigger (<code>EM404</code>), the four anti-patterns above, an open hotspot (<code>EM406</code>), and a workflow in no chapter in a folder model (<code>EM407</code>). Three profiles decide how strict the checks are:</p>
+      <p>Some checks need judgment, not hard rejection. These are a Command with no incoming flow and no <code>external_trigger</code> (<code>EM404</code>), the four anti-patterns above, and an open hotspot (<code>EM406</code>). An <code>api_endpoint</code> on a Command does not give it a reason. If a client sends the Command through an API, add an API screen that flows to it. Three profiles set the severity of these checks. A profile never decides whether tools get the model. A tool that renders or exports still gets the typed model when only a profile rejects it.</p>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Profile</th><th>Judgment diagnostics (EM404, EM406, EM407, the four smells)</th></tr></thead>
+          <thead><tr><th>Profile</th><th>Four smells (EM401, EM402, EM403, EM405)</th><th>EM404, EM406</th></tr></thead>
           <tbody>
-            <tr><td><code>workshop</code></td><td>Informational. Incomplete discovery stays easy to work with.</td></tr>
-            <tr><td><code>valid</code> (default)</td><td>Warnings</td></tr>
-            <tr><td><code>strict</code></td><td><code>EM404</code>, <code>EM406</code>, and <code>EM407</code> become errors. The four smells stay non-blocking judgment signals.</td></tr>
+            <tr><td><code>workshop</code></td><td>Info</td><td>Info</td></tr>
+            <tr><td><code>valid</code> (default)</td><td>Warning</td><td>Warning</td></tr>
+            <tr><td><code>strict</code></td><td>Warning</td><td>Error</td></tr>
           </tbody>
         </table>
       </div>
-      <p>This Command has no incoming flow, API endpoint, or trigger:</p>
+      <p>This Command has no incoming flow and no trigger:</p>
       <code-block lang="hcl">
+        board {
+          workflows = [workflow.schedule_appointment]
+        }
+
         bounded_context "appointments" {
           event "appointment_added" {
           }
@@ -110,10 +114,10 @@
         }
       </code-block>
       <p>Under the default <code>valid</code> profile, this is a warning and the file still validates:</p>
-      <code-block lang="text">em404-test.em.hcl:6:3: Warning EM404: Every command has a reason: command "add_appointment" has no incoming flow, api_endpoint, or external_trigger.
+      <code-block lang="text">em404-test.em.hcl:11:3: Warning EM404: Every command has a reason: command "add_appointment" has no incoming flow or external_trigger.
 em404-test.em.hcl valid</code-block>
       <p>Under <code>--profile strict</code>, the same diagnostic becomes a hard error, and the validator reports nothing as valid:</p>
-      <code-block lang="text">em404-test.em.hcl:6:3: Error EM404: Every command has a reason: command "add_appointment" has no incoming flow, api_endpoint, or external_trigger.</code-block>
+      <code-block lang="text">em404-test.em.hcl:11:3: Error EM404: Every command has a reason: command "add_appointment" has no incoming flow or external_trigger.</code-block>
       <p>A shipped example also produces a right-chair warning:</p>
       <code-block lang="text">pet-management-detailed.em.hcl:459:12: Warning EM403: Right chair anti-pattern: readmodel "owner_details" connects to several events; review whether the workflow contains more than one business capability.
 pet-management-detailed.em.hcl valid</code-block>
@@ -175,7 +179,7 @@ pet-management-detailed.em.hcl valid</code-block>
 }</code-block>
         <details class="reveal">
           <summary>Answer</summary>
-          <p><span class="verdict verdict-invalid">Invalid</span> A <code>readmodel</code> block exists only inside a <code>state_view</code>, <code>automation</code>, or <code>translation</code> workflow. Even if you declare it correctly, it needs a concrete <code>question</code>.</p>
+          <p><span class="verdict verdict-invalid">Invalid</span> A <code>readmodel</code> block exists only inside a <code>state_view</code> or <code>automation</code> workflow. Even if you declare it correctly, it needs a concrete <code>question</code>.</p>
         </details>
       </div>
 
@@ -190,16 +194,38 @@ pet-management-detailed.em.hcl valid</code-block>
 
       <div class="quiz-item">
         <span class="quiz-kicker">E</span>
-        <code-block lang="text">A translation consumes only event.orders.order_placed,
-where "orders" is an internal bounded context.</code-block>
+        <code-block lang="text">board {
+  workflows = [workflow.register_pet, workflow.pet_directory, workflow.register_pet]
+}</code-block>
         <details class="reveal">
           <summary>Answer</summary>
-          <p><span class="verdict verdict-invalid">Invalid</span> A Translation must consume at least one Event from an external bounded context. The validator checks this externality rule directly.</p>
+          <p><span class="verdict verdict-invalid">Invalid</span> The board lists <code>register_pet</code> twice. The validator reports <code>EM016</code>. Each workflow can appear on the board at most once.</p>
         </details>
       </div>
 
       <div class="quiz-item">
         <span class="quiz-kicker">F</span>
+        <code-block lang="text">translation "translate_payment" {
+  ...
+}</code-block>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p><span class="verdict verdict-invalid">Invalid</span> The language has no <code>translation</code> block. The validator reports <code>EM000</code>. Write an <code>automation</code> that consumes an Event of an <code>external = true</code> bounded context. Run <code>emhcl migrate</code> to convert an old v0.4.0 model.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">G</span>
+        <code-block lang="text">field "pet_name" {
+}</code-block>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p><span class="verdict verdict-invalid">Invalid</span> Every field needs a <code>type</code>. The tool does not guess a type from the name. The validator reports <code>EM009</code>.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">H</span>
         <code-block lang="text">A State Change scenario contains two "when" blocks.</code-block>
         <details class="reveal">
           <summary>Answer</summary>

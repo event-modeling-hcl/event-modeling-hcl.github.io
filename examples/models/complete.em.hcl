@@ -1,5 +1,14 @@
 # Complete executable reference for Event Modeling HCL with bounded contexts.
 
+board {
+  workflows = [
+    workflow.register_pet,
+    workflow.pet_directory,
+    workflow.notify_owner,
+    workflow.import_partner_pet,
+  ]
+}
+
 team "clinic_team" {
   title = "Clinic team"
 }
@@ -121,12 +130,15 @@ bounded_context "clinic" {
   }
 
   event "external_pet_imported" {
+    title = "External Pet Imported"
+
     field "pet_id" {
       type = field_type.pet_id
     }
   }
 
   event "owner_registered" {
+    title = "Owner Registered"
   }
 }
 
@@ -145,17 +157,20 @@ bounded_context "partner" {
 }
 
 state_change "register_pet" {
+  title       = "Register Pet"
   description = "Register a new pet for an owner."
   owner       = bounded_context.clinic
   status      = "created"
 
   screen "pet_screen" {
     title  = "Pet screen"
+    kind   = "ui"
     actor  = actor.clinic_staff
     fields = [field_type.clinic.pet_name]
     to     = [command.register_pet_command]
 
     field "pet_id" {
+      type = field_type.clinic.pet_id
     }
   }
 
@@ -283,7 +298,7 @@ automation "notify_owner" {
   }
 }
 
-translation "import_partner_pet" {
+automation "import_partner_pet" {
   title       = "Import partner pet"
   description = "Translate the partner contract into the clinic language."
 

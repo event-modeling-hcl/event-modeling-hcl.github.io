@@ -47,12 +47,13 @@
           <tbody>
             <tr><td>State Change</td><td>Event</td><td>Command</td><td>Event or Error</td><td>zero or more <code>given</code>, one <code>when</code>, one or more <code>then</code></td></tr>
             <tr><td>State View</td><td>Event</td><td>none</td><td>Read Model or Error</td><td>one or more <code>given</code>, zero <code>when</code>, one or more <code>then</code></td></tr>
-            <tr><td>Automation / Translation</td><td>Event or Read Model</td><td>Processor or Command</td><td>Event or Error</td><td>one <code>when</code>, one or more <code>then</code></td></tr>
+            <tr><td>Automation, action form</td><td>Event or Read Model</td><td>Processor or Command</td><td>Event or Error</td><td>zero or more <code>given</code>, one <code>when</code>, one or more <code>then</code></td></tr>
+            <tr><td>Automation, view form</td><td>Event</td><td>none</td><td>Read Model of the same Automation, or Error</td><td>one or more <code>given</code>, zero <code>when</code>, one or more <code>then</code></td></tr>
           </tbody>
         </table>
       </div>
       <p class="prose">Each step has one typed target. An <code>error</code> target contains a literal string.</p>
-      <p class="prose">The <a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md#scenarios">v0.4.0 specification</a> defines these HCL rules. Canvas examples in the methodology are conceptual, not alternative grammar.</p>
+      <p class="prose">The <a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md#scenarios">v0.7.0 specification</a> defines these HCL rules. Canvas examples in the methodology are conceptual, not alternative grammar. A Translation is an <code>automation</code>, so the Automation rules apply to it.</p>
     </div>
   </section>
 
@@ -64,6 +65,10 @@
 When  Command
 Then  Event or Error</code-block>
       <code-block lang="hcl">
+        board {
+          workflows = [workflow.add_pet]
+        }
+
         bounded_context "owner_management" {
           event "owner_registered" {
           }
@@ -100,6 +105,10 @@ Then  Event or Error</code-block>
       </code-block>
       <p>An error path uses a different <code>then</code> target. An optional <code>comment</code> records the business rule:</p>
       <code-block lang="hcl">
+        board {
+          workflows = [workflow.add_pet]
+        }
+
         bounded_context "pet_management" {
           event "pet_added" {
           }
@@ -135,6 +144,10 @@ Then  Event or Error</code-block>
 Then  Read Model or Error</code-block>
       <p>For example: <em>given Student Registered, then Students to Welcome</em>.</p>
       <code-block lang="hcl">
+        board {
+          workflows = [workflow.welcome_students]
+        }
+
         bounded_context "students" {
           event "student_registered" {
           }
@@ -160,9 +173,14 @@ Then  Read Model or Error</code-block>
       <callout kind="rule"><p>A State View has one or more Event <code>given</code> steps, no <code>when</code>, and one or more Read Model or Error <code>then</code> steps.</p></callout>
       <p>If you work from an older draft, read the <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/migrating-v0.2.md">migration guide</a> for the removed Query form.</p>
 
-      <h2>Automation / Translation scenarios</h2>
-      <p>The <code>given</code> step targets an Event or Read Model. The <code>when</code> step targets a Processor or Command. The <code>then</code> step targets an Event or Error.</p>
+      <h2>Automation scenarios</h2>
+      <p>An Automation scenario has two forms. The number of <code>when</code> steps selects the form. A Translation is an Automation, so it uses the same two forms.</p>
+      <p>An action form scenario has one <code>when</code> step. It states what follows when the Processor or the Command acts. The <code>given</code> step targets an Event or Read Model. The <code>when</code> step targets a Processor or Command. The <code>then</code> step targets an Event or Error.</p>
       <code-block lang="hcl">
+        board {
+          workflows = [workflow.add_weather_forecast]
+        }
+
         bounded_context "appointments" {
           event "appointment_added" {
           }
@@ -204,13 +222,70 @@ Then  Read Model or Error</code-block>
           }
         }
       </code-block>
+      <p>A view form scenario has no <code>when</code> step. It states the content of a Read Model of the same Automation after the given Events. It does not run the Processor and does not issue a Command. Use it to specify the todo list. Set <code>expect_empty_list = true</code> to state that the list is empty.</p>
+      <code-block lang="hcl">
+        board {
+          workflows = [workflow.add_weather_forecast]
+        }
+
+        bounded_context "appointments" {
+          event "appointment_added" {
+          }
+        }
+
+        bounded_context "weather" {
+          event "weather_predicted_for_appointment" {
+          }
+        }
+
+        automation "add_weather_forecast" {
+          readmodel "appointments_without_weather_forecast" {
+            question = "Which appointments still need a weather forecast?"
+            from     = [event.appointments.appointment_added, event.weather.weather_predicted_for_appointment]
+            to       = [processor.weather_processor]
+          }
+
+          processor "weather_processor" {
+            to = [command.add_weather_forecast]
+          }
+
+          command "add_weather_forecast" {
+            to = [event.weather.weather_predicted_for_appointment]
+          }
+
+          scenario "new_appointment_needs_forecast" {
+            given {
+              event = event.appointments.appointment_added
+            }
+
+            then {
+              readmodel = readmodel.appointments_without_weather_forecast
+            }
+          }
+
+          scenario "forecast_removes_appointment_from_list" {
+            given {
+              event = event.appointments.appointment_added
+            }
+
+            given {
+              event = event.weather.weather_predicted_for_appointment
+            }
+
+            then {
+              expect_empty_list = true
+              readmodel         = readmodel.appointments_without_weather_forecast
+            }
+          }
+        }
+      </code-block>
       <h2>Cover behavior, not just syntax</h2>
       <p>For each Command, review success, invalid input, invalid state, duplicate actions, alternative outcomes, external failure, and compensation. Write each applicable case.</p>
       <p>Use the actual business thresholds and concrete field values. Explain why a case cannot occur instead of inventing a rule.</p>
       <p>Review Read Models separately, including todo lists. Cover population, updates, and removal from their source Events.</p>
       <p>The methodology also uses storylines for lifecycles. HCL has no <code>storyline</code> block. Use several legal scenarios and <code>comment</code> blocks to explain related transitions.</p>
-      <p>A canvas automation can describe an empty When and a dispatched Command in Then. Native HCL requires one Processor or Command <code>when</code>, then an Event or Error.</p>
-      <p>Do not invent <code>query</code> or <code>expect_empty_list</code> attributes. A rejected Command uses an Error target, not an empty-list assertion. Record a tracked business failure as an Event.</p>
+      <p>A canvas automation can describe an empty When and a dispatched Command in Then. Native HCL has no such form. An action form scenario requires one Processor or Command <code>when</code>, then an Event or Error. A view form scenario has no <code>when</code> and ends in a Read Model or Error.</p>
+      <p>Do not invent a <code>query</code> attribute. A rejected Command uses an Error target, not an empty-list assertion. Use <code>expect_empty_list</code> only on a Read Model <code>then</code> step. Record a tracked business failure as an Event.</p>
       <p>See <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/EVENT_MODELING_METHODOLOGY.md#9-deep-dive-specifications-gwt-and-storylines">methodology scenario coverage</a> for discovery questions. Keep forms that HCL cannot express in explanatory prose, not invented syntax.</p>
 
     </div>
@@ -248,6 +323,10 @@ Then  Read Model or Error</code-block>
       <details class="reveal">
         <summary>Answer</summary>
         <code-block lang="hcl">
+          board {
+            workflows = [workflow.show_pet_details]
+          }
+
           bounded_context "pet_management" {
             event "pet_added" {
             }

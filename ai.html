@@ -50,7 +50,7 @@
       <div class="section-head"><h2>Works today</h2></div>
       <div class="loop-steps">
         <div class="card"><h3>1. Draft</h3><p>Describe the events, actors, ownership, and workflow.</p></div>
-        <div class="card"><h3>2. Validate</h3><p>Run <code>emhcl validate</code>.</p></div>
+        <div class="card"><h3>2. Validate</h3><p>Run <code>emhcl fmt -w</code>, then <code>emhcl validate</code>.</p></div>
         <div class="card"><h3>3. Fix</h3><p>Use the source position and <code>EMxxx</code> diagnostic.</p></div>
         <div class="card"><h3>4. Diagram</h3><p>Render the model and review its causal shape.</p></div>
         <div class="card"><h3>5. Review</h3><p>A person checks whether it describes the business.</p></div>
@@ -58,8 +58,17 @@
       <callout kind="warn">
         <p>Validation catches language and model-structure errors. The default <code>valid</code> profile permits modeling warnings. Even <code>strict</code> validation does not prove that a model follows the method or describes the business correctly.</p>
       </callout>
-      <p class="prose">Give the agent <a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md">Specification v0.4.0</a> for syntax and the <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/EVENT_MODELING_METHODOLOGY.md">methodology guide</a> for human review. The methodology is conceptual, not another grammar. Do not invent <code>query</code>, <code>storyline</code>, or <code>linked_copy</code> blocks. Field <code>mapping</code> records metadata, not executable lineage checks.</p>
-      <p class="prose">For a folder model, validate the folder, not each file in isolation. Use the diagnostic's file, line, column, and code to fix the source. Keep whole blocks intact, keep chapters in one file, and format each member file separately.</p>
+      <p class="prose">Give the agent <a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md">Specification v0.7.0</a> for syntax and the <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/EVENT_MODELING_METHODOLOGY.md">methodology guide</a> for human review. The methodology is conceptual, not another grammar. Do not invent <code>query</code>, <code>storyline</code>, <code>note</code>, <code>linked_copy</code>, or <code>translation</code> blocks. A translation is an <code>automation</code> that consumes an event of an <code>external = true</code> bounded context. Field <code>mapping</code> records metadata, not executable lineage checks. Do not add a <code>mapping</code> to a new model.</p>
+      <h3 class="prose">Use the agent skill</h3>
+      <p class="prose">The tool repository contains an <a href="https://github.com/event-modeling-hcl/eventmodeling-hcl/tree/main/.agents/skills/event-modeling-hcl">agent skill for Event Modeling HCL</a>. Give it to your coding agent. The skill teaches specification v0.7.0. It needs emhcl v0.16.0 or newer, because older releases implement older specification versions. Its front matter states these facts in <code>metadata.spec_version</code> and <code>metadata.emhcl_min</code>. To see the versions that a binary implements, run <code>emhcl version --format json</code>.</p>
+      <p class="prose">The skill runs three gates in this order. A gate passes only when its command exits with code 0. If a gate fails, the gates after it do not run. After each edit, start again at the first gate.</p>
+      <code-block lang="text">
+        emhcl fmt -w model.em.hcl                     # 1. formatted
+        emhcl validate model.em.hcl                   # 2. valid: a workshop draft is done here
+        emhcl validate --profile strict model.em.hcl  # 3. implementation-ready
+      </code-block>
+      <p class="prose">The <code>strict</code> profile fails on an open hotspot (<code>EM406</code>) and on a command without a reason (<code>EM404</code>). Do not let the agent invent a business rule to make <code>strict</code> pass. Keep the hotspot and call the model a workshop draft. For CI and scripts, <code>emhcl validate --format json</code> writes the diagnostics as one JSON object. <code>emhcl fmt --check</code> reports files that need formatting and changes no file.</p>
+      <p class="prose">For a folder model, validate the folder, not each file in isolation. Use the diagnostic's file, line, column, and code to fix the source. Keep whole blocks intact. Put each block in any member file: file names and block positions do not change the model. <code>emhcl fmt -w</code> on the folder formats each member file.</p>
       <p class="prose">Workflow <code>status</code> records progress: <code>created</code>, <code>planned</code>, <code>assigned</code>, <code>in_progress</code>, <code>review</code>, <code>blocked</code>, <code>done</code>, or <code>informational</code>. A status is not a validator verdict. Do not mark a workflow <code>done</code> only because validation passes.</p>
     </div>
   </section>
@@ -78,7 +87,7 @@
       <ul class="prompt-list">
         <li>
           <strong>Draft a model</strong>
-          <code-block lang="text">Here are the business Events for {domain}: {list}. Draft a .em.hcl model using Specification v0.4.0. Choose a workflow pattern for each slice and add native scenarios. Run emhcl validate on the whole model. Report warnings, assumptions, and open business questions for human review.</code-block>
+          <code-block lang="text">Here are the business Events for {domain}: {list}. Use the event-modeling-hcl agent skill to draft a .em.hcl model for Specification v0.7.0. Put every story workflow on the board. Give every field a type. Choose a workflow pattern for each slice and add native scenarios. Run emhcl fmt -w, then emhcl validate on the whole model. Report warnings, assumptions, and open business questions for human review.</code-block>
         </li>
         <li>
           <strong>Fix a validator error</strong>
