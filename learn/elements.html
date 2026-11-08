@@ -32,7 +32,7 @@
   <section class="hero" style="padding-bottom: 8px; text-align: left;">
     <div class="wrap">
       <div class="prose" style="margin: 0;">
-        <div class="eyebrow">Learn · 01 of 5</div>
+        <div class="eyebrow">Learn · 01 of 6</div>
         <h1>The five elements</h1>
         <p class="lede">Five pieces appear across the four workflow patterns.</p>
       </div>
@@ -237,7 +237,7 @@
 
       <h2>Fields need a source</h2>
       <p>Trace each field across the connected flow: Screen input, Command, Event, Read Model, and displayed output. Keep names consistent or document a rename.</p>
-      <p>Document calculations and system-filled values with <code>description</code>. Use <code>generated = true</code> for system-filled values, not user input.</p>
+      <p>Document calculations and system-filled values with <code>description</code>. Use <code>generated = true</code> for system-filled values, not user input. A <code>field_source</code> block states which fields a value comes from. See <a href="/learn/facts.html#field-sources">Field references and field sources</a>.</p>
       <p>The method uses mapping vocabulary to explain lineage. It is not a validated HCL mini-language. Do not encode <code>session:</code>, <code>latest:</code>, or <code>derived:</code> expressions in a <code>mapping</code> attribute.</p>
       <p>If a source is missing, inspect connected fields before adding data. Record a genuine unknown as a <code>hotspot</code>.</p>
       <p>See <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/EVENT_MODELING_METHODOLOGY.md#2-building-blocks--elements-naming-fields">the methodology on elements and fields</a> for the full review.</p>

@@ -32,7 +32,7 @@
   <section class="hero" style="padding-bottom: 8px; text-align: left;">
     <div class="wrap">
       <div class="prose" style="margin: 0;">
-        <div class="eyebrow">Learn · 05 of 5</div>
+        <div class="eyebrow">Learn · 06 of 6</div>
         <h1>Quality: smells, errors, and warnings</h1>
         <p class="lede">The validator checks structure. Business clarity still requires judgment.</p>
       </div>
@@ -82,7 +82,7 @@
   <section class="section section-alt">
     <div class="wrap prose">
       <h2>What the validator rejects outright</h2>
-      <p>All profiles reject these core problems: invalid HCL and unknown syntax, missing required semantic attributes, wrong literal types, invalid examples, duplicate identities, unresolved references, and references of the wrong kind. They also reject a missing or repeated <code>board</code> (<code>EM015</code>), a workflow listed twice on the board (<code>EM016</code>), and a field without a valid type (<code>EM009</code>). Other core problems are non-canonical flow directions, invalid pattern-specific scenario structure, an empty chapter (<code>EM005</code>), and a workflow in two chapters (<code>EM014</code>). File layout and block order have no meaning. A workflow that is not on the board is valid. Diagnostics use stable <code>EMxxx</code> codes. <code>EM0xx</code> codes report structure, <code>EM1xx</code> references, <code>EM2xx</code> flow, <code>EM3xx</code> scenarios, and <code>EM4xx</code> modeling judgment. The codes <code>EM006</code>, <code>EM011</code>, <code>EM012</code>, <code>EM013</code>, and <code>EM407</code> are retired.</p>
+      <p>All profiles reject these core problems: invalid HCL and unknown syntax, missing required semantic attributes, wrong literal types, invalid examples, duplicate identities, unresolved references, and references of the wrong kind. They also reject a missing or repeated <code>board</code> (<code>EM015</code>), a workflow listed twice on the board (<code>EM016</code>), and a field without a valid type (<code>EM009</code>). Other core problems are non-canonical flow directions, invalid pattern-specific scenario structure, an empty chapter (<code>EM005</code>), and a workflow in two chapters (<code>EM014</code>). The <a href="/learn/facts.html">method facts</a> add these core problems: a lifecycle that is not valid (<code>EM017</code>), an Event without the identity field of its aggregate (<code>EM018</code>), a field source that is not valid (<code>EM202</code>), a scenario attribute that does not fit the scenario form (<code>EM304</code>), and a scenario that both issues and does not issue one Command (<code>EM305</code>). File layout and block order have no meaning. A workflow that is not on the board is valid. Diagnostics use stable <code>EMxxx</code> codes. <code>EM0xx</code> codes report structure, <code>EM1xx</code> references, <code>EM2xx</code> flow, <code>EM3xx</code> scenarios, and <code>EM4xx</code> modeling judgment. The codes <code>EM006</code>, <code>EM011</code>, <code>EM012</code>, <code>EM013</code>, and <code>EM407</code> are retired.</p>
 
       <h2>What it leaves to human judgment</h2>
       <p>Some checks need judgment, not hard rejection. These are a Command with no incoming flow and no <code>external_trigger</code> (<code>EM404</code>), the four anti-patterns above, and an open hotspot (<code>EM406</code>). An <code>api_endpoint</code> on a Command does not give it a reason. If a client sends the Command through an API, add an API screen that flows to it. Three profiles set the severity of these checks. A profile never decides whether tools get the model. A tool that renders or exports still gets the typed model when only a profile rejects it.</p>
@@ -121,19 +121,20 @@ em404-test.em.hcl valid</code-block>
       <p>A shipped example also produces a right-chair warning:</p>
       <code-block lang="text">pet-management-detailed.em.hcl:459:12: Warning EM403: Right chair anti-pattern: readmodel "owner_details" connects to several events; review whether the workflow contains more than one business capability.
 pet-management-detailed.em.hcl valid</code-block>
+      <p>If the team keeps a shape that a signal reports, record a <code>decision</code> with <code>kind = "accepted_debt"</code> and the code in <code>signal</code>. The decision gives the reason to the next reader. It does not remove the signal and does not change its severity. See <a href="/learn/facts.html#decisions">Decisions</a>.</p>
       <callout kind="rule">
-        <p>To make an agent-ready model more explicit, use strictness. Do not use permissiveness to hide uncertainty. Put unknown business facts in <code>hotspot</code> blocks, not in silence.</p>
+        <p>To make an agent-ready model more explicit, use strictness. Do not use permissiveness to hide uncertainty. Put unknown business facts in <code>hotspot</code> blocks, not in silence. If you filled a gap yourself, write a hotspot with <code>kind = "assumption"</code> so that a person confirms it.</p>
       </callout>
 
       <h2>Review information completeness</h2>
       <p>Walk the full business journey, including cancellation, failure, and compensation. Inspect the current fields, connections, and scenarios rather than relying on memory.</p>
       <ul>
-        <li>Trace each Event field to Command input or a documented domain calculation or generated value.</li>
+        <li>Trace each Event field to Command input or a documented domain calculation or generated value. A <code>field_source</code> block states the source in the model.</li>
         <li>Trace each displayed Read Model field to connected Events and explain derived values.</li>
         <li>Trace each required Command input to its human or machine issuer. Explain inputs that do not reach resulting business state.</li>
         <li>Review consumer needs, identity, and ownership across context boundaries. Inspect existing sources before declaring data missing.</li>
       </ul>
-      <p>A passing validator does not prove that these sources or business rules are complete. Keep genuine unknowns as attached <code>hotspot</code> blocks. Do not invent answers to pass strict validation.</p>
+      <p>A passing validator does not prove that these sources or business rules are complete. Keep genuine unknowns as attached <code>hotspot</code> blocks. Do not invent answers to pass strict validation. Only the hotspot <code>status</code> controls <code>EM406</code>. The <code>kind</code>, <code>category</code>, <code>options</code>, and <code>concerns</code> of a hotspot do not change it.</p>
       <p>Review structure and business meaning separately. Record findings before making changes. A model with a material open question is not implementation-ready.</p>
 
       <h2>Respect workflow ownership</h2>
@@ -230,6 +231,21 @@ pet-management-detailed.em.hcl valid</code-block>
         <details class="reveal">
           <summary>Answer</summary>
           <p><span class="verdict verdict-invalid">Invalid</span> A State Change scenario requires one <code>when</code> block that targets a Command.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">I</span>
+        <code-block lang="text">decision "one_open_bookings_list" {
+  kind      = "accepted_debt"
+  signal    = "EM403"
+  statement = "The open bookings list reads two events."
+  reason    = "The guest sees one list."
+  on        = readmodel.open_bookings.open_bookings
+}</code-block>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p><span class="verdict verdict-suspicious">Valid but suspicious</span> The decision is valid, but the right-chair warning <code>EM403</code> stays with the same severity. A decision records the reason. It does not change a diagnostic.</p>
         </details>
       </div>
 

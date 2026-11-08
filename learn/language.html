@@ -32,7 +32,7 @@
   <section class="hero" style="padding-bottom: 8px; text-align: left;">
     <div class="wrap">
       <div class="prose" style="margin: 0;">
-        <div class="eyebrow">Learn · 03 of 5</div>
+        <div class="eyebrow">Learn · 03 of 6</div>
         <h1>The language</h1>
         <p class="lede">How documents, identities, references, fields, and flow work.</p>
       </div>
@@ -43,8 +43,8 @@
     <div class="wrap prose">
 
       <h2>The model</h2>
-      <p>A model contains domain catalogs (lists of shared definitions), one board, workshop notation, and workflows. Catalogs define contexts, actors, ownership, Events, aggregates, and field types. Workflows describe behavior. Chapters and hotspots keep workshop context.</p>
-      <p><a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md">Specification v0.7.0</a> defines a model as one <code>.em.hcl</code> file or a folder of member files. A folder includes only direct <code>.em.hcl</code> files whose names do not start with a dot. It does not include subfolders.</p>
+      <p>A model contains domain catalogs (lists of shared definitions), one board, workshop notation, lifecycles, and workflows. Catalogs define contexts, actors, ownership, Events, aggregates, and field types. A <code>lifecycle</code> states the states of the streams of one aggregate. Workflows describe behavior. Chapters keep workshop context. The records <code>hotspot</code>, <code>evidence</code>, and <code>decision</code>, with <code>evidence_source</code>, describe the model and add no behavior. See <a href="/learn/facts.html">Method facts</a>.</p>
+      <p><a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md">Specification v0.8.0</a> defines a model as one <code>.em.hcl</code> file or a folder of member files. A folder includes only direct <code>.em.hcl</code> files whose names do not start with a dot. It does not include subfolders.</p>
       <p>Each file holds whole top-level blocks and must parse on its own. References resolve across member files without changing ID scopes. A block never spans files, so each bounded context and its domain contracts stay in one file. File names and block order have no meaning. If you move blocks between files, the model does not change. See <a href="/reference.html#folder-models">Folder models</a>.</p>
       <p>After validation, downstream tools use a normalized typed model that has literal titles and source-to-target edges.</p>
 
@@ -94,7 +94,12 @@
             <tr><td>Field type</td><td><code>field_type.pet_management.pet_id</code></td></tr>
             <tr><td>Local field type, inside owning context</td><td><code>field_type.pet_id</code></td></tr>
             <tr><td>Local workflow element</td><td><code>command.add_pet</code></td></tr>
-            <tr><td>Workflow-qualified element, for a hotspot</td><td><code>command.add_pet.add_pet_command</code></td></tr>
+            <tr><td>Workflow-qualified element, for a record <code>on</code></td><td><code>command.add_pet.add_pet_command</code></td></tr>
+            <tr><td>Lifecycle and its parts, for a record <code>on</code></td><td><code>lifecycle.pet</code>, <code>state.pet.registered</code>, <code>transition.pet.register_pet</code></td></tr>
+            <tr><td>State, inside its own lifecycle</td><td><code>state.registered</code></td></tr>
+            <tr><td>Field of an element</td><td><code>event.pet_management.pet_added.field.pet_id</code></td></tr>
+            <tr><td>Field of a local workflow element, in a <code>field_source</code></td><td><code>command.add_pet_command.field.pet_id</code></td></tr>
+            <tr><td>Record, for a record <code>on</code></td><td><code>decision.one_pet_list</code>, <code>hotspot.weather_source</code></td></tr>
           </tbody>
         </table>
       </div>
@@ -141,7 +146,7 @@
           }
         }
       </code-block>
-      <p>Use <code>aggregate_dependencies</code> when behavior spans another consistency boundary.</p>
+      <p>Use <code>aggregate_dependencies</code> when behavior spans another consistency boundary. Use <code>identity</code> to name the field type that tells one stream of the aggregate from another. See <a href="/learn/facts.html#stream-identity">Stream identity</a>.</p>
 
       <h2>Reusable field types</h2>
       <p>Use a <code>field_type</code> when the same business term appears in several contracts:</p>
@@ -164,7 +169,7 @@
           }
         }
       </code-block>
-      <p>For a one-off field, write a built-in type inline, for example <code>field "request_id" { type = "UUID" }</code>. The <a href="/reference.html">reference</a> lists the available types and flags.</p>
+      <p>For a one-off field, write a built-in type inline, for example <code>field "request_id" { type = "UUID" }</code>. The <a href="/reference.html">reference</a> lists the available types and flags. The flags <code>correlation_key</code> and <code>deduplication_key</code> mark the fields that link and deduplicate outside facts. See <a href="/learn/facts.html#keys">Correlation and deduplication keys</a>.</p>
 
       <h2>The fields list</h2>
       <p>Every <code>field</code> and <code>subfield</code> must set <code>type</code>. A missing type is error <code>EM009</code>. The language never infers a type from the field name. A <code>fields</code> list adds several typed fields at once. Each entry adds one field, named for the last part of the reference:</p>

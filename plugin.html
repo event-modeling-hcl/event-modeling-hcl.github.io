@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>The Event Modeling HCL plugin for Claude, Codex, and ChatGPT</title>
+<meta name="description" content="Install the Event Modeling HCL plugin. Model business workflows with method skills, and change a team model in Git through merge requests.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Event Modeling HCL plugin | emhcl">
+<meta property="og:description" content="Method skills, the .em.hcl language skill, and Git procedures for Claude, Codex, and ChatGPT.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="canonical" href="https://event-modeling-hcl.github.io/plugin.html">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px;">
+    <div class="wrap">
+      <div class="prose">
+        <div class="eyebrow">AI assistants</div>
+        <h1>The Event Modeling HCL plugin</h1>
+        <p class="lede">The plugin teaches Claude, Codex, and ChatGPT the Event Modeling method and the <code>.em.hcl</code> language.</p>
+        <p>With a Git connector, a team can also view, change, and review one shared model through the assistant. Each change goes to a merge request (MR). A person reviews and merges it.</p>
+        <div class="btn-row" style="justify-content: center;">
+          <a class="btn btn-primary" href="#install">Install the plugin</a>
+          <a class="btn" href="https://github.com/event-modeling-hcl/event-modeling-hcl-plugin">Plugin repository</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="prose">
+      <h2>What the plugin contains</h2>
+      <p>The <a href="https://github.com/event-modeling-hcl/event-modeling-hcl-plugin">plugin repository</a> holds two Claude plugins in one marketplace. The name of the marketplace is <code>event-modeling-hcl</code>. Both plugins use the Apache-2.0 license and release together under one tag. The current release is v0.2.0. It targets Specification v0.8.0 and needs emhcl v0.17.0 or newer.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Plugin</th><th>Contents</th><th>Needs</th></tr></thead>
+          <tbody>
+            <tr><td><code>event-modeling-skills</code></td><td>32 method skills and the <code>event-modeling-hcl</code> language skill. The method skills discover, review, and plan a business model. The language skill owns HCL syntax and emhcl commands.</td><td>Nothing for business modeling. A shell with emhcl to validate HCL.</td></tr>
+            <tr><td><code>event-modeling-hcl-plugin</code></td><td>The <code>em-collaborate</code> skill with six team procedures: <code>em-setup</code>, <code>em-view</code>, <code>em-validate</code>, <code>em-change</code>, <code>em-review</code>, and <code>em-sync</code>.</td><td>A shell, network access, and a GitLab or GitHub connector.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
+      <p>The same skills are also available in two other packages:</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Surface</th><th>Modeling guidance</th><th>Repository procedures</th><th>Diagrams</th></tr></thead>
+          <tbody>
+            <tr><td>Claude plugins</td><td>32 method skills and the language skill</td><td>Six procedures through the GitLab or GitHub MCP server</td><td>Claude artifacts when the app supports them. Otherwise an HTML file.</td></tr>
+            <tr><td>Local Codex CLI and IDE</td><td>The same 33 modeling skills</td><td>The same six procedures through configured Git MCP tools and a shell</td><td>A local HTML file</td></tr>
+            <tr><td>ChatGPT and Codex plugin</td><td>The same 33 modeling skills</td><td>The same six procedures when a shell and Git MCP tools are available</td><td>A local HTML file</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
+      <p>The method text uses original wording based on community ideas. Event Modeling comes from Adam Dymitruk at Adaptech Group. The plugin also credits Martin Dilger.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="install">
+    <div class="wrap">
+      <div class="prose">
+      <h2>Install the plugin</h2>
+
+      <h3>Claude Code</h3>
+      <p>Add the marketplace, then install the collaboration plugin:</p>
+      <code-block lang="text">
+        claude plugin marketplace add event-modeling-hcl/event-modeling-hcl-plugin
+        claude plugin install event-modeling-hcl-plugin@event-modeling-hcl
+      </code-block>
+      <p>Claude Code also installs <code>event-modeling-skills</code> as a dependency. If you want only the skills without the Git procedures, install <code>event-modeling-skills@event-modeling-hcl</code> instead.</p>
+
+      <h3>Claude chat and Cowork</h3>
+      <p>Install the two plugins separately from Customize &gt; Plugins. Add the repository through Add &gt; Add marketplace. Alternatively, upload each plugin folder as its own ZIP file through Add &gt; Upload plugin. Each ZIP file must contain <code>.claude-plugin/plugin.json</code> at its root or inside one top-level folder. Do not upload a ZIP file of the whole marketplace repository.</p>
+
+      <h3>Local Codex CLI and IDE</h3>
+      <p>You need Python 3. In a checkout of the plugin repository, build the package and install it into your model repository:</p>
+      <code-block lang="text">
+        python3 scripts/build-codex.py
+        python3 scripts/install-codex.py --source dist/codex --project /path/to/model-repo
+      </code-block>
+      <p>The installer puts the 34 skills in <code>.agents/skills/</code> of that repository. To install them for all projects in <code>~/.agents/skills/</code>, use <code>--user</code> instead of <code>--project</code>. The installer does not replace a skill that already exists. To upgrade a managed installation, add <code>--update</code>. Restart Codex after the installation.</p>
+
+      <h3>ChatGPT and Codex plugin</h3>
+      <p>In a checkout of the plugin repository, build the plugin and register the repository as a marketplace:</p>
+      <code-block lang="text">
+        python3 scripts/build-chatgpt.py
+        codex plugin marketplace add /absolute/path/to/event-modeling-hcl-plugin
+      </code-block>
+      <p>The builder writes the plugin to <code>dist/chatgpt</code>. The output folder must be absent or empty. Restart the ChatGPT desktop app, select Event Modeling HCL in the Plugins Directory, and install <code>event-modeling-hcl-plugin</code>. To install it in Codex, run:</p>
+      <code-block lang="text">codex plugin add event-modeling-hcl-plugin@event-modeling-hcl</code-block>
+      <p>In Codex, call a plugin skill with its plugin prefix, for example <code>$event-modeling-hcl-plugin:em-collaborate em-view for OWNER/REPOSITORY</code>. Use the plugin or the standalone Codex skills in one session, not both.</p>
+
+      <callout kind="note">
+        <p>The installation does not give access to a repository and does not supply a shell. If the shell, the network, or the Git connector is not available, a repository procedure stops and does not report a result.</p>
+      </callout>
+
+      <h3>Upgrade from the development names</h3>
+      <p>The plugins had other names before v0.1.0. If you installed <code>emhcl@event-modeling-hcl</code>, uninstall it and install <code>event-modeling-hcl-plugin@event-modeling-hcl</code>. If you installed <code>emhcl-skills@event-modeling-hcl</code>, uninstall it and install <code>event-modeling-skills@event-modeling-hcl</code>:</p>
+      <code-block lang="text">
+        claude plugin uninstall emhcl@event-modeling-hcl
+        claude plugin uninstall emhcl-skills@event-modeling-hcl
+        claude plugin install event-modeling-hcl-plugin@event-modeling-hcl
+      </code-block>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="prose">
+      <h2>Model a business workflow</h2>
+      <p>Business modeling in plain words needs no HCL file, no shell, and no Git connector. Each method skill owns one part of the model, for example the events, the read models, the lifecycles, or the command scenarios. The skills exchange questions, decisions, and evidence through the model.</p>
+      <p>Select the skill by the size of the task:</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Task</th><th>Skill</th></tr></thead>
+          <tbody>
+            <tr><td>A complete event model from start to end</td><td><code>eventmodeling-orchestrating-workflow</code>. It runs the gates of the method contract in order.</td></tr>
+            <tr><td>A live workshop with a group</td><td><code>eventmodeling-facilitating-workshop</code>. It manages participants and time. The specialist skills record the model.</td></tr>
+            <tr><td>One part of the model</td><td>The specialist that owns the part, for example <code>eventmodeling-brainstorming-events</code> or <code>eventmodeling-writing-command-scenarios</code>.</td></tr>
+            <tr><td>Syntax repair, formatting, conversion, or a language question</td><td><code>event-modeling-hcl</code>. It does not repeat the business discovery.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
+      <p>Ask in plain words. The assistant selects the skill. For example:</p>
+      <code-block lang="text">
+        Make a complete event model for room bookings in a small hotel.
+        List the events of this domain.
+        Write the scenarios of the command open_booking.
+        Repair the EM202 diagnostic in model/20-bookings.em.hcl without a change to the business meaning.
+      </code-block>
+      <p>If a discussion follows screens instead of work, ask for a paper-world reset. The skills then follow one real case through its actors, decisions, information, and handoffs.</p>
+      <p>The language skill targets Specification v0.8.0. It writes the method facts of that version: lifecycles, field sources, evidence, decisions, and dispatch assertions. See <a href="/learn/facts.html">Method facts</a>. To validate a model, the language skill runs emhcl v0.17.0 or newer.</p>
+      <callout kind="warn">
+        <p>A valid model does not prove that it describes the business. A domain expert must review the result. The skills keep an open question as a hotspot and do not invent a business rule to make <code>strict</code> validation pass.</p>
+      </callout>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <div class="prose">
+      <h2>Work on a team model in Git</h2>
+      <p>The collaboration plugin connects the assistant to one model repository on GitLab or GitHub. It does not merge, and it does not write to the default branch.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Command</th><th>What it does</th><th>Writes to Git</th></tr></thead>
+          <tbody>
+            <tr><td><code>em-setup</code></td><td>Makes sure that the connector, the validator, and <code>.emhcl.yml</code> are available. If <code>.emhcl.yml</code> is missing, it proposes the file through an MR.</td><td>Only an MR</td></tr>
+            <tr><td><code>em-view</code></td><td>Shows a branch as a diagram and answers questions about it.</td><td>No</td></tr>
+            <tr><td><code>em-validate</code></td><td>Validates a branch with a profile and explains each diagnostic in plain words.</td><td>No</td></tr>
+            <tr><td><code>em-change</code></td><td>Turns a request in plain words into edits, validates them, publishes a diagram, and opens an MR.</td><td>A new branch and an MR</td></tr>
+            <tr><td><code>em-review</code></td><td>Validates the head of an MR, lists the changed slices, and publishes a diagram.</td><td>One comment</td></tr>
+            <tr><td><code>em-sync</code></td><td>Publishes the shared team diagram again from the default branch.</td><td>No</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
+      <p>In Cowork and Claude Code, run a command with the plugin prefix:</p>
+      <code-block lang="text">/event-modeling-hcl-plugin:em-change Add a cancellation fee when a guest cancels less than 24 hours before arrival</code-block>
+      <p>In Claude chat, ask in plain words. Claude uses the matching procedure.</p>
+      <p>Each procedure needs one Git connector:</p>
+      <ul>
+        <li>GitLab: the official GitLab MCP server. <code>em-change</code> needs GitLab 19.4 or later, because it starts each branch at an exact commit.</li>
+        <li>GitHub: the GitHub MCP server.</li>
+      </ul>
+      <p>Then ask the assistant to run <code>em-setup</code> for your repository.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="prose">
+      <h2>Set up a model repository</h2>
+      <ol>
+        <li>Keep the model in one folder. emhcl reads only the <code>.em.hcl</code> files directly in that folder and ignores subfolders. If the model is for specification v0.4.0, run <code>emhcl migrate -w &lt;folder&gt;</code> first.</li>
+        <li>Add <code>.emhcl.yml</code> at the root of the repository. <code>em-setup</code> proposes this file.</li>
+        <li>Add the CI job of your Git host, and use fast-forward merges.</li>
+      </ol>
+      <p>This is the <code>.emhcl.yml</code> of the pet-clinic example:</p>
+      <code-block lang="text">
+        emhcl_version: 0.17.0
+        model_path: model
+        branch_prefix: model/
+        mr_labels: [event-model]
+        reviewers_hint: "slice owner from CODEOWNERS"
+        merge_profile: strict
+        draft_profile: workshop
+        canonical_url: ""
+        team_artifact_url: ""
+      </code-block>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Key</th><th>Meaning</th><th>Value when absent</th></tr></thead>
+          <tbody>
+            <tr><td><code>emhcl_version</code></td><td>The emhcl release that the assistant and CI install. Both validate each commit with the same release.</td><td>None. The installer stops.</td></tr>
+            <tr><td><code>model_path</code></td><td>The folder of the model, relative to the repository root.</td><td><code>model</code></td></tr>
+            <tr><td><code>branch_prefix</code></td><td>The start of the name of each new branch.</td><td><code>model/</code></td></tr>
+            <tr><td><code>mr_labels</code></td><td>The labels on each new MR. GitHub pull requests get no labels.</td><td><code>[]</code></td></tr>
+            <tr><td><code>reviewers_hint</code></td><td>Text in the MR description that names the reviewer to ask. The plugin does not assign reviewers.</td><td><code>""</code></td></tr>
+            <tr><td><code>merge_profile</code></td><td>The validation profile of the CI gate. If the model fails it, <code>em-change</code> opens a draft MR.</td><td><code>strict</code></td></tr>
+            <tr><td><code>draft_profile</code></td><td>The profile of <code>em-view</code> and <code>em-validate</code> when you name no profile.</td><td><code>workshop</code></td></tr>
+            <tr><td><code>canonical_url</code></td><td>The Pages URL where CI publishes the diagram of the default branch.</td><td><code>""</code></td></tr>
+            <tr><td><code>team_artifact_url</code></td><td>The shared Claude artifact that shows the default branch. <code>em-sync</code> publishes to it.</td><td><code>""</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
+
+      <h3>GitLab CI</h3>
+      <p>Add this include to <code>.gitlab-ci.yml</code>:</p>
+      <code-block lang="text">
+        include:
+          - remote: https://raw.githubusercontent.com/event-modeling-hcl/event-modeling-hcl-plugin/v0.2.0/ci-templates/emhcl.gitlab-ci.yml
+            inputs:
+              plugin_ref: v0.2.0
+      </code-block>
+      <p>Set the merge method to "Fast-forward merge" and turn on "Pipelines must succeed". The job <code>emhcl-validate</code> validates with <code>merge_profile</code>. The job <code>pages</code> publishes the default branch to GitLab Pages.</p>
+
+      <h3>GitHub Actions</h3>
+      <p>Add this workflow as <code>.github/workflows/model.yml</code>:</p>
+      <code-block lang="text">
+        on:
+          pull_request:
+          push:
+            branches: [main]
+        jobs:
+          model:
+            uses: event-modeling-hcl/event-modeling-hcl-plugin/.github/workflows/emhcl-model.yml@v0.2.0
+            with:
+              plugin_ref: v0.2.0
+            permissions:
+              contents: read
+              pages: write
+              id-token: write
+      </code-block>
+      <p>On the default branch, require the status check <code>model / emhcl-validate</code> and a linear history.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <div class="prose">
+      <h2>Diagrams</h2>
+      <p>GitLab Pages or GitHub Pages shows the canonical diagram of the default branch. <code>em-change</code> and <code>em-review</code> publish one proposal diagram for each MR. The title of each diagram names the branch and the short commit SHA.</p>
+      <p>If the app can publish artifacts, each new artifact is private. To give access to other people, use the Share button on its page. If the app cannot publish artifacts, the procedure returns the HTML file that <code>emhcl diagram</code> wrote. That file has no shared URL.</p>
+      <p>Language changes go to the <a href="https://github.com/event-modeling-hcl/spec">specification</a> and to <a href="https://github.com/event-modeling-hcl/eventmodeling-hcl">emhcl</a>, not to the plugin.</p>
+      <div class="btn-row" style="margin-top: 24px;">
+        <a class="btn btn-primary" href="https://github.com/event-modeling-hcl/event-modeling-hcl-plugin">Plugin repository</a>
+        <a class="btn" href="/ai.html">Coding agents</a>
+      </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

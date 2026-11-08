@@ -29,6 +29,7 @@
   var FOOTER_LINKS = [
     { href: "/", label: "Home" },
     { href: "/ai.html", label: "Coding agents" },
+    { href: "/plugin.html", label: "AI plugin" },
     { href: "/reference.html", label: "Reference" },
     {
       href: "https://github.com/event-modeling-hcl/eventmodeling-hcl",
@@ -37,6 +38,10 @@
     {
       href: "https://github.com/event-modeling-hcl/spec",
       label: "Language spec",
+    },
+    {
+      href: "https://github.com/event-modeling-hcl/event-modeling-hcl-plugin",
+      label: "Plugin repository",
     },
   ];
 

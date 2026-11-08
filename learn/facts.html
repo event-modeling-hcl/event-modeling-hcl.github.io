@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>Method facts</title>
+<meta name="description" content="Stream identity, lifecycles, field sources, keys, evidence, decisions, and hotspot kinds in .em.hcl.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Method facts | Learn Event Modeling HCL">
+<meta property="og:description" content="Record stream identity, lifecycles, field sources, keys, evidence, and decisions as typed model facts.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="canonical" href="https://event-modeling-hcl.github.io/learn/facts.html">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px; text-align: left;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0;">
+        <div class="eyebrow">Learn · 05 of 6</div>
+        <h1>Method facts: say it in the model</h1>
+        <p class="lede">Older models kept these facts in descriptions, comments, or hotspots. Now each fact has a typed block or attribute.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Fact</th><th>Syntax</th><th>Core code</th></tr></thead>
+          <tbody>
+            <tr><td>The field that names one stream</td><td>aggregate <code>identity</code></td><td><code>EM018</code></td></tr>
+            <tr><td>The states of a stream and the moves between them</td><td><code>lifecycle</code>, <code>state</code>, <code>transition</code>, <code>invalid_transition</code></td><td><code>EM017</code></td></tr>
+            <tr><td>Where the value of a field comes from</td><td>field references, <code>field_source</code></td><td><code>EM202</code></td></tr>
+            <tr><td>The fields that link or deduplicate outside facts</td><td><code>correlation_key</code>, <code>deduplication_key</code></td><td>none</td></tr>
+            <tr><td>Where a fact comes from, and how certain it is</td><td><code>evidence_source</code>, <code>evidence</code></td><td>none</td></tr>
+            <tr><td>A choice that shapes the model, and its reason</td><td><code>decision</code></td><td>none</td></tr>
+            <tr><td>The kind of an open question</td><td>hotspot <code>kind</code>, <code>category</code>, <code>options</code>, <code>concerns</code></td><td>none</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="prose">All of these facts are optional. A model without them stays valid. The <a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md">v0.8.0 specification</a> defines the rules. The <a href="/examples/method-facts.html">method facts example</a> uses all of them in one booking model. Scenario cases, empty history, and dispatch assertions are on the <a href="/learn/scenarios.html">Scenarios</a> page.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+
+      <h2 id="stream-identity">Stream identity</h2>
+      <p>A stream is the history of the Events of one aggregate instance. Use <code>identity</code> when one field type tells one stream from another, for example a booking ID:</p>
+      <code-block lang="hcl">
+        board {
+          workflows = []
+        }
+
+        bounded_context "booking" {
+          field_type "booking_id" {
+            type         = "UUID"
+            id_attribute = true
+          }
+
+          aggregate "booking" {
+            identity = field_type.booking_id
+          }
+
+          event "booking_opened" {
+            aggregate = aggregate.booking
+            fields    = [field_type.booking_id]
+          }
+        }
+      </code-block>
+      <p>Each Event of the aggregate must have a top-level field of the identity field type. A <code>fields</code> entry or a <code>field</code> block with that <code>type</code> counts. A field named <code>booking_id</code> with the type <code>"UUID"</code> does not count. An Event without such a field is <code>EM018</code>.</p>
+
+      <h2 id="lifecycle">Lifecycle</h2>
+      <p>Use a <code>lifecycle</code> when a stream moves through business states and some Commands are valid only in some states. It is a top-level block for one aggregate:</p>
+      <code-block lang="hcl">
+        board {
+          workflows = [workflow.open_booking, workflow.cancel_booking]
+        }
+
+        bounded_context "booking" {
+          aggregate "booking" {
+          }
+
+          event "booking_opened" {
+            aggregate = aggregate.booking
+          }
+
+          event "booking_canceled" {
+            aggregate = aggregate.booking
+          }
+        }
+
+        lifecycle "booking" {
+          aggregate = aggregate.booking.booking
+
+          state "open" {
+            path = "main"
+          }
+
+          state "canceled" {
+            end  = true
+            path = "cancel"
+          }
+
+          transition "open_booking" {
+            command = command.open_booking.open_booking
+            events  = [event.booking.booking_opened]
+            before  = []
+            after   = state.open
+          }
+
+          transition "cancel_booking" {
+            command = command.cancel_booking.cancel_booking
+            events  = [event.booking.booking_canceled]
+            before  = [state.open]
+            after   = state.canceled
+          }
+
+          invalid_transition "cancel_canceled_booking" {
+            command = command.cancel_booking.cancel_booking
+            reason  = "A canceled booking cannot be canceled again."
+            before  = [state.canceled]
+          }
+        }
+
+        state_change "open_booking" {
+          screen "booking_form" {
+            to = [command.open_booking]
+          }
+
+          command "open_booking" {
+            to = [event.booking.booking_opened]
+          }
+        }
+
+        state_change "cancel_booking" {
+          screen "booking_details" {
+            to = [command.cancel_booking]
+          }
+
+          command "cancel_booking" {
+            to = [event.booking.booking_canceled]
+          }
+        }
+      </code-block>
+      <ul>
+        <li><code>aggregate</code>, <code>command</code>, and <code>events</code> use the qualified forms.</li>
+        <li><code>before = []</code> states that the transition starts the stream.</li>
+        <li><code>end = true</code> states that the stream ends in this state. <code>path</code> is <code>"main"</code>, <code>"cancel"</code>, <code>"failure"</code>, or <code>"compensation"</code>.</li>
+        <li>An <code>invalid_transition</code> states a Command that is not valid in each <code>before</code> state. Write the <code>reason</code> in business words. Each invalid transition is a source for a <code>state_violation</code> scenario.</li>
+      </ul>
+      <p>The validator reports <code>EM017</code> for a second lifecycle of one aggregate, a lifecycle without a state, or an empty <code>events</code> list. It also reports <code>EM017</code> for an empty <code>before</code> list on an invalid transition, one state and Command pair that is both valid and invalid, and a transition Event of another aggregate. A lifecycle adds no flow edge and no scenario. The validator does not compare it with the edges or the scenarios.</p>
+      <p>Outside its lifecycle, write <code>state.booking.open</code>, <code>transition.booking.cancel_booking</code>, or <code>invalid_transition.booking.cancel_canceled_booking</code>.</p>
+
+      <h2 id="field-sources">Field references and field sources</h2>
+      <p>A field reference names one field of an element: the element reference, then <code>.field.</code>, then the field name. Add <code>.field.&lt;name&gt;</code> again for each subfield, for example <code>command.open_booking.field.address.field.city</code>. A field reference names a field definition, not a value. It has no index such as <code>[0]</code>.</p>
+      <p>Use a <code>field_source</code> block in a workflow when a reader must know where the value of a field comes from:</p>
+      <code-block lang="hcl">
+        board {
+          workflows = [workflow.open_booking]
+        }
+
+        bounded_context "booking" {
+          field_type "guest_name" {
+            type = "String"
+          }
+
+          event "booking_opened" {
+            fields = [field_type.guest_name]
+          }
+        }
+
+        state_change "open_booking" {
+          screen "booking_form" {
+            to = [command.open_booking]
+
+            field "name" {
+              type = field_type.booking.guest_name
+            }
+          }
+
+          command "open_booking" {
+            fields = [field_type.booking.guest_name]
+            to     = [event.booking.booking_opened]
+          }
+
+          field_source {
+            inputs = [screen.booking_form.field.name]
+            target = command.open_booking.field.guest_name
+          }
+
+          field_source {
+            inputs = [command.open_booking.field.guest_name]
+            target = event.booking.booking_opened.field.guest_name
+          }
+        }
+      </code-block>
+      <p>Elements of the same workflow use the local form. Events use the qualified form. The source follows the edges: each input element must connect to the target element by one canonical edge of the workflow. A field of an Event or a Command takes one input. A field of a Read Model, a Screen, or a Processor can take several. Write the rule of a converted or derived value in <code>description</code>. The language stores the rule as text and does not run it.</p>
+      <p>The validator reports <code>EM202</code> for an empty <code>inputs</code> list, an input without a canonical edge to the target, several inputs for an Event or Command field, and a second source for the same target. The language does not infer a source from equal names.</p>
+
+      <h2 id="keys">Correlation and deduplication keys</h2>
+      <p>An outside fact often arrives without your own ID, and it can arrive twice. Use the two key flags on the fields of that fact:</p>
+      <code-block lang="hcl">
+        board {
+          workflows = []
+        }
+
+        bounded_context "payments" {
+          external = true
+
+          event "payment_received" {
+            field "booking_reference" {
+              type            = "String"
+              correlation_key = true
+            }
+
+            field "payment_reference" {
+              type              = "String"
+              deduplication_key = true
+            }
+          }
+        }
+      </code-block>
+      <p><code>correlation_key = true</code> states that the value links the outside fact to an entity of your system. <code>deduplication_key = true</code> states that a second delivery with the same value records no new fact. Write the flags on <code>field</code> and <code>subfield</code> blocks. On a <code>field_type</code>, they are <code>EM000</code>. The flags add no diagnostic and no scenario rule. To state the duplicate behavior, write a <code>business_duplicate</code> scenario.</p>
+
+      <h2 id="evidence">Evidence</h2>
+      <p>Use evidence when a reader must know where a rule comes from. An <code>evidence_source</code> names a document, code, an application, or a person. An <code>evidence</code> record states that the source supports one model part:</p>
+      <code-block lang="hcl">
+        board {
+          workflows = []
+        }
+
+        bounded_context "payments" {
+          external = true
+
+          event "payment_received" {
+            field "payment_reference" {
+              type = "String"
+            }
+          }
+        }
+
+        evidence_source "payment_api_docs" {
+          kind     = "document"
+          location = "https://payments.example.com/docs/webhooks"
+        }
+
+        evidence "payment_event_is_documented" {
+          certainty = "stated"
+          location  = "section Webhooks"
+          source    = evidence_source.payment_api_docs
+          on        = event.payments.payment_received
+        }
+
+        evidence "payment_reference_is_unique" {
+          description = "No source states that a payment reference is unique."
+          certainty   = "assumed"
+          on          = event.payments.payment_received.field.payment_reference
+        }
+      </code-block>
+      <p><code>certainty</code> is <code>"stated"</code> when the source says it clearly, <code>"implied"</code> when it follows from the source, and <code>"assumed"</code> when no source gives it. A <code>"stated"</code> or <code>"implied"</code> record without <code>source</code> is <code>EM000</code>. Several records can attach to one target. Evidence does not change validity or a diagnostic.</p>
+
+      <h2 id="decisions">Decisions</h2>
+      <p>Use a <code>decision</code> when the team makes a choice that a future reader can question. It holds one <code>statement</code> and one <code>reason</code>. Omit <code>on</code> for a decision about the whole model:</p>
+      <code-block lang="hcl">
+        board {
+          workflows = [workflow.open_bookings]
+        }
+
+        bounded_context "booking" {
+          event "booking_opened" {
+          }
+
+          event "booking_canceled" {
+          }
+        }
+
+        state_view "open_bookings" {
+          readmodel "open_bookings" {
+            question = "Which bookings are open?"
+            from     = [event.booking.booking_opened, event.booking.booking_canceled]
+          }
+        }
+
+        decision "bookings_use_one_currency" {
+          statement = "All amounts are in euros."
+          reason    = "The hotel accepts payments only in euros."
+        }
+
+        decision "one_open_bookings_list" {
+          kind      = "accepted_debt"
+          signal    = "EM403"
+          statement = "The open bookings list reads two events."
+          reason    = "The guest sees one list. A split gives two lists with one purpose."
+          on        = readmodel.open_bookings.open_bookings
+        }
+      </code-block>
+      <p><code>kind</code> is <code>"choice"</code> or <code>"accepted_debt"</code>. If you omit it, the kind is <code>"choice"</code>. Use accepted debt when the team keeps a shape that a judgment signal reports, and name that code in <code>signal</code>. Only accepted debt can have a <code>signal</code>. On a choice, <code>signal</code> is <code>EM000</code>.</p>
+      <callout kind="rule"><p>A decision does not change a diagnostic. The model above still reports <code>EM403</code> with the same severity. A tool can show the decision next to the signal.</p></callout>
+
+      <h2 id="hotspot-kinds">Kinds of hotspots</h2>
+      <p>A hotspot can state what kind of open point it is. Use <code>kind = "assumption"</code> when you filled a gap and a person must confirm it. Use <code>kind = "request"</code> when another part of the model must change. If you omit <code>kind</code>, the hotspot is a question.</p>
+      <code-block lang="hcl">
+        board {
+          workflows = [workflow.cancel_booking]
+        }
+
+        bounded_context "booking" {
+          event "booking_canceled" {
+          }
+        }
+
+        state_change "cancel_booking" {
+          screen "booking_details" {
+            to = [command.cancel_booking]
+          }
+
+          command "cancel_booking" {
+            to = [event.booking.booking_canceled]
+          }
+        }
+
+        hotspot "refund_rule" {
+          kind     = "assumption"
+          category = "rule"
+          question = "Does the guest lose the deposit after a cancellation?"
+          options  = ["The guest loses the deposit.", "The guest gets the deposit back."]
+          on       = command.cancel_booking.cancel_booking
+        }
+
+        hotspot "late_cancellation_scenario" {
+          kind     = "request"
+          question = "Which scenario states a cancellation on the day of the booking?"
+          concerns = "scenario"
+          on       = workflow.cancel_booking
+        }
+      </code-block>
+      <p><code>category</code> is <code>"action"</code>, <code>"data"</code>, <code>"next"</code>, <code>"rule"</code>, <code>"example"</code>, <code>"view"</code>, <code>"who"</code>, or <code>"time"</code>. <code>options</code> lists the answers that you offer. A request must have <code>concerns</code>, the kind of model part that must change. Another kind must not have it. Both errors are <code>EM000</code>. Only <code>status</code> controls <code>EM406</code>.</p>
+
+      <h2 id="attach-targets">What a record can point at</h2>
+      <p>A <code>hotspot</code>, an <code>evidence</code> record, and a <code>decision</code> each name one attach target in <code>on</code>. All three accept a catalog item, a workflow, an owner, an actor, and a workflow-qualified element. The new forms are in this table:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Target</th><th>Example</th><th>Records</th></tr></thead>
+          <tbody>
+            <tr><td>Lifecycle part</td><td><code>transition.booking.cancel_booking</code></td><td><code>hotspot</code>, <code>evidence</code>, <code>decision</code></td></tr>
+            <tr><td>Field</td><td><code>event.payments.payment_received.field.payment_reference</code></td><td><code>hotspot</code>, <code>evidence</code>, <code>decision</code></td></tr>
+            <tr><td>Decision</td><td><code>decision.one_open_bookings_list</code></td><td><code>hotspot</code>, <code>evidence</code></td></tr>
+            <tr><td>Hotspot</td><td><code>hotspot.refund_rule</code></td><td><code>evidence</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>A target kind that the record does not accept is <code>EM101</code>. For example, a decision cannot point at a hotspot. A target that is not declared is <code>EM102</code>.</p>
+      <p>See <a href="https://github.com/event-modeling-hcl/spec/blob/main/rfcs/0007-method-facts.md">RFC 0007</a> for the reasons behind each fact.</p>
+
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <nav class="page-path-nav">
+        <a href="/learn/scenarios.html"><small>Previous</small>← Scenarios</a>
+        <a class="next" href="/learn/quality.html"><small>Next</small>Quality: smells, errors, warnings →</a>
+      </nav>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

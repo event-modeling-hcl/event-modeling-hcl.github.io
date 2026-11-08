@@ -97,6 +97,7 @@
       <h2>Why it exists</h2>
       <p>Start with the business process without software. Identify who acts, what facts they record, and what information they need. Then describe that flow in HCL.</p>
       <p>Event Models needed to live beside the code, pass code review, and work with automated checks. HCL fits this need. The validator produces a typed model for documentation and coding-agent workflows.</p>
+      <p>The model can also hold facts from the method: the lifecycle of an aggregate, the source of a field value, the evidence for a rule, and the decisions of the team. See <a href="/learn/facts.html">Method facts</a>.</p>
       <p>A valid file does not prove that the business process is complete. Review field origins, missing decisions, failure paths, and scenarios with domain experts. See the <a href="/learn/index.html">method and core concepts</a>.</p>
     </div>
   </section>
@@ -118,6 +119,15 @@
 
   <section class="section">
     <div class="wrap prose" style="margin: 0 auto;">
+      <h2>Model with an AI assistant</h2>
+      <p>The <a href="/plugin.html">Event Modeling HCL plugin</a> gives Claude, Codex, and ChatGPT the method and the language. It has 32 method skills for discovery and review, and one skill for <code>.em.hcl</code> syntax and emhcl commands.</p>
+      <p>A team can also view, change, and review a shared model in Git through the assistant. Each change goes to a merge request. A person reviews and merges it.</p>
+      <div class="btn-row"><a class="btn" href="/plugin.html">About the plugin</a></div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose" style="margin: 0 auto;">
       <h2>Why HCL?</h2>
       <p>HCL lets an Event be an <code>event</code> block instead of an object with <code>kind: event</code>. HCL also has traversal expressions, and the <code>.em.hcl</code> validator checks them as references.</p>
       <p>The cost is more custom tooling. YAML is easier to adopt, and JSON has a broader interchange ecosystem. This project accepts that cost.</p>
@@ -125,7 +135,7 @@
     </div>
   </section>
 
-  <section class="section section-alt">
+  <section class="section">
     <div class="wrap">
       <div class="section-head"><h2>About this project</h2></div>
       <div class="split">
@@ -135,14 +145,14 @@
         </div>
         <div class="card">
           <h3>Project status</h3>
-          <p><strong>Status:</strong> experimental<br><strong>Current spec:</strong> v0.7.0<br><strong>CLI:</strong> v0.16.0</p>
+          <p><strong>Status:</strong> experimental<br><strong>Current spec:</strong> v0.8.0<br><strong>CLI:</strong> v0.17.0<br><strong>Plugin:</strong> v0.2.0</p>
           <p>Syntax can still change before 1.0.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section">
+  <section class="section section-alt">
     <div class="wrap prose" style="margin: 0 auto; text-align: center;">
       <h2>Try the example</h2>
       <p>Install the CLI. Validate a small model. Open the generated diagram.</p>

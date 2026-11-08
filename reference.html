@@ -32,9 +32,9 @@
   <section class="hero" style="padding-bottom: 8px;">
     <div class="wrap">
       <div class="prose" style="margin: 0 auto;">
-        <div class="eyebrow">Reference for .em.hcl v0.7.0 and emhcl v0.16.0</div>
+        <div class="eyebrow">Reference for .em.hcl v0.8.0 and emhcl v0.17.0</div>
         <h1>The cheat sheet</h1>
-        <p class="lede">Blocks, attributes, values, diagnostics, and commands in one page. <a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md">Specification v0.7.0</a> defines the language. emhcl v0.16.0 implements it.</p>
+        <p class="lede">Blocks, attributes, values, diagnostics, and commands in one page. <a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md">Specification v0.8.0</a> defines the language. emhcl v0.17.0 implements it.</p>
       </div>
     </div>
   </section>
@@ -55,18 +55,22 @@
             <tr><td><code>state_view</code></td><td>Workflow</td><td>Event → Read Model → Screen</td></tr>
             <tr><td><code>automation</code></td><td>Workflow</td><td>Event → Read Model or Processor → Command → Event. An automation that consumes an Event of an external context is a translation.</td></tr>
             <tr><td><code>chapter</code></td><td>Workshop notation</td><td>A named set of workflows. The list order has no meaning. A workflow is in one chapter at most.</td></tr>
-            <tr><td><code>hotspot</code></td><td>Workshop notation</td><td>An open or resolved question or blocker</td></tr>
+            <tr><td><code>hotspot</code></td><td>Record</td><td>An open or resolved question, assumption, or request. Its <code>on</code> names one attach target.</td></tr>
+            <tr><td><code>lifecycle</code></td><td>Method fact</td><td>The states of the streams of one aggregate, with <code>state</code>, <code>transition</code>, and <code>invalid_transition</code> blocks</td></tr>
+            <tr><td><code>evidence_source</code></td><td>Method fact</td><td>One place that evidence comes from: a document, code, an application, or a person</td></tr>
+            <tr><td><code>evidence</code></td><td>Record</td><td>A source supports one attach target, with a <code>certainty</code></td></tr>
+            <tr><td><code>decision</code></td><td>Record</td><td>One choice that shapes the model, and its reason</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="prose">The language has no <code>translation</code> block. The block order and the file layout have no meaning. Only the board sets the story order. A workflow that the board does not list is off-board. It is valid and gets no diagnostic.</p>
+      <p class="prose">The language has no <code>translation</code> block. The block order and the file layout have no meaning. Only the board sets the story order. A workflow that the board does not list is off-board. It is valid and gets no diagnostic. A record (<code>hotspot</code>, <code>evidence</code>, or <code>decision</code>) describes the model and adds no behavior.</p>
 
       <div class="section-head" style="margin-top: 36px;"><h2>Inside a <code>bounded_context</code></h2></div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Block</th><th>Purpose</th></tr></thead>
           <tbody>
-            <tr><td><code>aggregate</code></td><td>A context-owned consistency boundary</td></tr>
+            <tr><td><code>aggregate</code></td><td>A context-owned consistency boundary. Optional <code>identity = field_type.&lt;id&gt;</code> names the field type of one stream.</td></tr>
             <tr><td><code>field_type</code></td><td>A reusable field from the ubiquitous language. Requires a built-in <code>type</code>.</td></tr>
             <tr><td><code>event</code></td><td>A canonical past-tense fact with <code>field</code> children</td></tr>
           </tbody>
@@ -85,6 +89,7 @@
             <tr><td><code>processor</code></td><td>Automation</td><td>A machine reaction (the "gear")</td></tr>
             <tr><td><code>table</code></td><td>Any workflow</td><td>Presentation-only illustrative tabular or example data</td></tr>
             <tr><td><code>scenario</code></td><td>Any workflow</td><td>Pattern-specific Given/When/Then (see below)</td></tr>
+            <tr><td><code>field_source</code></td><td>Any workflow</td><td>An unlabeled block. One field takes its value from other fields (see below).</td></tr>
           </tbody>
         </table>
       </div>
@@ -112,13 +117,36 @@
           <thead><tr><th>Workflow</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
           <tbody>
             <tr><td>State Change</td><td>Event, zero or more</td><td>one Command</td><td>Event or Error, one or more</td></tr>
-            <tr><td>State View</td><td>Event, one or more</td><td><strong>none</strong></td><td>Read Model or Error, one or more</td></tr>
-            <tr><td>Automation, action form</td><td>Event or Read Model, zero or more</td><td>one Processor or Command</td><td>Event or Error, one or more</td></tr>
-            <tr><td>Automation, view form</td><td>Event, one or more</td><td><strong>none</strong></td><td>Read Model of the same automation, or Error, one or more</td></tr>
+            <tr><td>State View</td><td>Event, one or more, or none with <code>empty_history = true</code></td><td><strong>none</strong></td><td>Read Model or Error, one or more</td></tr>
+            <tr><td>Automation, action form</td><td>Event or Read Model, zero or more</td><td>one Processor or Command</td><td>Event or Error, one or more. Also a Command of the same automation when <code>when</code> targets a Processor.</td></tr>
+            <tr><td>Automation, view form</td><td>Event, one or more, or none with <code>empty_history = true</code></td><td><strong>none</strong></td><td>Read Model of the same automation, or Error, one or more</td></tr>
           </tbody>
         </table>
       </div>
       <p class="prose">The number of <code>when</code> steps selects the form of an automation scenario. A view form scenario states the content of a read model, for example a to-do list. <code>expect_empty_list = true</code> on a <code>then</code> step states that the read model is empty.</p>
+
+      <div class="section-head" style="margin-top: 36px;"><h2>Scenario attributes</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Attribute</th><th>Where</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><code>case = "..."</code></td><td>Any scenario</td><td>The kind of business rule that the scenario states. The form of the scenario selects the group of values. A value from the wrong group is <code>EM304</code>.</td></tr>
+            <tr><td><code>empty_history = true</code></td><td>State View scenario, automation view form scenario</td><td>The read model before any event. The scenario has no <code>given</code> step. A <code>given</code> step is <code>EM301</code>. On another scenario, it is <code>EM304</code>.</td></tr>
+            <tr><td><code>expect_no_dispatch = true</code></td><td><code>then</code> command step</td><td>The processor does not issue this command. On another step, or with fields, it is <code>EM304</code>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Group</th><th>Scenario forms</th><th>Values of <code>case</code></th></tr></thead>
+          <tbody>
+            <tr><td>Command cases</td><td><code>state_change</code>, automation action form</td><td><code>happy_path</code>, <code>variant</code>, <code>refused_input</code>, <code>state_violation</code>, <code>business_duplicate</code>, <code>limit</code>, <code>authorization</code>, <code>alternative_path</code>, <code>external_failure</code>, <code>compensation</code></td></tr>
+            <tr><td>Read model cases</td><td><code>state_view</code>, automation view form</td><td><code>appear</code>, <code>change</code>, <code>disappear</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="prose">An unknown <code>case</code> is <code>EM008</code>. The tool does not infer a case from the steps and does not compare the case with the steps.</p>
+      <p class="prose">A dispatch is the issue of a command by a processor. A <code>then</code> command step is allowed only in an automation action form scenario whose one <code>when</code> step targets a processor. Elsewhere it is <code>EM303</code>. Use the local form <code>command.&lt;id&gt;</code>. A command of another workflow is <code>EM101</code>. Two <code>then</code> steps that name the same command, with <code>expect_no_dispatch = true</code> on only one of them, are <code>EM305</code>. The tool does not require an edge from the processor to the command.</p>
       <div class="section-head" style="margin-top: 36px;"><h2>Reference forms</h2></div>
       <div class="table-wrap">
         <table>
@@ -131,11 +159,18 @@
             <tr><td>Aggregate</td><td><code>aggregate.pet_management.pet</code> (or <code>aggregate.pet</code> inside its own context)</td></tr>
             <tr><td>Field type</td><td><code>field_type.pet_management.pet_id</code> (or <code>field_type.pet_id</code> inside its own context)</td></tr>
             <tr><td>Local workflow element</td><td><code>command.add_pet</code></td></tr>
-            <tr><td>Workflow-qualified element (for a hotspot)</td><td><code>command.add_pet.add_pet_command</code></td></tr>
+            <tr><td>Workflow-qualified element (for a record <code>on</code>)</td><td><code>command.add_pet.add_pet_command</code></td></tr>
+            <tr><td>State inside its own lifecycle</td><td><code>state.open</code></td></tr>
+            <tr><td>Lifecycle part (for a record <code>on</code>)</td><td><code>lifecycle.booking</code>, <code>state.booking.open</code>, <code>transition.booking.confirm_booking</code>, <code>invalid_transition.booking.confirm_canceled_booking</code></td></tr>
+            <tr><td>Field</td><td><code>event.booking.booking_opened.field.guest_name</code>, <code>command.open_booking.field.guest_name</code> (local), <code>command.open_booking.open_booking.field.guest_name</code> (workflow-qualified)</td></tr>
+            <tr><td>Subfield</td><td><code>command.open_booking.field.address.field.city</code></td></tr>
+            <tr><td>Record</td><td><code>evidence_source.booking_policy</code>, <code>decision.one_open_bookings_list</code>, <code>hotspot.refund_rule</code></td></tr>
           </tbody>
         </table>
       </div>
-      <p class="prose">References are HCL traversals, not strings. Each reference is an exact lookup. Interpolation, functions, and variables are invalid.</p>
+      <p class="prose">References are HCL traversals, not strings. Each reference is an exact lookup. Interpolation, functions, and variables are invalid. <code>state.&lt;id&gt;</code> outside a lifecycle is <code>EM101</code>. A field reference names a field definition, also inside a list item. An index step such as <code>x[0]</code> in a field reference is <code>EM101</code>. A field name that the lookup does not find is <code>EM102</code>.</p>
+      <div class="section-head" style="margin-top: 36px;"><h2>Attach targets</h2></div>
+      <p class="prose">The <code>on</code> of a record names one attach target. All three records accept a catalog item, a workflow, an owner, an actor, a workflow-qualified element, a lifecycle part, and a field reference. A <code>hotspot</code> and an <code>evidence</code> also accept <code>decision.&lt;id&gt;</code>. Only an <code>evidence</code> accepts <code>hotspot.&lt;id&gt;</code>. Another target kind is <code>EM101</code>.</p>
     </div>
   </section>
 
@@ -155,9 +190,48 @@
             <tr><td><code>pii = true</code></td><td>Personally identifiable information</td></tr>
             <tr><td><code>cardinality = "Single"</code> or <code>"List"</code></td><td>The field holds one value or a list</td></tr>
             <tr><td><code>example = ...</code></td><td>A native HCL literal, checked against the effective type and cardinality (<code>EM010</code>)</td></tr>
+            <tr><td><code>correlation_key = true</code></td><td>The value links an outside fact to an entity of the modeled system</td></tr>
+            <tr><td><code>deduplication_key = true</code></td><td>A second delivery with the same value records no new fact</td></tr>
           </tbody>
         </table>
       </div>
+      <p class="prose">The two key flags are allowed on <code>field</code> and <code>subfield</code>. On a <code>field_type</code> they are <code>EM000</code>. A value that is not a Boolean is <code>EM007</code>. The tool does not infer a flag from a field name.</p>
+
+      <div class="section-head" style="margin-top: 36px;"><h2>Aggregate identity</h2></div>
+      <p class="prose"><code>identity</code> on an <code>aggregate</code> is a <code>field_type</code> reference, in the form <code>field_type.&lt;id&gt;</code> or <code>field_type.&lt;context&gt;.&lt;id&gt;</code>. Another value is <code>EM101</code>. Each event of that aggregate must have a top-level field of the identity type. A field with a built-in type string does not count. An event without such a field is <code>EM018</code>.</p>
+
+      <div class="section-head" style="margin-top: 36px;"><h2>Lifecycles</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Block</th><th>Attribute</th><th>Required</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td><code>lifecycle</code></td><td><code>aggregate</code></td><td>yes</td><td><code>aggregate.&lt;context&gt;.&lt;id&gt;</code></td></tr>
+            <tr><td><code>state</code></td><td><code>end</code></td><td>no</td><td><code>true</code> when the stream ends in this state</td></tr>
+            <tr><td><code>state</code></td><td><code>path</code></td><td>no</td><td><code>"main"</code>, <code>"cancel"</code>, <code>"failure"</code>, or <code>"compensation"</code></td></tr>
+            <tr><td><code>transition</code></td><td><code>before</code></td><td>yes</td><td>List of <code>state.&lt;id&gt;</code>. An empty list starts the stream.</td></tr>
+            <tr><td><code>transition</code></td><td><code>after</code></td><td>yes</td><td>One <code>state.&lt;id&gt;</code></td></tr>
+            <tr><td><code>transition</code></td><td><code>command</code></td><td>yes</td><td><code>command.&lt;workflow&gt;.&lt;id&gt;</code></td></tr>
+            <tr><td><code>transition</code></td><td><code>events</code></td><td>yes</td><td>Non-empty list of <code>event.&lt;context&gt;.&lt;id&gt;</code></td></tr>
+            <tr><td><code>invalid_transition</code></td><td><code>before</code></td><td>yes</td><td>Non-empty list of <code>state.&lt;id&gt;</code></td></tr>
+            <tr><td><code>invalid_transition</code></td><td><code>command</code></td><td>yes</td><td><code>command.&lt;workflow&gt;.&lt;id&gt;</code></td></tr>
+            <tr><td><code>invalid_transition</code></td><td><code>reason</code></td><td>yes</td><td>Non-empty text in business words</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="prose">Each block also accepts <code>title</code> and <code>description</code>. Another form of <code>aggregate</code>, <code>command</code>, or an <code>events</code> entry is <code>EM101</code>. <code>EM017</code> reports a lifecycle that is not valid: a second lifecycle for the same aggregate, no <code>state</code> block, an empty required list, one state and command pair in a transition and in an invalid transition, or a transition event of another aggregate. A lifecycle adds no flow edge and no scenario. On a command, <code>creates_aggregate = true</code> states that at least one successful outcome creates a stream.</p>
+
+      <div class="section-head" style="margin-top: 36px;"><h2>Field sources</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Attribute</th><th>Required</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td><code>target</code></td><td>yes</td><td>One field reference</td></tr>
+            <tr><td><code>inputs</code></td><td>yes</td><td>Non-empty list of field references</td></tr>
+            <tr><td><code>description</code></td><td>no</td><td>Text, for example the rule of a derived value</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="prose">Use the local form for elements of the same workflow and the qualified form for events. A workflow-qualified element of another workflow is <code>EM101</code>. <code>EM202</code> reports a field source that is not valid: an empty <code>inputs</code> list, an input that does not reach the target along one canonical edge of the workflow, an event or command field with more than one input, or a second field source with the same target. The tool does not compare types or units, and it does not infer a source from equal names.</p>
 
       <div class="section-head" style="margin-top: 36px;"><h2>Titles</h2></div>
       <p class="prose"><code>title</code> is optional literal text. When you omit it, the element has no title. The tool does not make a title from the label, and views show the ID instead. An empty string is a title.</p>
@@ -211,7 +285,42 @@
 
       <div class="section-head" style="margin-top: 36px;"><h2>Status values</h2></div>
       <p class="prose">Workflow <code>status</code>: <code>created</code>, <code>planned</code>, <code>assigned</code>, <code>in_progress</code>, <code>review</code>, <code>blocked</code>, <code>done</code>, <code>informational</code>.</p>
-      <p class="prose">Hotspot <code>status</code>: <code>open</code> (default) or <code>resolved</code>. An open hotspot produces <code>EM406</code>.</p>
+      <p class="prose">Hotspot <code>status</code>: <code>open</code> (default) or <code>resolved</code>. An open hotspot produces <code>EM406</code>. Only <code>status</code> controls <code>EM406</code>.</p>
+
+      <div class="section-head" style="margin-top: 36px;"><h2>Hotspot kinds</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Attribute</th><th>Values</th></tr></thead>
+          <tbody>
+            <tr><td><code>kind</code></td><td><code>"question"</code> (default), <code>"assumption"</code>, or <code>"request"</code></td></tr>
+            <tr><td><code>category</code></td><td><code>"action"</code>, <code>"data"</code>, <code>"next"</code>, <code>"rule"</code>, <code>"example"</code>, <code>"view"</code>, <code>"who"</code>, or <code>"time"</code></td></tr>
+            <tr><td><code>options</code></td><td>List of non-empty strings: the answers that the author offers</td></tr>
+            <tr><td><code>concerns</code></td><td><code>"event"</code>, <code>"aggregate"</code>, <code>"field_type"</code>, <code>"command"</code>, <code>"readmodel"</code>, <code>"screen"</code>, <code>"processor"</code>, <code>"scenario"</code>, <code>"workflow"</code>, <code>"board"</code>, <code>"chapter"</code>, <code>"actor"</code>, <code>"lifecycle"</code>, or <code>"field_source"</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="prose">A question states missing information. An assumption states a gap that the author filled, as a question to confirm. A request states a change in another part of the model. A request requires <code>concerns</code>. Without it, or with <code>concerns</code> on another kind, the hotspot is <code>EM000</code>. An unknown value is <code>EM008</code>.</p>
+
+      <div class="section-head" style="margin-top: 36px;"><h2>Evidence and decisions</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Block</th><th>Attribute</th><th>Required</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td><code>evidence_source</code></td><td><code>kind</code></td><td>yes</td><td><code>"document"</code>, <code>"code"</code>, <code>"application"</code>, or <code>"person"</code></td></tr>
+            <tr><td><code>evidence_source</code></td><td><code>location</code></td><td>no</td><td>Text, for example a file path, a URL, or the role of a person</td></tr>
+            <tr><td><code>evidence</code></td><td><code>on</code></td><td>yes</td><td>One attach target</td></tr>
+            <tr><td><code>evidence</code></td><td><code>certainty</code></td><td>yes</td><td><code>"stated"</code> (the source says it clearly), <code>"implied"</code> (it follows from the source), or <code>"assumed"</code> (no source gives it)</td></tr>
+            <tr><td><code>evidence</code></td><td><code>source</code></td><td>for <code>"stated"</code> and <code>"implied"</code></td><td><code>evidence_source.&lt;id&gt;</code></td></tr>
+            <tr><td><code>evidence</code></td><td><code>location</code></td><td>no</td><td>Text inside the source, for example a section and a page</td></tr>
+            <tr><td><code>decision</code></td><td><code>statement</code></td><td>yes</td><td>Non-empty text</td></tr>
+            <tr><td><code>decision</code></td><td><code>reason</code></td><td>yes</td><td>Non-empty text</td></tr>
+            <tr><td><code>decision</code></td><td><code>kind</code></td><td>no</td><td><code>"choice"</code> (default) or <code>"accepted_debt"</code></td></tr>
+            <tr><td><code>decision</code></td><td><code>signal</code></td><td>no</td><td>One judgment code from <code>"EM401"</code> to <code>"EM406"</code>. Only with <code>kind = "accepted_debt"</code>.</td></tr>
+            <tr><td><code>decision</code></td><td><code>on</code></td><td>no</td><td>One attach target. Without it, the decision is about the whole model.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="prose">Each block also accepts <code>title</code> and <code>description</code>. An <code>evidence</code> with <code>"stated"</code> or <code>"implied"</code> and no <code>source</code> is <code>EM000</code>. <code>signal</code> on a <code>"choice"</code> decision is <code>EM000</code>. A decision does not change a diagnostic. A decision with <code>signal = "EM403"</code> does not remove <code>EM403</code> and does not change its severity. Evidence does not change validity.</p>
     </div>
   </section>
 
@@ -228,7 +337,7 @@
           </tbody>
         </table>
       </div>
-      <p class="prose">Core diagnostics (<code>EM000</code> to <code>EM303</code>) are errors in every profile, and they stop the typed model. A profile sets only the severity of the judgment signals <code>EM401</code> to <code>EM406</code>. When a model has no core errors, the tool builds the typed model in every profile. A <code>strict</code> error still makes <code>validate</code> exit with code 1.</p>
+      <p class="prose">Core diagnostics (<code>EM000</code> to <code>EM305</code>) are errors in every profile, and they stop the typed model. A profile sets only the severity of the judgment signals <code>EM401</code> to <code>EM406</code>. When a model has no core errors, the tool builds the typed model in every profile. A <code>strict</code> error still makes <code>validate</code> exit with code 1.</p>
 
       <div class="section-head" style="margin-top: 36px;"><h2>Diagnostic codes</h2></div>
       <div class="table-wrap">
@@ -241,19 +350,24 @@
             <tr><td><code>EM003</code></td><td>Core</td><td>A label is not lower snake case</td></tr>
             <tr><td><code>EM004</code></td><td>Core</td><td>A block is not allowed in its workflow kind</td></tr>
             <tr><td><code>EM005</code></td><td>Core</td><td>A chapter lists no workflow</td></tr>
-            <tr><td><code>EM007</code></td><td>Core</td><td>An attribute value has the wrong kind</td></tr>
+            <tr><td><code>EM007</code></td><td>Core</td><td>An attribute value has the wrong kind, or a text that must be non-empty is empty or holds only whitespace</td></tr>
             <tr><td><code>EM008</code></td><td>Core</td><td>An enum attribute has an unknown value</td></tr>
             <tr><td><code>EM009</code></td><td>Core</td><td>A field or subfield has no type or an invalid type, or a <code>field_type</code> has no built-in type</td></tr>
             <tr><td><code>EM010</code></td><td>Core</td><td>An example does not match its field type or cardinality</td></tr>
             <tr><td><code>EM014</code></td><td>Core</td><td>A workflow is in two or more chapters</td></tr>
             <tr><td><code>EM015</code></td><td>Core</td><td>The model has no <code>board</code> block, or more than one</td></tr>
             <tr><td><code>EM016</code></td><td>Core</td><td>The board lists a workflow more than once</td></tr>
-            <tr><td><code>EM101</code></td><td>Core</td><td>A reference has the wrong form or targets the wrong kind</td></tr>
+            <tr><td><code>EM017</code></td><td>Core</td><td>A lifecycle is not valid</td></tr>
+            <tr><td><code>EM018</code></td><td>Core</td><td>An event of an aggregate with an <code>identity</code> has no field of the identity type</td></tr>
+            <tr><td><code>EM101</code></td><td>Core</td><td>A reference has the wrong form or targets the wrong kind. This includes <code>state.&lt;id&gt;</code> outside a lifecycle, a <code>then</code> command of another workflow, an <code>identity</code> that is not a <code>field_type</code> reference, an index step in a field reference, and a record <code>on</code> with a target kind that the record does not accept.</td></tr>
             <tr><td><code>EM102</code></td><td>Core</td><td>A reference names no declared element</td></tr>
             <tr><td><code>EM201</code></td><td>Core</td><td>A flow edge uses a non-canonical spelling or a target kind that the pattern does not allow</td></tr>
-            <tr><td><code>EM301</code></td><td>Core</td><td>A scenario has the wrong number of <code>given</code>, <code>when</code>, or <code>then</code> steps for its pattern or form</td></tr>
+            <tr><td><code>EM202</code></td><td>Core</td><td>A field source is not valid</td></tr>
+            <tr><td><code>EM301</code></td><td>Core</td><td>A scenario has the wrong number of <code>given</code>, <code>when</code>, or <code>then</code> steps for its pattern or form. This includes an <code>empty_history = true</code> scenario with a <code>given</code> step.</td></tr>
             <tr><td><code>EM302</code></td><td>Core</td><td>A scenario step does not set one target</td></tr>
-            <tr><td><code>EM303</code></td><td>Core</td><td>A scenario step target kind is not allowed for its pattern, form, and step</td></tr>
+            <tr><td><code>EM303</code></td><td>Core</td><td>A scenario step target kind is not allowed for its pattern, form, and step. This includes a <code>then</code> command outside an automation action form scenario whose <code>when</code> targets a processor.</td></tr>
+            <tr><td><code>EM304</code></td><td>Core</td><td><code>case</code>, <code>empty_history</code>, or <code>expect_no_dispatch</code> does not fit the pattern or form of its scenario</td></tr>
+            <tr><td><code>EM305</code></td><td>Core</td><td>A scenario states that the processor issues a command and also that it does not issue it</td></tr>
             <tr><td><code>EM401</code></td><td>Judgment</td><td>Bed: a screen connects to several commands</td></tr>
             <tr><td><code>EM402</code></td><td>Judgment</td><td>Left chair: a command emits several events</td></tr>
             <tr><td><code>EM403</code></td><td>Judgment</td><td>Right chair: a read model consumes several events</td></tr>
@@ -277,14 +391,14 @@
           <thead><tr><th>Command</th><th>Does</th></tr></thead>
           <tbody>
             <tr><td><code>emhcl validate [--profile workshop|valid|strict] [--format text|json] &lt;model&gt;</code></td><td>Validates the model. The default profile is <code>valid</code>. A valid model prints <code>&lt;path&gt; valid</code>. <code>--format json</code> writes one object with the keys <code>path</code>, <code>profile</code>, <code>has_errors</code>, <code>has_core_errors</code>, and <code>diagnostics</code>.</td></tr>
-            <tr><td><code>emhcl fmt [-w | --check] &lt;model&gt;</code></td><td>Canonicalizes whitespace and attribute order. Without a flag, prints the result. <code>-w</code> rewrites only the files that change. <code>--check</code> writes no file, prints each file that needs formatting, and exits with code 1 when there is one. On a folder, formats each member file. A syntax error in any member changes no file.</td></tr>
+            <tr><td><code>emhcl fmt [-w | --check] &lt;model&gt;</code></td><td>Canonicalizes whitespace and attribute order. Without a flag, prints the result. <code>-w</code> rewrites only the files that change. <code>--check</code> writes no file, prints each file that needs formatting, and exits with code 1 when there is one. On a folder, formats each member file. A syntax error in any member changes no file. <code>on</code> sorts last only in <code>evidence</code> and <code>decision</code>.</td></tr>
             <tr><td><code>emhcl migrate [-w] &lt;model&gt;</code></td><td>Converts a specification v0.4.0 model to the current language. Adds a <code>board</code>, writes each field type and derived title, and rewrites each <code>translation</code> as <code>automation</code>. Without <code>-w</code>, prints the result. With <code>-w</code>, rewrites the changed files.</td></tr>
-            <tr><td><code>emhcl diff [--format text|json] &lt;base&gt; &lt;head&gt;</code></td><td>Lists the declarations that a change added, removed, or changed, for example <code>changed workflow.register_pet</code>. Compares the typed models, so a moved block or a new layout gives no line. Exits with code 1 when a model has a core error.</td></tr>
+            <tr><td><code>emhcl diff [--format text|json] &lt;base&gt; &lt;head&gt;</code></td><td>Lists the declarations that a change added, removed, or changed, for example <code>changed workflow.register_pet</code>. Covers lifecycles, evidence sources, evidence, and decisions. A hotspot has the address <code>hotspot.&lt;id&gt;</code>, and a state has the address <code>state.&lt;lifecycle&gt;.&lt;id&gt;</code>. Compares the typed models, so a moved block or a new layout gives no line. Exits with code 1 when a model has a core error.</td></tr>
             <tr><td><code>emhcl diagram [--title &lt;text&gt;] &lt;model&gt; -o &lt;file&gt;</code></td><td>Renders a self-contained interactive HTML canvas with chapter navigation and Model, Compact, Storming, Slides, and Context Map views. Without <code>-o</code>, writes to stdout. <code>--title</code> sets the page title. Core errors stop the output. Modeling judgment does not.</td></tr>
             <tr><td><code>emhcl serve [--addr &lt;host&gt;] [--port &lt;n&gt;] [--profile &lt;p&gt;] &lt;model&gt;</code></td><td>Serves the canvas on <code>127.0.0.1:8080</code> and reloads when the model changes. For a folder, reloads when you add, remove, rename, or edit a member file. <code>--port 0</code> picks a free port. With <code>--profile strict</code>, a banner lists the policy errors.</td></tr>
             <tr><td><code>emhcl import &lt;file.json&gt; [-o &lt;model.em.hcl&gt;]</code></td><td>Converts Event Modeling JSON to one formatted <code>.em.hcl</code> file and validates it. Without <code>-o</code>, writes to stdout.</td></tr>
             <tr><td><code>emhcl export &lt;model&gt; [-o &lt;file.json&gt;]</code></td><td>Converts a valid model to slice-based Event Modeling JSON. Without <code>-o</code>, writes to stdout. Refuses a target that ends in <code>.em.hcl</code> or is the source file (exit code 2).</td></tr>
-            <tr><td><code>emhcl version [--format text|json]</code></td><td>Prints the installed version, for example <code>emhcl v0.16.0</code>. <code>--format json</code> prints <code>{"tool": ..., "spec": ...}</code>, where <code>spec</code> is the specification version that the tool implements.</td></tr>
+            <tr><td><code>emhcl version [--format text|json]</code></td><td>Prints the installed version, for example <code>emhcl v0.17.0</code>. <code>--format json</code> prints <code>{"tool": ..., "spec": ...}</code>, where <code>spec</code> is the specification version that the tool implements.</td></tr>
           </tbody>
         </table>
       </div>
@@ -338,6 +452,8 @@
         <li>Import writes a <code>board</code> that lists every slice in document order. Slice type <code>TRANSLATION</code> becomes an <code>automation</code>.</li>
         <li>Export writes the board workflows in board order, then the off-board workflows in ID order, with a warning that names them. An <code>automation</code> with an edge from an Event of an external context exports as <code>TRANSLATION</code>.</li>
         <li>The conversion is not lossless. Export drops chapters, hotspots, teams, systems, read-model questions, <code>external_trigger</code>, and screen <code>kind = "api"</code>. Import drops original canvas IDs and field-name spellings. Each command writes a warning for each detail that the other format cannot hold.</li>
+        <li>Export also drops the method facts with a warning: aggregate <code>identity</code>, lifecycles, evidence sources, evidence, decisions, <code>field_source</code> blocks, key flags, and scenario <code>case</code>. It omits an <code>empty_history</code> scenario and a no-dispatch <code>then</code> step. When no <code>then</code> step is left, it omits the scenario.</li>
+        <li>Import accepts a <code>then</code> command in an automation specification whose one <code>when</code> step is a processor.</li>
         <li>Both commands fail when a workflow or slice has two or more actors. They do not choose an actor for you.</li>
         <li>If the imported model has validation errors, <code>import</code> still writes the source for repair and exits with code 1.</li>
       </ul>
@@ -359,7 +475,7 @@
           </tbody>
         </table>
       </div>
-      <p class="prose">One generated file carries all five views. Model, Compact, Storming, and Slides follow the board order. Off-board workflows are listed separately under <strong>Off-board workflows</strong>. Chapters are the top-level navigation: a model with several chapters opens an <strong>All chapters</strong> overview, and the chapter picker and its previous and next arrows switch chapters. A model without chapters shows the whole board in every view. An API screen shows its route instead of a wireframe. Status, context, and field-detail options are under <strong>Filters</strong>. The Model and Storming views support zoom. Zoom with the toolbar, Ctrl/⌘ + scroll, or the <code>+</code>, <code>-</code>, <code>0</code>, and <code>F</code> keys.</p>
+      <p class="prose">One generated file carries all five views. Model, Compact, Storming, and Slides follow the board order. Off-board workflows are listed separately under <strong>Off-board workflows</strong>. Chapters are the top-level navigation: a model with several chapters opens an <strong>All chapters</strong> overview, and the chapter picker and its previous and next arrows switch chapters. A model without chapters shows the whole board in every view. An API screen shows its route instead of a wireframe. The Model view marks a no-dispatch step with the flag <code>expect_no_dispatch</code>. Slides show "Expects that the command is not issued". Status, context, and field-detail options are under <strong>Filters</strong>. The Model and Storming views support zoom. Zoom with the toolbar, Ctrl/⌘ + scroll, or the <code>+</code>, <code>-</code>, <code>0</code>, and <code>F</code> keys.</p>
     </div>
   </section>
 

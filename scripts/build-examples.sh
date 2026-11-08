@@ -7,7 +7,7 @@
 #
 # Reads:  examples/models/*.em.hcl   (one-file models)
 #         examples/models/*/         (folder models)
-# Needs:  emhcl v0.16.0 or newer (Event Modeling HCL Specification v0.7.0)
+# Needs:  emhcl v0.17.0 or newer (Event Modeling HCL Specification v0.8.0)
 # Writes: examples/canvas/<name>.html (git-ignored build artifacts)
 set -euo pipefail
 

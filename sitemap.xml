@@ -7,6 +7,7 @@
   <url><loc>https://event-modeling-hcl.github.io/learn/patterns.html</loc></url>
   <url><loc>https://event-modeling-hcl.github.io/learn/language.html</loc></url>
   <url><loc>https://event-modeling-hcl.github.io/learn/scenarios.html</loc></url>
+  <url><loc>https://event-modeling-hcl.github.io/learn/facts.html</loc></url>
   <url><loc>https://event-modeling-hcl.github.io/learn/quality.html</loc></url>
   <url><loc>https://event-modeling-hcl.github.io/examples/index.html</loc></url>
   <url><loc>https://event-modeling-hcl.github.io/examples/minimal.html</loc></url>
@@ -16,8 +17,10 @@
   <url><loc>https://event-modeling-hcl.github.io/examples/appointments-and-weather.html</loc></url>
   <url><loc>https://event-modeling-hcl.github.io/examples/pet-clinic.html</loc></url>
   <url><loc>https://event-modeling-hcl.github.io/examples/api-screens.html</loc></url>
+  <url><loc>https://event-modeling-hcl.github.io/examples/method-facts.html</loc></url>
   <url><loc>https://event-modeling-hcl.github.io/playground/</loc></url>
   <url><loc>https://event-modeling-hcl.github.io/ai.html</loc></url>
+  <url><loc>https://event-modeling-hcl.github.io/plugin.html</loc></url>
   <url><loc>https://event-modeling-hcl.github.io/start.html</loc></url>
   <url><loc>https://event-modeling-hcl.github.io/reference.html</loc></url>
 </urlset>
