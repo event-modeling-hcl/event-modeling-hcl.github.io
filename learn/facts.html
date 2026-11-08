@@ -32,10 +32,24 @@
   <section class="hero" style="padding-bottom: 8px; text-align: left;">
     <div class="wrap">
       <div class="prose" style="margin: 0;">
-        <div class="eyebrow">Learn · 05 of 6</div>
+        <div class="eyebrow">Learn · emhcl and .em.hcl · 6 of 7</div>
         <h1>Method facts: say it in the model</h1>
         <p class="lede">Older models kept these facts in descriptions, comments, or hotspots. Now each fact has a typed block or attribute.</p>
       </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <callout kind="target">
+        <p>After this page, you can:</p>
+        <ul>
+        <li>say which block records each method fact</li>
+        <li>add a stream identity and a lifecycle to an aggregate</li>
+        <li>record evidence, decisions, and hotspots</li>
+        </ul>
+      </callout>
+      <p>Method facts are optional. A model without them stays valid. Add them when a team needs the model to say more than the flow shows. The method behind them is in <a href="/learn/method-review.html">Review a model</a>.</p>
     </div>
   </section>
 
@@ -166,7 +180,16 @@
         <li><code>end = true</code> states that the stream ends in this state. <code>path</code> is <code>"main"</code>, <code>"cancel"</code>, <code>"failure"</code>, or <code>"compensation"</code>.</li>
         <li>An <code>invalid_transition</code> states a Command that is not valid in each <code>before</code> state. Write the <code>reason</code> in business words. Each invalid transition is a source for a <code>state_violation</code> scenario.</li>
       </ul>
-      <p>The validator reports <code>EM017</code> for a second lifecycle of one aggregate, a lifecycle without a state, or an empty <code>events</code> list. It also reports <code>EM017</code> for an empty <code>before</code> list on an invalid transition, one state and Command pair that is both valid and invalid, and a transition Event of another aggregate. A lifecycle adds no flow edge and no scenario. The validator does not compare it with the edges or the scenarios.</p>
+      <p>The validator reports <code>EM017</code> in these cases:</p>
+      <ul>
+        <li>a second lifecycle of one aggregate</li>
+        <li>a lifecycle without a state</li>
+        <li>an empty <code>events</code> list</li>
+        <li>an empty <code>before</code> list on an invalid transition</li>
+        <li>one state and Command pair that is both valid and invalid</li>
+        <li>a transition Event of another aggregate</li>
+      </ul>
+      <p>A lifecycle adds no flow edge and no scenario. The validator does not compare it with the edges or the scenarios.</p>
       <p>Outside its lifecycle, write <code>state.booking.open</code>, <code>transition.booking.cancel_booking</code>, or <code>invalid_transition.booking.cancel_canceled_booking</code>.</p>
 
       <h2 id="field-sources">Field references and field sources</h2>
@@ -213,7 +236,14 @@
         }
       </code-block>
       <p>Elements of the same workflow use the local form. Events use the qualified form. The source follows the edges: each input element must connect to the target element by one canonical edge of the workflow. A field of an Event or a Command takes one input. A field of a Read Model, a Screen, or a Processor can take several. Write the rule of a converted or derived value in <code>description</code>. The language stores the rule as text and does not run it.</p>
-      <p>The validator reports <code>EM202</code> for an empty <code>inputs</code> list, an input without a canonical edge to the target, several inputs for an Event or Command field, and a second source for the same target. The language does not infer a source from equal names.</p>
+      <p>The validator reports <code>EM202</code> in these cases:</p>
+      <ul>
+        <li>an empty <code>inputs</code> list</li>
+        <li>an input without a canonical edge to the target</li>
+        <li>several inputs for an Event or Command field</li>
+        <li>a second source for the same target</li>
+      </ul>
+      <p>The language does not infer a source from equal names.</p>
 
       <h2 id="keys">Correlation and deduplication keys</h2>
       <p>An outside fact often arrives without your own ID, and it can arrive twice. Use the two key flags on the fields of that fact:</p>
@@ -374,10 +404,42 @@
   </section>
 
   <section class="section">
+    <div class="wrap prose">
+      <h2>Check yourself</h2>
+      <div class="quiz-item">
+        <span class="quiz-kicker">1</span>
+        <p>An aggregate sets <code>identity = field_type.booking_id</code>. An Event has a field <code>booking_id</code> with the type <code>&quot;UUID&quot;</code>. What does the validator say?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>It reports <code>EM018</code>. The field must use the identity field type. A field with the same name and the type <code>&quot;UUID&quot;</code> does not count.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">2</span>
+        <p>The team keeps a shape that <code>EM403</code> reports. Where do you write the reason?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>In a <code>decision</code> with <code>kind = &quot;accepted_debt&quot;</code> and <code>signal = &quot;EM403&quot;</code>. The decision does not change the severity.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">3</span>
+        <p>Are the method facts required?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>No. All of them are optional.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
     <div class="wrap">
       <nav class="page-path-nav">
         <a href="/learn/scenarios.html"><small>Previous</small>← Scenarios</a>
-        <a class="next" href="/learn/quality.html"><small>Next</small>Quality: smells, errors, warnings →</a>
+        <a class="next" href="/learn/quality.html"><small>Next</small>Quality →</a>
       </nav>
     </div>
   </section>

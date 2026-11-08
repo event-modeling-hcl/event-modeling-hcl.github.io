@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>Examples That Test the Model</title>
+<meta name="description" content="Scenarios use Given, When, and Then to test one business rule. Learn the seven questions for every Command and how to write examples for Read Models.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Examples That Test the Model: Learn Event Modeling">
+<meta property="og:description" content="Given, When, and Then, the seven questions for every Command, and Read Model examples.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="canonical" href="https://event-modeling-hcl.github.io/learn/method-examples.html">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px; text-align: left;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0;">
+        <div class="eyebrow">Learn · Event Modeling · 5 of 6</div>
+        <h1>Examples that test the model</h1>
+        <p class="lede">A scenario is one example of one rule. It shows how a slice behaves.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="prose">
+      <callout kind="target">
+        <p>After this page, you can:</p>
+        <ul>
+        <li>write a Given, When, Then example for a Command and for a Read Model</li>
+        <li>name the seven kinds of example that every Command needs</li>
+        <li>show a refused Command and an empty list in a way that a reader can check</li>
+        </ul>
+      </callout>
+      <h2>One rule, one example</h2>
+      <p>A scenario is an example of one business rule. It has three parts. Given says what already happened. When names the action. Then states the result. Use business words and concrete values.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Kind</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+          <tbody>
+            <tr><td>State Change</td><td>Earlier Events. An empty list means no history.</td><td>At most one Command.</td><td>The new Events, or an expected refusal.</td></tr>
+            <tr><td>State View</td><td>The source Events.</td><td>Nothing.</td><td>One Read Model, with its content.</td></tr>
+            <tr><td>Automation</td><td>Setup Events first, and the trigger Event last.</td><td>Nothing.</td><td>The Command that the Automation sends, or nothing.</td></tr>
+            <tr><td>Refusal</td><td>Events that make the state invalid. No Events for a plain input check.</td><td>The Command.</td><td>No Event, and a short reason for the refusal.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
+      <p>Do not mix Events and a Read Model in one Then. All parts of one scenario come from the same chapter.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>Write a good example</h2>
+      <p>Three checks make an example useful:</p>
+      <ul>
+        <li>The givens are explicit. Write "Order Created exists and Order Confirmed does not", not "an order".</li>
+        <li>The action is clear. Write "the customer confirms the order", not "something happens".</li>
+        <li>The result can be checked. Write the Event with its values, or the refusal with its reason. "It works" is not a result.</li>
+      </ul>
+      <p>Test a limit on both sides. If a rule allows a loan up to 2 million euros, write one example just below the limit and one just above.</p>
+      <p>The table shows examples for the clinic. The rules are examples only.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Title</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+          <tbody>
+            <tr><td>Appointment is added</td><td>Pet Added (pet 5)</td><td>Add Appointment (pet 5, 10:00)</td><td>Appointment Added (pet 5, 10:00)</td></tr>
+            <tr><td>Unknown pet</td><td>Nothing</td><td>Add Appointment (pet 9, 10:00)</td><td>Refused: Pet not found</td></tr>
+            <tr><td>Missing time</td><td>Pet Added (pet 5)</td><td>Add Appointment (pet 5, no time)</td><td>Refused: Time is required</td></tr>
+            <tr><td>Calendar shows it</td><td>Appointment Added (pet 5, 10:00)</td><td>Nothing</td><td>Calendar: one row, pet 5 at 10:00</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Seven questions for every Command</h2>
+      <p>Do not stop at one good case and one bad case. Ask all seven questions for every Command. Write an example for each answer that applies. If a case cannot happen, write down why.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Kind</th><th>The question</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Happy path</td><td>What is the normal success case?</td></tr>
+            <tr><td>2</td><td>Validation failure</td><td>Which invalid or missing inputs does the system refuse?</td></tr>
+            <tr><td>3</td><td>State violation</td><td>In which state is this Command not allowed?</td></tr>
+            <tr><td>4</td><td>Duplicate action</td><td>What happens if someone sends it again after it worked?</td></tr>
+            <tr><td>5</td><td>Alternative path</td><td>Which other valid outcomes depend on the context?</td></tr>
+            <tr><td>6</td><td>External failure</td><td>What happens if an outside system or a timer fails?</td></tr>
+            <tr><td>7</td><td>Compensation</td><td>Can someone undo it? What starts the cleanup?</td></tr>
+          </tbody>
+        </table>
+      </div>      <p>Try first: the Command is Confirm Order. Name three examples beyond the happy path.</p>
+      <details class="reveal">
+        <summary>Show the answer</summary>
+        <p>Three examples: a missing card (validation failure), an order that was canceled (state violation), and a second confirmation of the same order (duplicate action).</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>Refused or recorded?</h2>
+      <p>Two kinds of failure look alike. Keep them apart.</p>
+      <ul>
+        <li>A refused Command records no Event. Nothing happened. You write it as an example with a reason.</li>
+        <li>A failure that the business tracks is a fact. The payment gateway declines a card, so the system records Payment Failed with the order, the reason, and the time.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Examples for Read Models</h2>
+      <p>Every Read Model needs at least one view example. This includes each todo list. Many Command examples with no view example make an incomplete model.</p>
+      <ul>
+        <li>Show how the Read Model fills when Events arrive.</li>
+        <li>Show how it changes or empties, for example when an item expires or a customer returns an item.</li>
+        <li>For a list, give one concrete row for each expected row.</li>
+        <li>If the list is empty, write that it is empty on purpose. A missing example can mean that nobody wrote it yet.</li>
+        <li>A refusal is not an empty list. Use a refusal only for Commands.</li>
+      </ul>
+      <p>Some Read Models build up over many Events. A balance goes from 40 to 110 after two deposits. For these, write a storyline. A storyline tells one use case as a series of beats. A todo list is a good candidate: it starts empty, gets one row, and is empty again after the work is done.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Check yourself</h2>
+      <div class="quiz-item">
+        <span class="quiz-kicker">1</span>
+        <p>Make this result checkable: Then, it works.</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Name the Event and its values. For example: Appointment Added with pet 5 and time 10:00.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">2</span>
+        <p>What is the Given for the example Confirm twice?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Order Created and Order Confirmed. The second confirmation then refuses with a reason such as &quot;Order already confirmed&quot;.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">3</span>
+        <p>The last appointment is canceled. What does the Calendar example say?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>The Calendar is an empty list. Write that it is empty on purpose.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">4</span>
+        <p>A payment provider declines a card. Is this a refusal or a recorded fact?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>It is a recorded fact. The business tracks it, so the system records Payment Failed.</p>
+        </details>
+      </div>
+
+      <callout kind="rule">
+        <p>Remember:</p>
+        <ul>
+        <li>A scenario is one example of one rule: Given, When, Then.</li>
+        <li>Ask the seven questions for every Command.</li>
+        <li>Every Read Model, including each todo list, needs a view example.</li>
+        <li>Write an empty list on purpose. Keep refusals for Commands.</li>
+        </ul>
+      </callout>
+    </div>
+  </section>
+
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <nav class="page-path-nav">
+        <a href="/learn/method-steps.html"><small>Previous</small>← The steps of a session</a>
+        <a class="next" href="/learn/method-review.html"><small>Next</small>Review a model →</a>
+      </nav>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>What Event Modeling Is</title>
+<meta name="description" content="Event Modeling tells a business process as a story of facts on a timeline. This page explains the basic flow from Screen to Command to Event to Read Model.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What Event Modeling Is: Learn Event Modeling">
+<meta property="og:description" content="A story of facts on a timeline, and the basic flow from Screen to Read Model.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="canonical" href="https://event-modeling-hcl.github.io/learn/method-idea.html">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px; text-align: left;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0;">
+        <div class="eyebrow">Learn · Event Modeling · 1 of 6</div>
+        <h1>What Event Modeling is</h1>
+        <p class="lede">An event model tells a business process as a story of facts on a timeline.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <callout kind="target">
+        <p>After this page, you can:</p>
+        <ul>
+        <li>say in one sentence what an event model shows</li>
+        <li>name the five parts of the basic flow, in order</li>
+        <li>explain why you model the work before you think about software</li>
+        </ul>
+      </callout>
+      <h2>A story on a timeline</h2>
+      <p>An event model tells how a business works. You read it from left to right, like a comic strip. Each step shows a fact that happened. For example, a pet clinic added an appointment.</p>
+      <p>A fact is something that already happened. A fact does not change later. The model shows three more things around each fact:</p>
+      <ul>
+        <li>The intent that caused the fact. For example, a staff member wants to add an appointment.</li>
+        <li>The information that people see after the fact. For example, the calendar.</li>
+        <li>The people or machines that look at this information and then act.</li>
+      </ul>
+      <p>Try first: a pet clinic books a visit by phone. Name two facts that the clinic can write down after the call.</p>
+      <details class="reveal">
+        <summary>Show the answer</summary>
+        <p>Two good answers are Owner Registered and Appointment Added. Both names use the past tense. Both say what happened. Neither says what someone wants.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>Start without software</h2>
+      <p>Model the work as people do it without a computer. Ask three questions:</p>
+      <ol>
+        <li>How do people do this work on paper?</li>
+        <li>Who acts, and what starts each action?</li>
+        <li>What must the person know before the action?</li>
+      </ol>
+      <p>Leave out each step that exists only because of software. A loading spinner, a cache refresh, and a session check are not business steps. They do not belong on the timeline.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>The basic flow</h2>
+      <p>Every model follows the same flow. Read it from left to right:</p>
+      <div class="flow-row"><span class="flow-step"><span class="term term-screen">Screen</span></span><span class="flow-arrow">→</span><span class="flow-step"><span class="term term-command">Command</span></span><span class="flow-arrow">→</span><span class="flow-step"><span class="term term-event">Event</span></span><span class="flow-arrow">→</span><span class="flow-step"><span class="term term-readmodel">Read Model</span></span><span class="flow-arrow">→</span><span class="flow-step"><span class="term term-screen">Screen</span></span></div>
+      <p>The table gives the meaning of each part. The examples come from a pet clinic. This guide uses the same clinic on every page.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Part</th><th>What it is</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td><span class="term term-screen">Screen</span></td><td>What a person sees and acts on.</td><td>The form that schedules an appointment.</td></tr>
+            <tr><td><span class="term term-command">Command</span></td><td>An intent to change something. The system can refuse it.</td><td>Add Appointment</td></tr>
+            <tr><td><span class="term term-event">Event</span></td><td>A fact that happened because a Command worked.</td><td>Appointment Added</td></tr>
+            <tr><td><span class="term term-readmodel">Read Model</span></td><td>An answer that the system builds from Events.</td><td>Calendar: which appointments are on the calendar?</td></tr>
+            <tr><td><span class="term term-screen">Screen</span></td><td>Shows the answer, so the person can decide the next step.</td><td>The calendar page.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>A machine can start a Command in place of a person. That machine step is an Automation. You meet it on page 2.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>Cause comes before effect</h2>
+      <p>The order of the steps must make causal sense. Four rules keep it that way:</p>
+      <ul>
+        <li>Every Event comes from one Command.</li>
+        <li>Every Command has one reason. The reason is a Screen, where a person decides, or an Automation, where the system reacts.</li>
+        <li>A story starts with a Read Model that feeds a Screen, or with an Automation that reacts to an Event that exists. It does not start with a Command that has no reason.</li>
+        <li>Two Commands in a row need a trigger between them. If nothing triggers the second Command, the model has a gap.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Build first, then review</h2>
+      <p>You work in two modes. Do not mix them in one pass. The method calls them Modeling Mode and Critic Mode.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Mode</th><th>What you do</th><th>How you act</th></tr></thead>
+          <tbody>
+            <tr><td>Build</td><td>Brainstorm, order, sketch, and write the model.</td><td>Capture the process as fully as you can. Note a small mistake and move on.</td></tr>
+            <tr><td>Review</td><td>Check what the model holds.</td><td>Apply every rule. Report each problem. Do not fix a problem in silence.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>A build pass is not the time for a full audit. A review pass is not the time to add missing parts. In a review, you write down what is missing.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Check yourself</h2>
+      <p>Answer each question in your head first. Then open the answer.</p>
+      <div class="quiz-item">
+        <span class="quiz-kicker">1</span>
+        <p>Which name is a fact that happened: <em>Add Appointment</em>, <em>Appointment Added</em>, or <em>Show Calendar</em>?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p><em>Appointment Added</em>. It uses the past tense. <em>Add Appointment</em> is a Command, which is an intent. <em>Show Calendar</em> is a question that a Read Model answers.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">2</span>
+        <p>A model has the Command <em>Add Appointment</em>. Nothing starts it. What is wrong?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Every Command needs one reason. Add the Screen where staff add the appointment, or the Automation that adds it.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">3</span>
+        <p>A team puts a loading spinner on the timeline. What do you do?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Remove it. A spinner exists only because of software. It is not a business step.</p>
+        </details>
+      </div>
+
+      <callout kind="rule">
+        <p>Remember:</p>
+        <ul>
+        <li>A model is a story of facts on a timeline, read from left to right.</li>
+        <li>The basic flow is Screen, Command, Event, Read Model, Screen.</li>
+        <li>Model the work without software first.</li>
+        <li>Build the model in one pass and review it in another.</li>
+        </ul>
+      </callout>
+    </div>
+  </section>
+
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <nav class="page-path-nav">
+        <a href="/learn/index.html"><small>Previous</small>← Learn</a>
+        <a class="next" href="/learn/method-blocks.html"><small>Next</small>The five building blocks →</a>
+      </nav>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

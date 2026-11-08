@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>Review a Model</title>
+<meta name="description" content="Review an event model in a second pass. Use a quick self-check, four structural shapes, a field check, an identity check, and the rules for facts from other systems.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Review a Model: Learn Event Modeling">
+<meta property="og:description" content="A quick self-check, four shapes, a field check, identity, and outside facts.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="canonical" href="https://event-modeling-hcl.github.io/learn/method-review.html">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px; text-align: left;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0;">
+        <div class="eyebrow">Learn · Event Modeling · 6 of 6</div>
+        <h1>Review a model</h1>
+        <p class="lede">A review pass applies every rule, reports every problem, and keeps unknowns visible.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <callout kind="target">
+        <p>After this page, you can:</p>
+        <ul>
+        <li>run a quick self-check on a model</li>
+        <li>spot the four structural shapes that need a closer look</li>
+        <li>ask whether a history has one business identity</li>
+        <li>name the main risks of facts that come from another system</li>
+        </ul>
+      </callout>
+      <h2>Review in a second pass</h2>
+      <p>You review a model in a different pass than you build it. In a review, apply every rule and report every problem. Do not quietly add missing parts. Write findings as comments or tasks, so the team can decide.</p>
+      <p>Start with this fast check. Answer yes or no to each line:</p>
+      <ul>
+        <li>Is every Event a past-tense business fact?</li>
+        <li>Is every Command an imperative business intent, not a query?</li>
+        <li>Is every Read Model named for its data?</li>
+        <li>Does any Event hold a computed or summed value?</li>
+        <li>Does every Command have one issuer, and does that issuer trace to a Screen or an Automation?</li>
+        <li>Does the timeline start with a State View or with an Automation that reacts to an Event?</li>
+        <li>Is there a State Change that follows a State Change with no new trigger?</li>
+        <li>Does any Screen start more than one Command?</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <div class="prose">
+
+      <h2>Four shapes to look at twice</h2>
+      <p>Four shapes in the connections often point to a problem. The team uses nicknames for them. Do not use the nicknames with business people. Ask the plain question instead.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Shape</th><th>What you see</th><th>How strong</th><th>Plain question for the business</th></tr></thead>
+          <tbody>
+            <tr><td>Bed</td><td>One Screen starts more than one Command.</td><td>Always a problem.</td><td>This Screen lets someone choose between several actions. Is it clearer if each action is its own step?</td></tr>
+            <tr><td>Left chair</td><td>One Command records more than two Events.</td><td>A candidate.</td><td>When this action works, do all of these facts always happen together?</td></tr>
+            <tr><td>Right chair</td><td>One Read Model uses more than three Events.</td><td>A candidate.</td><td>Does this Screen answer one question or several?</td></tr>
+            <tr><td>Shelf</td><td>One slice has far more examples than its neighbors.</td><td>A candidate.</td><td>Is this step doing more, or does it cover something that needs its own step?</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
+      <p>A count alone does not prove a problem. Read the Events, the fields, and the examples first. Flag a candidate only if it shows several jobs. Drop it if the domain explains it.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Is the data complete?</h2>
+      <p>Check the fields of the whole model, using the model and not your memory.</p>
+      <ul>
+        <li>Each Event field has an origin and at least one use.</li>
+        <li>Each Command input reaches an Event.</li>
+        <li>Each field that a Read Model shows comes from a connected Event.</li>
+        <li>Each derived value has inputs that you can trace.</li>
+      </ul>
+      <p>Before you call data missing, look for it elsewhere in the model. Then walk the whole story from the start to each end. Include cancellations, failures, and repairs.</p>
+      <p>A gap has a typical fix. A view field that no Event supplies needs a new field on an Event, or you drop the view field. A calculation that you modeled as an Event moves to a Read Model. A missing failure path needs a new Event.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>One history, one identity</h2>
+      <p>Every history of Events must answer one question: the history of which one thing? The answer is one business identity, such as an order ID. "All orders" is a wrong answer.</p>
+      <p>Length is not the problem. A bank account that is open for thirty years has a long history, and that is fine. The problem is mixed content. Compare these cases:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>What you find</th><th>What it means</th><th>What to do</th></tr></thead>
+          <tbody>
+            <tr><td>All Events belong to one clear thing.</td><td>The boundary is right.</td><td>Keep it, however long it is.</td></tr>
+            <tr><td>Events describe a category, such as all orders.</td><td>A collection pretends to be a thing.</td><td>Keep one history for each order. Show the category in a Read Model.</td></tr>
+            <tr><td>Users, orders, and payments mix in one history.</td><td>A log pretends to be a thing.</td><td>Use one history for each kind of thing.</td></tr>
+            <tr><td>An active thing and its archive mix.</td><td>Two lifecycles are tied together.</td><td>Split them if their lifetimes and users differ.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>A rule decides how many earlier facts it needs. The rule "this customer must be registered" needs the registration for that email only. The rule "not already subscribed to this course" needs the subscriptions of that email and that course. Do not pull in more facts than the rule needs.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Facts from another system</h2>
+      <p>When a fact comes from outside, translate it before your model uses it. Seven principles guide the work:</p>
+      <ul>
+        <li>Correlation first. Record the link between your ID and the outside ID when you start the outside action. Recover your ID before you record a fact.</li>
+        <li>Translate the meaning, not only the field names. Convert units and formats, such as cents to a decimal amount.</li>
+        <li>Do not leak. Do not use an outside ID as your main ID. Do not copy the outside data shape into your Events.</li>
+        <li>Make it idempotent. Idempotent means safe to run twice. A repeated message must not record the same fact twice.</li>
+        <li>Validate every message.</li>
+        <li>Fill gaps from your own data. Enrich from your system. Ignore what you do not need.</li>
+        <li>Choose a default or fail with a clear reason. Do not assume in silence.</li>
+      </ul>
+      <p>Write an example for each of these cases of a translation:</p>
+      <ul>
+        <li>The message has no link to your ID.</li>
+        <li>The message arrives before your thing exists.</li>
+        <li>The message arrives twice.</li>
+        <li>The message has missing or partial data.</li>
+        <li>Messages arrive in the wrong order.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>Questions and decisions</h2>
+      <p>A model often holds open questions. Write a genuine question as a comment that stays open until someone answers it. Do not delete the comment. Answering it resolves it. A hotspot is a red note beside the element that has a problem or a dispute. It is not an Event.</p>
+      <p>Do not hide a gap by guessing. If you fill a gap yourself, say so in a note, so that a person can confirm it. A model with a material open question is not ready to build.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Check yourself</h2>
+      <div class="quiz-item">
+        <span class="quiz-kicker">1</span>
+        <p>One Screen has the buttons Approve and Reject. Each starts a different Command. Which shape is this, and how strong is it?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>It is the shape that the team calls the bed. It is always a problem. Split it into two Screen states.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">2</span>
+        <p>A history is called Orders and holds the Events of all orders. What is wrong?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>It is a collection with no single business identity. Keep one history for each order, and show the full list in a Read Model.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">3</span>
+        <p>A payment provider sends the same message twice. What must your model do?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Record the fact once. The translation must be idempotent. Keep the outside ID to detect the repeat.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">4</span>
+        <p>A Read Model uses five Events. Is that wrong?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Not by itself. Five Events are a reason to look closer. Check whether the Read Model answers more than one question. Keep it if one question needs all five.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">5</span>
+        <p>A Read Model field has no Event that supplies it. What are two fixes?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Add the field to an Event that already exists, or remove the field from the Read Model.</p>
+        </details>
+      </div>
+
+      <callout kind="rule">
+        <p>Remember:</p>
+        <ul>
+        <li>Review in a separate pass. Report problems. Do not fix them in silence.</li>
+        <li>Four shapes need a second look. Counts start a review. They do not end it.</li>
+        <li>Every history has one business identity.</li>
+        <li>Translate outside facts: correlate first, record once, and do not leak foreign IDs.</li>
+        </ul>
+      </callout>
+    </div>
+  </section>
+
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <nav class="page-path-nav">
+        <a href="/learn/method-examples.html"><small>Previous</small>← Examples that test the model</a>
+        <a class="next" href="/learn/index.html"><small>Next</small>Back to the learning paths →</a>
+      </nav>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

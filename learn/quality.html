@@ -32,10 +32,24 @@
   <section class="hero" style="padding-bottom: 8px; text-align: left;">
     <div class="wrap">
       <div class="prose" style="margin: 0;">
-        <div class="eyebrow">Learn · 06 of 6</div>
+        <div class="eyebrow">Learn · emhcl and .em.hcl · 7 of 7</div>
         <h1>Quality: smells, errors, and warnings</h1>
         <p class="lede">The validator checks structure. Business clarity still requires judgment.</p>
       </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <callout kind="target">
+        <p>After this page, you can:</p>
+        <ul>
+        <li>name the four smells and the code of each one</li>
+        <li>tell an invalid model from a suspicious one</li>
+        <li>choose the validation profile for your situation</li>
+        </ul>
+      </callout>
+      <p>The validator checks structure. It cannot check business meaning. This page shows where the tool stops and where your review starts. The review method is in <a href="/learn/method-review.html">Review a model</a>.</p>
     </div>
   </section>
 
@@ -74,7 +88,7 @@
           </tbody>
         </table>
       </div>
-      <p class="prose">Chair and shelf counts start a review, not an automatic split. Inspect the actual rules and fields. Explain justified fan-in or fan-out.</p>
+      <p class="prose">Chair and shelf counts start a review, not an automatic split. Inspect the rules and the fields. Explain justified fan-in or fan-out.</p>
       <p class="prose">Use plain business language with stakeholders. The shape nicknames are internal shorthand.</p>
     </div>
   </section>
@@ -82,10 +96,29 @@
   <section class="section section-alt">
     <div class="wrap prose">
       <h2>What the validator rejects outright</h2>
-      <p>All profiles reject these core problems: invalid HCL and unknown syntax, missing required semantic attributes, wrong literal types, invalid examples, duplicate identities, unresolved references, and references of the wrong kind. They also reject a missing or repeated <code>board</code> (<code>EM015</code>), a workflow listed twice on the board (<code>EM016</code>), and a field without a valid type (<code>EM009</code>). Other core problems are non-canonical flow directions, invalid pattern-specific scenario structure, an empty chapter (<code>EM005</code>), and a workflow in two chapters (<code>EM014</code>). The <a href="/learn/facts.html">method facts</a> add these core problems: a lifecycle that is not valid (<code>EM017</code>), an Event without the identity field of its aggregate (<code>EM018</code>), a field source that is not valid (<code>EM202</code>), a scenario attribute that does not fit the scenario form (<code>EM304</code>), and a scenario that both issues and does not issue one Command (<code>EM305</code>). File layout and block order have no meaning. A workflow that is not on the board is valid. Diagnostics use stable <code>EMxxx</code> codes. <code>EM0xx</code> codes report structure, <code>EM1xx</code> references, <code>EM2xx</code> flow, <code>EM3xx</code> scenarios, and <code>EM4xx</code> modeling judgment. The codes <code>EM006</code>, <code>EM011</code>, <code>EM012</code>, <code>EM013</code>, and <code>EM407</code> are retired.</p>
+      <p>Every profile rejects the core problems below. A core problem is an error in every profile.</p>
+      <ul>
+        <li>Syntax: invalid HCL, unknown syntax, a missing attribute that the language requires, and a literal of the wrong type.</li>
+        <li>Identities and references: a duplicate identity, a reference that does not resolve, and a reference of the wrong kind.</li>
+        <li>The board: a missing or repeated <code>board</code> (<code>EM015</code>) and a workflow listed twice on the board (<code>EM016</code>).</li>
+        <li>Fields: a field without a valid type (<code>EM009</code>) and an example that does not match its type.</li>
+        <li>Chapters: an empty chapter (<code>EM005</code>) and a workflow in two chapters (<code>EM014</code>).</li>
+        <li>Flow and scenarios: a flow in a non-canonical direction and a scenario with a structure that its pattern does not allow.</li>
+        <li>Method facts (see <a href="/learn/facts.html">Method facts</a>):
+          <ul>
+            <li>an invalid lifecycle (<code>EM017</code>)</li>
+            <li>an Event without the identity field of its aggregate (<code>EM018</code>)</li>
+            <li>an invalid field source (<code>EM202</code>)</li>
+            <li>a scenario attribute that does not fit the scenario form (<code>EM304</code>)</li>
+            <li>a scenario that both issues and does not issue one Command (<code>EM305</code>)</li>
+          </ul>
+        </li>
+      </ul>
+      <p>File layout and block order have no meaning. A workflow that is not on the board is valid.</p>
+      <p>Diagnostics use stable <code>EMxxx</code> codes. <code>EM0xx</code> reports structure, <code>EM1xx</code> references, <code>EM2xx</code> flow, <code>EM3xx</code> scenarios, and <code>EM4xx</code> modeling judgment. The codes <code>EM006</code>, <code>EM011</code>, <code>EM012</code>, <code>EM013</code>, and <code>EM407</code> are retired.</p>
 
       <h2>What it leaves to human judgment</h2>
-      <p>Some checks need judgment, not hard rejection. These are a Command with no incoming flow and no <code>external_trigger</code> (<code>EM404</code>), the four anti-patterns above, and an open hotspot (<code>EM406</code>). An <code>api_endpoint</code> on a Command does not give it a reason. If a client sends the Command through an API, add an API screen that flows to it. Three profiles set the severity of these checks. A profile never decides whether tools get the model. A tool that renders or exports still gets the typed model when only a profile rejects it.</p>
+      <p>Some checks need judgment, not hard rejection. These are a Command with no incoming flow and no <code>external_trigger</code> (<code>EM404</code>), the four anti-patterns above, and an open hotspot (<code>EM406</code>). An <code>api_endpoint</code> on a Command does not give it a reason. If a client sends the Command through an API, add an API screen that flows to it. Three profiles set the severity of these checks. A profile does not decide whether tools get the model. A tool that renders or exports still gets the typed model when only a profile rejects it.</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Profile</th><th>Four smells (EM401, EM402, EM403, EM405)</th><th>EM404, EM406</th></tr></thead>
@@ -259,7 +292,8 @@ pet-management-detailed.em.hcl valid</code-block>
         <p>The <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/learning-event-modeling-hcl.md">full guide</a> includes more exercises, facilitation notes, and a final project.</p>
         <div class="btn-row" style="justify-content: center;">
           <a class="btn btn-primary" href="https://github.com/event-modeling-hcl/eventmodeling-hcl/releases">Get the CLI</a>
-          <a class="btn" href="/learn/index.html">Back to the path</a>
+          <a class="btn" href="/learn/review.html">Take the mixed review</a>
+          <a class="btn" href="/learn/index.html">Back to the paths</a>
         </div>
       </div>
     </div>

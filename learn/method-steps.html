@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>The Steps of a Modeling Session</title>
+<meta name="description" content="A modeling session has six stages: scope and roles, Events, Screens and Commands, Read Models, scenarios, and slices. Learn what each stage asks and when it is done.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Steps of a Modeling Session: Learn Event Modeling">
+<meta property="og:description" content="Six stages from scope to slices, with a question and a check for each.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="canonical" href="https://event-modeling-hcl.github.io/learn/method-steps.html">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px; text-align: left;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0;">
+        <div class="eyebrow">Learn · Event Modeling · 4 of 6</div>
+        <h1>The steps of a session</h1>
+        <p class="lede">Six stages take a business process from a first idea to slices that teams can build.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="prose">
+      <callout kind="target">
+        <p>After this page, you can:</p>
+        <ul>
+        <li>list the six stages of a modeling session in order</li>
+        <li>say what each stage asks, what it produces, and when it is done</li>
+        <li>start a session at the first step that is not done</li>
+        </ul>
+      </callout>
+      <h2>Six stages, one short form</h2>
+      <p>The short form of the method is: Events, then Commands and Screens, then Read Models, then scenarios, then slices. The full method has twelve steps. This page groups them into six stages.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Stage</th><th>Key question</th><th>You produce</th><th>Done when</th></tr></thead>
+          <tbody>
+            <tr><td>1. Scope and roles</td><td>Which process, which goal, and who acts?</td><td>A short scope and a Role Catalog.</td><td>Every role has a domain name, what it can do, and what it cannot do.</td></tr>
+            <tr><td>2. Events and their order</td><td>Which facts happen, and in which order?</td><td>Past-tense Events in named chapters, in causal order.</td><td>Every Event is in a named chapter and has a clear trigger.</td></tr>
+            <tr><td>3. Screens, Commands, Automations</td><td>What does each person decide? What does the system do alone?</td><td>Screens, Commands with one issuer each, Automations with todo lists.</td><td>Every human role has a Screen. Every Automation has a todo list.</td></tr>
+            <tr><td>4. Read Models and owners</td><td>Which questions do people and Automations ask? Who owns what?</td><td>Read Models, each with one question. Team boundaries.</td><td>Every Screen has the data it needs. No Read Model answers two questions.</td></tr>
+            <tr><td>5. Scenarios and checks</td><td>Which rules and failures must hold? Is the data complete?</td><td>Scenarios, a field check, and a review verdict.</td><td>Every Command and Read Model has scenarios. The review passes.</td></tr>
+            <tr><td>6. Slices and reasons</td><td>Which pieces will teams build? Why did we choose this?</td><td>One slice for each Command, Read Model, and Automation. Short notes on the reasons.</td><td>No element lacks a slice.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>Stage 1: roles</h2>
+      <p>Write the Role Catalog first. It lists every human role and every system actor. Examples of human roles are Clinic Staff and Owner. An example of a system actor is a Weather Provider.</p>
+      <p>Each entry has four parts:</p>
+      <ul>
+        <li>a domain name, not a label such as &quot;User Type B&quot;</li>
+        <li>one line that says what the role does</li>
+        <li>the actions that change state</li>
+        <li>what the role cannot do</li>
+      </ul>
+      <p>For a system actor, also note whether it is internal or external and how it delivers facts.</p>
+      <p>Ask the domain expert four kinds of question:</p>
+      <ul>
+        <li>Is the requirement written down, or only in people's heads?</li>
+        <li>Who knows the domain, and who decides?</li>
+        <li>Where is the risk? What can go wrong?</li>
+        <li>Which rules apply? For example, "cancel within 24 hours". What shows that someone broke the rule?</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Stage 2: Events, a worked example</h2>
+      <p>Look for facts in four places: state changes, milestones, decisions with an outcome, and handoffs between people or systems. Skip implementation steps. Then put the Events in causal order. For each Event, write what must be true first and what triggers it.</p>
+      <p>In this example, the clinic has four Events:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Event</th><th>Comes after</th><th>Trigger</th></tr></thead>
+          <tbody>
+            <tr><td><span class="term term-event">Owner Registered</span></td><td>Nothing. It starts the story.</td><td>The owner registers.</td></tr>
+            <tr><td><span class="term term-event">Pet Added</span></td><td>Owner Registered</td><td>Staff add the pet.</td></tr>
+            <tr><td><span class="term term-event">Appointment Added</span></td><td>Pet Added</td><td>Staff schedule the visit.</td></tr>
+            <tr><td><span class="term term-event">Weather Predicted for Appointment</span></td><td>Appointment Added</td><td>The weather Automation.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Show alternatives too, not only the happy path. For example, add a branch for a canceled appointment. Put each Event in one column. Do not skip any Event.</p>
+      <p>Assign every Event to a named chapter before you plot it. A chapter is one story. It belongs naturally to one team or one domain expert.</p>
+      <p>Try first: Appointment Added and Appointment Canceled both belong to the story of one appointment. Do they need two chapters?</p>
+      <details class="reveal">
+        <summary>Show the answer</summary>
+        <p>No. A cancellation decides how the story ends. It does not start a different story. Keep both Events in one chapter. Use a separate chapter only when the person chooses a different journey before the process starts.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>Stage 3: Screens, Commands, Automations</h2>
+      <p>For each state on the timeline, sketch the Screen. Ask: "What decision does the person make with this data?" List each field that the Screen shows and the Event that it comes from.</p>
+      <p>Then write one Command for each action on a Screen. For each Command, write:</p>
+      <ul>
+        <li>the role that issues it</li>
+        <li>its typed inputs and where each input comes from</li>
+        <li>the earlier facts that must hold</li>
+        <li>the Event it records, and each failure it can have</li>
+      </ul>
+      <p>Where no person acts, place an Automation and its todo list. If an Event from another system already exists, do not place a local Command in its column. Translate the outside Event first.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Stages 4 to 6 in short</h2>
+      <p>Stage 4: list each Screen and each Automation. Find the data each one needs. Write one Read Model for each question. Trace each field to an Event. Then find the owner of each Event and Command. A team owns the parts that it can change alone.</p>
+      <p>Stage 5: write scenarios for each Command and Read Model (page 5). Check that every field has an origin and a use. Then review the whole model and give it a verdict: pass, pass with warnings, or fail (page 6).</p>
+      <p>Stage 6: write one slice for each Command, Read Model, and Automation. Add a short note where a later reader can misunderstand a choice. At the end, write one note for each chapter. Say what you assumed and why.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>Where to start</h2>
+      <p>A model is often half done. Enter the method at the first step that is not done. Do not repeat the steps that are done.</p>
+      <p>After each step, write two to four bullets: what you made, what you decided, and what the next step must carry forward. Also list the open questions.</p>
+      <p>Do not cut a required part to save effort. A todo list, a Read Model, and a translation chain are required. If the layout is hard, solve the layout. If you must reduce the scope, say so in the notes.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Check yourself</h2>
+      <div class="quiz-item">
+        <span class="quiz-kicker">1</span>
+        <p>Which comes first in a session: Screens or Events?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Events. Brainstorm and order the Events first. Sketch Screens after the Events are in order.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">2</span>
+        <p>The Role Catalog lists one role: User. What do you change?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Replace it with specific domain roles. Give each one a name, what it can do, and what it cannot do.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">3</span>
+        <p>Stage 3 is done, and a teammate asks to start again at stage 1. What do you do?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Enter at the first step that is not done. Repeat a done step only if a new fact shows that it was wrong.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">4</span>
+        <p>A human role has no Screen and no Read Model. What does this tell you?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Something is missing, or the role is only decoration. Every human role needs at least one Screen and at least one Read Model.</p>
+        </details>
+      </div>
+
+      <callout kind="rule">
+        <p>Remember:</p>
+        <ul>
+        <li>The short form is Events, Commands and Screens, Read Models, scenarios, slices.</li>
+        <li>Write the Role Catalog first, and use specific roles.</li>
+        <li>Enter at the first step that is not done.</li>
+        <li>Each stage has a clear check that tells you it is done.</li>
+        </ul>
+      </callout>
+    </div>
+  </section>
+
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <nav class="page-path-nav">
+        <a href="/learn/method-patterns.html"><small>Previous</small>← Patterns and slices</a>
+        <a class="next" href="/learn/method-examples.html"><small>Next</small>Examples that test the model →</a>
+      </nav>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

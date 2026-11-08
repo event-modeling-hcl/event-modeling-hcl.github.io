@@ -32,10 +32,24 @@
   <section class="hero" style="padding-bottom: 8px; text-align: left;">
     <div class="wrap">
       <div class="prose" style="margin: 0;">
-        <div class="eyebrow">Learn · 02 of 6</div>
+        <div class="eyebrow">Learn · emhcl and .em.hcl · 3 of 7</div>
         <h1>The four patterns</h1>
         <p class="lede">Four causal shapes organize Event Modeling workflows.</p>
       </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <callout kind="target">
+        <p>After this page, you can:</p>
+        <ul>
+        <li>choose the workflow block for each pattern</li>
+        <li>write a Translation as an automation that consumes an external Event</li>
+        <li>say why a todo list uses list membership and not a done flag</li>
+        </ul>
+      </callout>
+      <p>This page shows the four patterns as code. For the ideas behind them, read <a href="/learn/method-patterns.html">Patterns and slices</a> first.</p>
     </div>
   </section>
 
@@ -56,7 +70,7 @@
       </div>
       <p class="prose">Quick check: which pattern turns intent into fact, and which pattern turns facts into an answer?</p>
       <p class="prose">Use one workflow per pattern-sized capability. Placing an order and showing its details are separate State Change and State View workflows, not one combined capability.</p>
-      <p class="prose">Every model has exactly one <code>board</code> block. Its <code>workflows</code> list sets the story order. A model without a board, or with two boards, fails with <code>EM015</code>. Each example on this page is a complete model, so each one has a board.</p>
+      <p class="prose">Every model has one <code>board</code> block. Its <code>workflows</code> list sets the story order. A model without a board, or with two boards, fails with <code>EM015</code>. Each example on this page is a complete model, so each one has a board.</p>
     </div>
   </section>
 
@@ -249,9 +263,50 @@
   </section>
 
   <section class="section">
+    <div class="wrap prose">
+      <h2>Check yourself</h2>
+      <div class="quiz-item">
+        <span class="quiz-kicker">1</span>
+        <p>Which keyword writes a Translation?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>There is none. Write an <code>automation</code> that consumes at least one Event of a bounded context with <code>external = true</code>.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">2</span>
+        <p>How many <code>board</code> blocks does a model have?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>One. A missing board or two boards fails with <code>EM015</code>.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">3</span>
+        <p>How does the todo list show that an appointment still needs a forecast?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>By list membership. The row stays until the forecast Event removes it. There is no done flag.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">4</span>
+        <p>Placing an order and showing its details: how many workflows is that?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Two. Use one <code>state_change</code> for placing the order and one <code>state_view</code> for the details.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
     <div class="wrap">
       <nav class="page-path-nav">
-        <a href="/learn/elements.html"><small>Previous</small>← The five elements</a>
+        <a href="/learn/elements.html"><small>Previous</small>← The elements in HCL</a>
         <a class="next" href="/learn/language.html"><small>Next</small>The language →</a>
       </nav>
     </div>

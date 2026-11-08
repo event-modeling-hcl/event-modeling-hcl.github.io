@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>The Five Building Blocks</title>
+<meta name="description" content="Event, Command, Read Model, Screen, and Automation are the five building blocks of Event Modeling. Learn what each one is, how to name it, and how to tell an Event from a Read Model.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Five Building Blocks: Learn Event Modeling">
+<meta property="og:description" content="What each building block is, how to name it, and a short test for Event or Read Model.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="canonical" href="https://event-modeling-hcl.github.io/learn/method-blocks.html">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px; text-align: left;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0;">
+        <div class="eyebrow">Learn · Event Modeling · 2 of 6</div>
+        <h1>The five building blocks</h1>
+        <p class="lede">Event, Command, Read Model, Screen, and Automation, with a naming rule for each.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <callout kind="target">
+        <p>After this page, you can:</p>
+        <ul>
+        <li>name the five building blocks and say what each one is</li>
+        <li>write a good name for an Event and for a Command</li>
+        <li>tell an Event from a Read Model with a short test</li>
+        </ul>
+      </callout>
+      <h2>Event: a fact that already happened</h2>
+      <p>An Event is a business fact. Its name uses the past tense and the words of the business. Use two to four words. Examples: <span class="term term-event">Appointment Added</span>, <span class="term term-event">Payment Authorized</span>, and <span class="term term-event">Pet Added</span>.</p>
+      <p>Five rules describe an Event:</p>
+      <ul>
+        <li>An Event exists only when its Command worked.</li>
+        <li>An Event does not change. A correction is a new Event, for example Order Total Corrected.</li>
+        <li>An Event holds facts that the system captured. It does not hold a value that changes when other data changes, such as a running total.</li>
+        <li>An Event belongs to one thing, such as one order or one pet.</li>
+        <li>Start with the identity of that thing and one or two key facts. Add more later.</li>
+      </ul>
+      <p>Some names look like Events and are not. The table shows the common mistakes.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Mistake</th><th>Example</th><th>What to do</th></tr></thead>
+          <tbody>
+            <tr><td>A user interface state</td><td>Sidebar Opened, Button Clicked</td><td>Leave it out, unless the business cares.</td></tr>
+            <tr><td>A technical step</td><td>Api Called, Response Received</td><td>Find the business fact below it.</td></tr>
+            <tr><td>A command name</td><td>Place Order</td><td>Use the past tense: Order Placed.</td></tr>
+            <tr><td>A generic change</td><td>User Updated, Record Deleted</td><td>Name the specific fact.</td></tr>
+            <tr><td>A calculation</td><td>Inventory Level Recalculated</td><td>Use a Read Model.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>Command: an intent to make something happen</h2>
+      <p>A Command says what a role wants to do. Its name is a short order in business words: <span class="term term-command">Place Order</span>, <span class="term term-command">Cancel Subscription</span>, or <span class="term term-command">Add Appointment</span>. A name such as Load Orders is not a Command. It asks a question, so a Read Model answers it.</p>
+      <p>A Command can fail. Two kinds of failure exist, and the model treats them in different ways:</p>
+      <ul>
+        <li>The system refuses the Command because a rule does not hold. Nothing happened, so the system records no Event. You write the refusal as a scenario.</li>
+        <li>The business tracks the failure as a fact, for example a declined payment. You record an Event, such as Payment Failed.</li>
+      </ul>
+      <p>Each Command has one issuer. The issuer is one Screen or one Automation. The issuer acts for one named role, such as Clinic Staff. The word "User" is too generic.</p>
+      <p>A Command checks its own rules against earlier facts about the same thing. It does not read a Read Model to decide.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Read Model: an answer to one question</h2>
+      <p>A Read Model is an answer that the system builds from Events. It has a clear question, for example: which appointments are on the calendar?</p>
+      <callout kind="rule"><p>No question, no Read Model.</p></callout>
+      <ul>
+        <li>Events are the only source. The same Events always give the same answer.</li>
+        <li>You can rebuild a Read Model at any time. Building it has no side effects.</li>
+        <li>A Read Model does not decide whether a Command works.</li>
+        <li>Its name is a noun phrase for the data, such as <span class="term term-readmodel">Calendar</span> or <span class="term term-readmodel">Order Summary</span>. Names such as Order Summary Projector describe the machinery, so avoid them.</li>
+      </ul>
+      <p>A Read Model with many rows is list-shaped. A todo list for an Automation is always list-shaped.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>Screen and Automation: who starts the work</h2>
+      <p>A Screen shows what a person sees and acts on. Use the words that the person uses: Dashboard or Calendar. A Screen shows its content and its fields. A title alone is a placeholder.</p>
+      <p>A Screen is one decision. It starts at most one Command. If a page offers three actions, model three Screen states, one for each action.</p>
+      <p>When no person acts, the system acts. That step is an Automation. A reminder, a deadline, and a timer are Automations, not Screens.</p>
+      <p>An Automation does not react to Events directly. It keeps a todo list. The todo list is a Read Model. The pattern is:</p>
+      <div class="flow-row"><span class="flow-step"><span class="term term-readmodel">Todo list</span></span><span class="flow-arrow">→</span><span class="flow-step"><span class="term term-processor">Automation</span></span><span class="flow-arrow">→</span><span class="flow-step"><span class="term term-command">Command</span></span><span class="flow-arrow">→</span><span class="flow-step"><span class="term term-event">Event</span></span></div>
+      <p>Example: Customer Registered adds a row to the list Notifications to Send. The Automation reads each row and sends a Command. The Event Notification Sent removes the row. Page 3 shows more.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Event or Read Model? A short test</h2>
+      <p>Many beginners model a calculation as an Event. Ask these questions in order. Stop at the first clear answer.</p>
+      <ol>
+        <li>Did an actor do something? Then it is an Event.</li>
+        <li>Is it only a calculation, such as a sum, a count, or a balance? Then it is a Read Model.</li>
+        <li>Is it fixed once it exists? Then it is an Event.</li>
+        <li>Does it change when other data changes? Then it is a Read Model.</li>
+      </ol>
+      <p>Classify each name. Answer in your head, then open the answer.</p>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">A</span>
+        <p><em>Account Balance</em></p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p><span class="verdict verdict-valid">Read Model</span> A balance is a sum of earlier facts. It changes with each deposit.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">B</span>
+        <p><em>Payment Authorized</em></p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p><span class="verdict verdict-valid">Event</span> A person or system did something, and the fact is fixed.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">C</span>
+        <p><em>Order Flagged for Manual Review</em></p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p><span class="verdict verdict-valid">Event</span> It is an independent fact that someone decided.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>Every field needs a source</h2>
+      <p>Commands, Events, Read Models, and Screens carry fields. Each field must have a known source. A field with no source is a gap. Do not fill a gap with a guess. Find the missing data, or ask a person who knows the business.</p>
+      <p>This table shows where a Command field can come from:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Origin</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>A person types or picks it.</td><td>The bike that the customer picks.</td></tr>
+            <tr><td>The signed-in session.</td><td>The customer ID of the person who signed in.</td></tr>
+            <tr><td>An earlier Event.</td><td>The station from the Event Bike Reserved.</td></tr>
+            <tr><td>The system makes it.</td><td>A new ID, or the current time.</td></tr>
+            <tr><td>A message from outside.</td><td>The transaction reference from a payment provider.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The system makes some values and people supply others. Mark a value that the system makes as generated. A value that a person supplies is not generated.</p>
+      <p>Every input of a Command must reach an Event, or you must explain why not. Data must not vanish between steps.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Check yourself</h2>
+      <div class="quiz-item">
+        <span class="quiz-kicker">1</span>
+        <p>Label each name as Command, Event, Read Model, or not a business step: <em>Cancel Subscription</em>, <em>Subscription Canceled</em>, <em>Subscription Count</em>, <em>Button Clicked</em>.</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Command, Event, Read Model, and not a business step. The user interface produces the last one.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">2</span>
+        <p>A Screen has two buttons, Approve and Reject. Each button sends a different Command. What is wrong?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>A Screen is one decision. Split it into two Screen states, one for each action, so it is clear which choice a person makes.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">3</span>
+        <p>The Event Order Created holds the field total tax. Why is this a problem?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Tax is a calculation, and it can change. Keep the items and amounts in the Event. Calculate the tax in a Read Model.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">4</span>
+        <p>A Command checks whether a seat is free by reading the Seats Read Model. What is wrong?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>A Command checks facts about its own thing. It must not read a Read Model. Use the earlier Events about that seat.</p>
+        </details>
+      </div>
+
+      <callout kind="rule">
+        <p>Remember:</p>
+        <ul>
+        <li>Events are facts in the past tense. Commands are intents. Read Models are answers to one question.</li>
+        <li>A Screen is one decision. A Command has one issuer.</li>
+        <li>A calculation is a Read Model, not an Event.</li>
+        <li>Every field needs a source.</li>
+        </ul>
+      </callout>
+    </div>
+  </section>
+
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <nav class="page-path-nav">
+        <a href="/learn/method-idea.html"><small>Previous</small>← What Event Modeling is</a>
+        <a class="next" href="/learn/method-patterns.html"><small>Next</small>Patterns and slices →</a>
+      </nav>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

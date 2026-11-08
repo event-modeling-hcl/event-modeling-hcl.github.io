@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>Mixed Review</title>
+<meta name="description" content="Mixed review questions from both learning tracks. Answer from memory, then check each answer and follow the link to read again.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mixed Review: Learn Event Modeling HCL">
+<meta property="og:description" content="Questions from both tracks, in mixed order.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="canonical" href="https://event-modeling-hcl.github.io/learn/review.html">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px; text-align: left;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0;">
+        <div class="eyebrow">Learn · Review</div>
+        <h1>Mixed review</h1>
+        <p class="lede">Answer from memory. A pause between study and review makes learning last.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <callout kind="target">
+        <p>After this page, you can:</p>
+        <ul>
+        <li>recall the main rules of both tracks without looking at the pages</li>
+        <li>find the topics that you need to read again</li>
+        </ul>
+      </callout>
+      <h2>How to use this review</h2>
+      <p>Wait two or three days after you finish a page. Then answer the questions here. The questions come in mixed order on purpose. Mixing topics makes recall harder, and that makes learning stronger.</p>
+      <ol>
+        <li>Read one question.</li>
+        <li>Say the answer aloud or write it down.</li>
+        <li>Open the answer and compare.</li>
+        <li>Mark each wrong answer. Follow its link and read that part again.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>Round 1: the method</h2>
+      <div class="quiz-item">
+        <span class="quiz-kicker">1</span>
+        <p>Is <em>Inventory Level Recalculated</em> a good Event?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>No. It is a calculation, so it belongs in a Read Model. <a href="/learn/method-blocks.html">Building blocks</a></p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">2</span>
+        <p>A Command is refused because a rule does not hold. What does the system record?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>No Event. Nothing happened. You write the refusal as an example with a reason. <a href="/learn/method-examples.html">Examples</a></p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">3</span>
+        <p>Name the six stages of a session, in order.</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Scope and roles. Events and their order. Screens, Commands, and Automations. Read Models and owners. Scenarios and checks. Slices and reasons. <a href="/learn/method-steps.html">Steps</a></p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">4</span>
+        <p>Why does a todo list have no status field?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>A row means that work is open. An opening Event adds the row, and a completion Event removes it. <a href="/learn/method-patterns.html">Patterns</a></p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">5</span>
+        <p>One Screen starts two Commands. What do you do?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Split it into two Screen states, one for each action. The team calls this shape the bed. It is always a problem. <a href="/learn/method-review.html">Review</a></p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">6</span>
+        <p>A payment provider sends the same message twice. What must happen?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>The system records the fact once. A translation must be idempotent, which means safe to run twice. <a href="/learn/method-review.html">Review</a></p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Round 2: the tool and the language</h2>
+      <div class="quiz-item">
+        <span class="quiz-kicker">7</span>
+        <p>Which block writes a Translation?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>There is no translation block. Write an <code>automation</code> that consumes an Event of a bounded context with <code>external = true</code>. <a href="/learn/patterns.html">Patterns</a></p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">8</span>
+        <p>How do you refer to the Event <code>pet_added</code> of the context <code>pet_management</code>?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Write <code>event.pet_management.pet_added</code>, without quotes. A quoted value is a string, not a reference. <a href="/learn/language.html">Language</a></p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">9</span>
+        <p>Why is <code>field "pet_name" {}</code> invalid?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Every field needs a <code>type</code>. The tool does not guess a type from the name. The code is <code>EM009</code>. <a href="/learn/language.html">Language</a></p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">10</span>
+        <p>How many <code>when</code> steps does a State View scenario have?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>None. It has Event <code>given</code> steps and a Read Model <code>then</code> step. <a href="/learn/scenarios.html">Scenarios</a></p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">11</span>
+        <p>What does <code>--profile strict</code> change?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>It turns <code>EM404</code> (a Command with no reason) and <code>EM406</code> (an open hotspot) into errors. Core errors are errors in every profile. <a href="/learn/tool.html">The tool</a></p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">12</span>
+        <p>Which command checks the format in CI without changing a file?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p><code>emhcl fmt --check</code>. <a href="/learn/tool.html">The tool</a></p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <nav class="page-path-nav">
+        <a href="/learn/index.html"><small>Previous</small>← Learn</a>
+        <a class="next" href="/examples/index.html"><small>Next</small>Examples →</a>
+      </nav>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

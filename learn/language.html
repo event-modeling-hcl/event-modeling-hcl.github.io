@@ -32,10 +32,24 @@
   <section class="hero" style="padding-bottom: 8px; text-align: left;">
     <div class="wrap">
       <div class="prose" style="margin: 0;">
-        <div class="eyebrow">Learn · 03 of 6</div>
+        <div class="eyebrow">Learn · emhcl and .em.hcl · 4 of 7</div>
         <h1>The language</h1>
         <p class="lede">How documents, identities, references, fields, and flow work.</p>
       </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <callout kind="target">
+        <p>After this page, you can:</p>
+        <ul>
+        <li>say what a board, a bounded context, and an aggregate do</li>
+        <li>write a typed reference without quotes</li>
+        <li>choose the right side of an edge: <code>to</code> or <code>from</code></li>
+        </ul>
+      </callout>
+      <p>This page is the rulebook for the syntax. The earlier pages used these rules in examples. Come back here when a diagnostic points at a rule.</p>
     </div>
   </section>
 
@@ -45,11 +59,11 @@
       <h2>The model</h2>
       <p>A model contains domain catalogs (lists of shared definitions), one board, workshop notation, lifecycles, and workflows. Catalogs define contexts, actors, ownership, Events, aggregates, and field types. A <code>lifecycle</code> states the states of the streams of one aggregate. Workflows describe behavior. Chapters keep workshop context. The records <code>hotspot</code>, <code>evidence</code>, and <code>decision</code>, with <code>evidence_source</code>, describe the model and add no behavior. See <a href="/learn/facts.html">Method facts</a>.</p>
       <p><a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md">Specification v0.8.0</a> defines a model as one <code>.em.hcl</code> file or a folder of member files. A folder includes only direct <code>.em.hcl</code> files whose names do not start with a dot. It does not include subfolders.</p>
-      <p>Each file holds whole top-level blocks and must parse on its own. References resolve across member files without changing ID scopes. A block never spans files, so each bounded context and its domain contracts stay in one file. File names and block order have no meaning. If you move blocks between files, the model does not change. See <a href="/reference.html#folder-models">Folder models</a>.</p>
+      <p>Each file holds whole top-level blocks and must parse on its own. References resolve across member files without changing ID scopes. A block does not span files, so each bounded context and its domain contracts stay in one file. File names and block order have no meaning. If you move blocks between files, the model does not change. See <a href="/reference.html#folder-models">Folder models</a>.</p>
       <p>After validation, downstream tools use a normalized typed model that has literal titles and source-to-target edges.</p>
 
       <h2>The board sets the story order</h2>
-      <p>A model has exactly one top-level <code>board</code> block. Its <code>workflows</code> list is the complete story order for diagrams:</p>
+      <p>A model has one top-level <code>board</code> block. Its <code>workflows</code> list is the complete story order for diagrams:</p>
       <code-block lang="hcl">
         board {
           workflows = [workflow.add_pet]
@@ -62,7 +76,7 @@
       <p>Chapters are membership sets. A chapter lists its workflows, but it does not set order. A workflow in two chapters is error <code>EM014</code>. An empty chapter is error <code>EM005</code>.</p>
 
       <h2>Identities and literal titles</h2>
-      <p>In the block above, the identity is <code>add_pet</code>. Labels use <code>lower_snake_case</code>. A title is a literal string. If you omit <code>title</code>, the model has no title. Tools never derive a title from the label. A tool can show the identity instead.</p>
+      <p>In the block above, the identity is <code>add_pet</code>. Labels use <code>lower_snake_case</code>. A title is a literal string. If you omit <code>title</code>, the model has no title. A tool does not derive a title from the label. A tool can show the identity instead.</p>
       <code-block lang="hcl">
         board {
           workflows = []
@@ -74,7 +88,7 @@
           }
         }
       </code-block>
-      <p>The formatter never writes a title and formats one file at a time.</p>
+      <p>The formatter does not write a title. It formats one file at a time.</p>
 
       <h2>Typed references</h2>
       <p>Quoted values are data. Unquoted traversals are references. For example, <code>to = [event.pet_management.pet_added]</code> resolves a relationship. If you quote that traversal, it becomes an invalid string.</p>
@@ -172,7 +186,7 @@
       <p>For a one-off field, write a built-in type inline, for example <code>field "request_id" { type = "UUID" }</code>. The <a href="/reference.html">reference</a> lists the available types and flags. The flags <code>correlation_key</code> and <code>deduplication_key</code> mark the fields that link and deduplicate outside facts. See <a href="/learn/facts.html#keys">Correlation and deduplication keys</a>.</p>
 
       <h2>The fields list</h2>
-      <p>Every <code>field</code> and <code>subfield</code> must set <code>type</code>. A missing type is error <code>EM009</code>. The language never infers a type from the field name. A <code>fields</code> list adds several typed fields at once. Each entry adds one field, named for the last part of the reference:</p>
+      <p>Every <code>field</code> and <code>subfield</code> must set <code>type</code>. A missing type is error <code>EM009</code>. The language does not infer a type from the field name. A <code>fields</code> list adds several typed fields at once. Each entry adds one field, named for the last part of the reference:</p>
       <code-block lang="hcl">
         board {
           workflows = []
@@ -286,10 +300,60 @@
     </div>
   </section>
 
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Check yourself</h2>
+      <div class="quiz-item">
+        <span class="quiz-kicker">1</span>
+        <p>What is wrong with <code>to = [&quot;event.orders.order_placed&quot;]</code>?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>The value is quoted, so it is a string. A reference is an unquoted traversal: <code>to = [event.orders.order_placed]</code>.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">2</span>
+        <p>A Screen leads to a Command in the same workflow. Where do you write the edge?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>On the Screen, with <code>to</code>. A workflow-local source writes its own <code>to</code>.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">3</span>
+        <p>A catalog Event feeds a Read Model. Where do you write the edge?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>On the Read Model, with <code>from</code>. The receiver names a catalog Event source.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">4</span>
+        <p>You omit <code>title</code> on an Event. What does a tool show?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>The identity, for example <code>appointment_added</code>. A tool does not derive a title from the label.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">5</span>
+        <p>A workflow is not in the board list. Is the model invalid?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>No. An off-board workflow is valid. It is only outside the story order.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
   <section class="section section-alt">
     <div class="wrap">
       <nav class="page-path-nav">
-        <a href="/learn/patterns.html"><small>Previous</small>← The four patterns</a>
+        <a href="/learn/patterns.html"><small>Previous</small>← The patterns in HCL</a>
         <a class="next" href="/learn/scenarios.html"><small>Next</small>Scenarios →</a>
       </nav>
     </div>

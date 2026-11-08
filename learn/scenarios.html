@@ -32,10 +32,24 @@
   <section class="hero" style="padding-bottom: 8px; text-align: left;">
     <div class="wrap">
       <div class="prose" style="margin: 0;">
-        <div class="eyebrow">Learn · 04 of 6</div>
+        <div class="eyebrow">Learn · emhcl and .em.hcl · 5 of 7</div>
         <h1>Scenarios: make the slice testable</h1>
         <p class="lede">A scenario sits beside its workflow. It describes one business rule with typed steps.</p>
       </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <callout kind="target">
+        <p>After this page, you can:</p>
+        <ul>
+        <li>write a State Change, a State View, and an Automation scenario</li>
+        <li>state an empty list and an empty history</li>
+        <li>use <code>case</code> values and dispatch assertions</li>
+        </ul>
+      </callout>
+      <p>This page shows the syntax of scenarios. For the thinking behind them, read <a href="/learn/method-examples.html">Examples that test the model</a> first.</p>
     </div>
   </section>
 
@@ -477,7 +491,7 @@ Then  Read Model or Error</code-block>
 
       <h2>Cover behavior, not just syntax</h2>
       <p>For each Command, review success, invalid input, invalid state, duplicate actions, alternative outcomes, external failure, and compensation. Write each applicable case and name it in <code>case</code>.</p>
-      <p>Use the actual business thresholds and concrete field values. Explain why a case cannot occur instead of inventing a rule.</p>
+      <p>Use the thresholds of the business and concrete field values. Explain why a case cannot occur instead of inventing a rule.</p>
       <p>Review Read Models separately, including todo lists. Cover the empty start, population, updates, and removal from their source Events.</p>
       <p>The methodology also uses storylines for lifecycles. HCL has no <code>storyline</code> block. State the states and transitions of a stream in a <a href="/learn/facts.html#lifecycle"><code>lifecycle</code></a> block. Write a <code>state_violation</code> scenario for each invalid transition.</p>
       <p>A canvas automation can describe an empty When and a dispatched Command in Then. Native HCL has no empty When in an action form scenario. Name the Processor in the <code>when</code> step and the dispatched Command in a <code>then</code> step.</p>
@@ -555,6 +569,47 @@ Then  Read Model or Error</code-block>
           }
         </code-block>
       </details>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Check yourself</h2>
+      <div class="quiz-item">
+        <span class="quiz-kicker">1</span>
+        <p>How many <code>when</code> steps does a State View scenario have?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>None. It has Event <code>given</code> steps and a Read Model or Error <code>then</code> step.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">2</span>
+        <p>How do you state that a Read Model is empty before any Event?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Write <code>empty_history = true</code> and no <code>given</code> step. In the <code>then</code> step, write <code>expect_empty_list = true</code>.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">3</span>
+        <p>How do you state that a Processor does not issue a Command?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>In an action form scenario whose <code>when</code> step targets the Processor, write <code>expect_no_dispatch = true</code> in a <code>then</code> step.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">4</span>
+        <p>Which <code>case</code> values fit a Read Model scenario?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p><code>appear</code>, <code>change</code>, and <code>disappear</code>. A value from the Command group is <code>EM304</code> here.</p>
+        </details>
+      </div>
     </div>
   </section>
 

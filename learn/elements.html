@@ -32,9 +32,36 @@
   <section class="hero" style="padding-bottom: 8px; text-align: left;">
     <div class="wrap">
       <div class="prose" style="margin: 0;">
-        <div class="eyebrow">Learn · 01 of 6</div>
+        <div class="eyebrow">Learn · emhcl and .em.hcl · 2 of 7</div>
         <h1>The five elements</h1>
         <p class="lede">Five pieces appear across the four workflow patterns.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <callout kind="target">
+        <p>After this page, you can:</p>
+        <ul>
+        <li>match each building block to its block in a model</li>
+        <li>write an Event inside a bounded context and a Command inside a workflow</li>
+        <li>say why a Read Model needs a question</li>
+        </ul>
+      </callout>
+      <p>This page shows how to write the five building blocks. If a term is new, read <a href="/learn/method-blocks.html">The five building blocks</a> first. It explains the ideas without code.</p>
+      <p>Use this table as a map. The sections below show each block in a complete model.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Building block</th><th>Block in <code>.em.hcl</code></th><th>Where it lives</th></tr></thead>
+          <tbody>
+            <tr><td><span class="term term-event">Event</span></td><td><code>event</code></td><td>Inside a <code>bounded_context</code>.</td></tr>
+            <tr><td><span class="term term-command">Command</span></td><td><code>command</code></td><td>Inside a workflow.</td></tr>
+            <tr><td><span class="term term-readmodel">Read Model</span></td><td><code>readmodel</code>, with a <code>question</code></td><td>Inside a <code>state_view</code> or an <code>automation</code>.</td></tr>
+            <tr><td><span class="term term-screen">Screen</span></td><td><code>screen</code>, with <code>kind</code> <code>&quot;ui&quot;</code> or <code>&quot;api&quot;</code></td><td>Inside a workflow.</td></tr>
+            <tr><td><span class="term term-processor">Automation</span></td><td><code>processor</code></td><td>Inside an <code>automation</code> workflow.</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </section>
@@ -61,7 +88,7 @@
           }
         }
       </code-block>
-      <p>The label <code>appointment_added</code> is the identity. A title is optional and literal. Tools never derive it from the label. To show different wording, add <code>title</code>.</p>
+      <p>The label <code>appointment_added</code> is the identity. A title is optional and literal. A tool does not derive it from the label. To show different wording, add <code>title</code>.</p>
       <callout kind="note"><p>Rule of thumb: if the system can still reject the thing, it is probably not an Event yet.</p></callout>
 
       <h2>Command: an intent to make something happen</h2>
@@ -98,7 +125,7 @@
         }
       </code-block>
       <p>A Command needs an incoming flow or an <code>external_trigger</code>. If it has neither, the validator reports <code>EM404</code>. An <code>api_endpoint</code> on a Command records where the code receives it. It does not give the Command a reason. A Command that a client sends through an API gets an API Screen as its issuer.</p>
-      <p>The method requires exactly one issuer for each Command. Identify the human decision or machine reaction, not just a validator reason.</p>
+      <p>The method requires one issuer for each Command. Identify the human decision or machine reaction, not just a validator reason.</p>
       <p>A Command checks its documented preconditions against prior facts about its subject, not a Read Model. A refused intent records no Event. A tracked business failure can record a failure Event.</p>
 
       <h2>Read Model: an answer to a concrete question</h2>
@@ -245,11 +272,52 @@
     </div>
   </section>
 
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Check yourself</h2>
+      <div class="quiz-item">
+        <span class="quiz-kicker">1</span>
+        <p>Where do you declare an Event?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Inside a <code>bounded_context</code>. The context owns the Event. A workflow only refers to it.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">2</span>
+        <p>A Command has no incoming flow and no <code>external_trigger</code>. What does the validator say?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>It reports <code>EM404</code>. This is a warning by default and an error under <code>--profile strict</code>. An <code>api_endpoint</code> on the Command does not count as a reason.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">3</span>
+        <p>A <code>readmodel</code> block has no <code>question</code>. Is the model valid?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>No. A Read Model needs a concrete question. No question, no Read Model.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">4</span>
+        <p>A payment webhook reports a fact from another system. How do you model it?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>As an Event of a bounded context with <code>external = true</code>, which an <code>automation</code> consumes. It is not an API Screen.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
   <section class="section section-alt">
     <div class="wrap">
       <nav class="page-path-nav">
-        <a href="/learn/index.html"><small>Learn</small>← Back to the path</a>
-        <a class="next" href="/learn/patterns.html"><small>Next</small>The four patterns →</a>
+        <a href="/learn/tool.html"><small>Previous</small>← Work with emhcl</a>
+        <a class="next" href="/learn/patterns.html"><small>Next</small>The patterns in HCL →</a>
       </nav>
     </div>
   </section>

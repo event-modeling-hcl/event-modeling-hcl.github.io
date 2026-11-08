@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>Work with emhcl</title>
+<meta name="description" content="Use the emhcl command line tool in a loop: format, validate, read each diagnostic, fix, and render. Learn profiles, folder models, diff, and JSON output for scripts.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Work with emhcl: Learn Event Modeling HCL">
+<meta property="og:description" content="The edit loop, diagnostics, profiles, folder models, diff, and JSON output.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="canonical" href="https://event-modeling-hcl.github.io/learn/tool.html">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px; text-align: left;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0;">
+        <div class="eyebrow">Learn · emhcl and .em.hcl · 1 of 7</div>
+        <h1>Work with <code>emhcl</code></h1>
+        <p class="lede">Five commands in a loop: format, validate, read, fix, and render.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <callout kind="target">
+        <p>After this page, you can:</p>
+        <ul>
+        <li>run the edit loop: format, validate, read, fix, and render</li>
+        <li>read a diagnostic and find the line to fix</li>
+        <li>choose the validation profile for your situation</li>
+        <li>validate a model that lives in many files</li>
+        </ul>
+      </callout>
+      <h2>Before you start</h2>
+      <p>Install the command line tool first. The <a href="/start.html">Get started</a> page shows three ways. Then make sure that the tool runs:</p>
+      <code-block lang="text">emhcl version</code-block>
+      <p>A model for specification v0.8.0 needs emhcl v0.17.0 or newer.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>The edit loop</h2>
+      <p>You work on a model in a loop. Repeat these steps after each change:</p>
+      <ol>
+        <li>Edit the <code>.em.hcl</code> file.</li>
+        <li>Format the file with <code>emhcl fmt -w model.em.hcl</code>.</li>
+        <li>Validate the file with <code>emhcl validate model.em.hcl</code>.</li>
+        <li>Read each diagnostic and fix its cause.</li>
+        <li>Render the model with <code>emhcl diagram model.em.hcl -o model.html</code>. Open <code>model.html</code> in a browser.</li>
+      </ol>
+      <p>To render after every save, run <code>emhcl serve model.em.hcl</code> and open the URL that it prints. The server listens on <code>127.0.0.1:8080</code> by default. Add <code>--port 0</code> to let the tool pick a free port.</p>
+      <p>Each command ends with an exit code:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Exit code</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>Success.</td></tr>
+            <tr><td>1</td><td>The model has problems.</td></tr>
+            <tr><td>2</td><td>The tool cannot read the command line.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>A valid model prints the path and the word <code>valid</code>, for example <code>model.em.hcl valid</code>.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Read a diagnostic</h2>
+      <p>The tool reports each problem on one line in this form:</p>
+      <code-block lang="text">file:line:column: Severity EMxxx: message</code-block>
+      <p>Here is a diagnostic from an example on the Language page. A Command points back to its Screen with <code>from</code>:</p>
+      <code-block lang="text">reverse-flow.em.hcl:16:13: Error EM201: Invalid flow reference: command.from has no canonical flow targets in a state_change workflow. You referenced: screen.form.</code-block>
+      <p>Read it from left to right:</p>
+      <ul>
+        <li>The file is <code>reverse-flow.em.hcl</code>. Look at line 16, column 13.</li>
+        <li>The severity is Error. The file does not validate.</li>
+        <li>The code is <code>EM201</code>. The first digit after EM tells the family.</li>
+        <li>The message says that <code>from</code> is not a canonical flow target in a <code>state_change</code>.</li>
+      </ul>
+      <p>The fix: delete <code>from</code> on the Command. The Screen already has <code>to = [command.create]</code>, and that is the canonical edge. A workflow-local source writes its own <code>to</code>.</p>
+      <p>The code families help you find the cause fast:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Family</th><th>What it reports</th></tr></thead>
+          <tbody>
+            <tr><td><code>EM0xx</code></td><td>Structure: syntax, identities, the board, field types.</td></tr>
+            <tr><td><code>EM1xx</code></td><td>References that do not resolve.</td></tr>
+            <tr><td><code>EM2xx</code></td><td>Flow: edges in the wrong direction or place.</td></tr>
+            <tr><td><code>EM3xx</code></td><td>Scenarios.</td></tr>
+            <tr><td><code>EM4xx</code></td><td>Modeling judgment: warnings to review.</td></tr>
+          </tbody>
+        </table>
+      </div>      <p>Try first: the tool prints EM301. Which family is it, and where do you look?</p>
+      <details class="reveal">
+        <summary>Show the answer</summary>
+        <p>It is in the EM3xx family, so it reports a scenario. Look at the scenario named in the message.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>Choose a profile</h2>
+      <p>A profile sets how strict the tool is about modeling judgment. Core errors, such as a broken reference, are errors in every profile. Only the codes <code>EM401</code> to <code>EM406</code> change.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Profile</th><th>Four shapes (EM401, EM402, EM403, EM405)</th><th>EM404 and EM406</th></tr></thead>
+          <tbody>
+            <tr><td><code>workshop</code></td><td>Information</td><td>Information</td></tr>
+            <tr><td><code>valid</code> (the default)</td><td>Warning</td><td>Warning</td></tr>
+            <tr><td><code>strict</code></td><td>Warning</td><td>Error</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Use <code>workshop</code> while you explore with the team. Use the default for daily work. Use <code>strict</code> before you call a model ready for implementation:</p>
+      <code-block lang="text">emhcl validate --profile strict model.em.hcl</code-block>
+      <p>The <code>strict</code> profile turns two things into errors. The first is a Command with no reason, which is <code>EM404</code>. The second is an open hotspot, which is <code>EM406</code>. A profile does not hide the model. A tool can still render a model that only a profile rejects. Page 7 explains each code.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>A model in many files</h2>
+      <p>Split a model into a folder when one file is too long to read. The folder is still one model. The tool reads every <code>.em.hcl</code> file directly in the folder. It ignores subfolders and file names that start with a dot.</p>
+      <p>Two facts make folders safe:</p>
+      <ul>
+        <li>File names and the order of blocks have no meaning. Moving a block to another file does not change the model.</li>
+        <li>A block does not span two files. Move each block whole.</li>
+      </ul>
+      <p>To split a file, follow these steps:</p>
+      <ol>
+        <li>Make a new folder for the model.</li>
+        <li>Move the <code>board</code> and the catalog blocks into one file, for example <code>00-catalog.em.hcl</code>.</li>
+        <li>Move the <code>chapter</code> blocks into another file, for example <code>01-chapters.em.hcl</code>.</li>
+        <li>Move each workflow into its own file, for example <code>10-register-pet.em.hcl</code>.</li>
+        <li>Move other blocks, such as <code>hotspot</code>, into any file.</li>
+        <li>Run <code>emhcl validate</code> on the folder and fix each error.</li>
+      </ol>
+      <p>The number prefix is not part of the language. It keeps the files in reading order for people. Most commands accept a folder path in place of a file path:</p>
+      <code-block lang="text">emhcl validate examples/pet-clinic
+emhcl serve examples/pet-clinic</code-block>
+      <p>Each diagnostic names the member file that needs attention.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>See what changed</h2>
+      <p>The command <code>diff</code> compares two models. It lists each declaration that a change added, removed, or changed:</p>
+      <code-block lang="text">emhcl diff base/model head/model</code-block>
+      <p>A line looks like <code>changed workflow.register_pet</code>. A changed workflow lists its changed elements and scenarios below it. The tool compares the typed models, so a block that moves to another file gives no line.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Use the tool in scripts and CI</h2>
+      <p>Scripts and agents can read the results as data. Add <code>--format json</code> to <code>validate</code>:</p>
+      <code-block lang="text">emhcl validate --profile strict --format json model.em.hcl</code-block>
+      <p>The tool writes one JSON object. Its keys are <code>path</code>, <code>profile</code>, <code>has_errors</code>, <code>has_core_errors</code>, and <code>diagnostics</code>. Each diagnostic has <code>code</code>, <code>severity</code>, <code>summary</code>, <code>detail</code>, <code>line</code>, <code>column</code>, <code>judgment</code>, and <code>file</code>. The value of <code>judgment</code> is true for the codes <code>EM401</code> to <code>EM406</code>.</p>
+      <p>Two more commands help in CI:</p>
+      <code-block lang="text">emhcl fmt --check model.em.hcl
+emhcl diagram --title "shop main @ 1a2b3c4" -o model.html model.em.hcl</code-block>
+      <p>The command <code>fmt --check</code> writes no file. It lists each file whose layout differs and exits with code 1. The option <code>--title</code> sets the title in the page header and the browser tab.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>Move models in and out</h2>
+      <p>The commands <code>export</code> and <code>import</code> convert between a native model and slice-based Event Modeling JSON. The JSON form is a projection that the tool warns about. It is not a copy of the canvas.</p>
+      <p>The command <code>migrate</code> converts a model that was written for specification v0.4.0. It adds a <code>board</code>, writes explicit types, and writes explicit titles. Use <code>-w</code> to rewrite the file:</p>
+      <code-block lang="text">emhcl migrate -w old.em.hcl</code-block>
+      <p>Validate the result after you migrate.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Check yourself</h2>
+      <div class="quiz-item">
+        <span class="quiz-kicker">1</span>
+        <p>The tool prints <code>Warning EM404</code> and then <code>valid</code>. Is the model valid?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Yes, under the default profile. A warning does not stop validation. Under <code>--profile strict</code>, the same diagnostic is an error.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">2</span>
+        <p>You move a workflow to another file in the folder. Does the model change?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>No. File names and the position of blocks have no meaning. The model stays the same.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">3</span>
+        <p>Which command checks the format in CI without changing a file?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p><code>emhcl fmt --check</code>. It exits with code 1 if a file differs from the formatted output.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">4</span>
+        <p>A command ends with exit code 2. What does that mean?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>The tool cannot read the command line. The model is not the cause. Check the options and the path.</p>
+        </details>
+      </div>
+
+      <callout kind="rule">
+        <p>Remember:</p>
+        <ul>
+        <li>The loop is: format, validate, read, fix, render.</li>
+        <li>A diagnostic names the file, the line, the severity, and a code. The code family tells the area.</li>
+        <li>The profile changes only the codes EM401 to EM406.</li>
+        <li>A folder of .em.hcl files is one model. File names and block order have no meaning.</li>
+        </ul>
+      </callout>
+    </div>
+  </section>
+
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <nav class="page-path-nav">
+        <a href="/start.html"><small>Previous</small>← Get started</a>
+        <a class="next" href="/learn/elements.html"><small>Next</small>The elements in HCL →</a>
+      </nav>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

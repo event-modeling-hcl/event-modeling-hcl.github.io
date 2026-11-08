@@ -11,10 +11,10 @@
   } catch (e) {}
 </script>
 <title>Learn Event Modeling HCL</title>
-<meta name="description" content="Learn the elements, patterns, scenarios, language, and quality checks of Event Modeling HCL.">
+<meta name="description" content="Two learning tracks. Track 1 teaches Event Modeling without code. Track 2 teaches the emhcl tool and the .em.hcl language.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Learn Event Modeling HCL">
-<meta property="og:description" content="Two short paths through Event Modeling and .em.hcl.">
+<meta property="og:description" content="Two short tracks: Event Modeling without code, and the emhcl tool with the .em.hcl language.">
 <meta property="og:image" content="/assets/img/og-default.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -35,12 +35,13 @@
 <site-nav></site-nav>
 
 <main id="main">
-  <section class="hero" style="padding-bottom: 8px;">
+
+  <section class="hero" style="padding-bottom: 8px; text-align: left;">
     <div class="wrap">
-      <div class="prose">
+      <div class="prose" style="margin: 0;">
         <div class="eyebrow">Learn</div>
         <h1>Event Modeling and <code>.em.hcl</code></h1>
-        <p class="lede">Choose a path that matches what you already know.</p>
+        <p class="lede">Two tracks. Choose the one that matches what you know.</p>
       </div>
     </div>
   </section>
@@ -49,77 +50,118 @@
     <div class="wrap">
       <div class="card-grid">
         <div class="card">
-          <h2>New to Event Modeling?</h2>
-          <p>Start with the vocabulary and the four workflow shapes that appear again and again.</p>
+          <h2>Track 1: Event Modeling</h2>
+          <p>No code. Learn the method itself: the building blocks, the patterns, the steps of a session, the examples that test a model, and how to review it.</p>
           <div class="learning-route">
-            <a href="/learn/elements.html">Elements</a><span>→</span>
-            <a href="/learn/patterns.html">Patterns</a><span>→</span>
-            <a href="/learn/scenarios.html">Scenarios</a><span>→</span>
-            <a href="/learn/language.html">Language</a><span>→</span>
-            <a href="/learn/facts.html">Facts</a><span>→</span>
-            <a href="/learn/quality.html">Quality</a>
+            <a href="/learn/method-idea.html">The idea</a>
+            <span>→</span>
+            <a href="/learn/method-blocks.html">Building blocks</a>
+            <span>→</span>
+            <a href="/learn/method-patterns.html">Patterns</a>
+            <span>→</span>
+            <a href="/learn/method-steps.html">Steps</a>
+            <span>→</span>
+            <a href="/learn/method-examples.html">Examples</a>
+            <span>→</span>
+            <a href="/learn/method-review.html">Review</a>
           </div>
         </div>
         <div class="card">
-          <h2>Already know Event Modeling?</h2>
-          <p>Start with how each concept maps to HCL.</p>
+          <h2>Track 2: emhcl and <code>.em.hcl</code></h2>
+          <p>Write a model as code and check it with the tool. Install the tool, learn the language, and read the diagnostics.</p>
           <div class="learning-route">
-            <a href="/learn/language.html">Language</a><span>→</span>
-            <a href="/learn/scenarios.html">Scenarios</a><span>→</span>
-            <a href="/learn/facts.html">Facts</a><span>→</span>
-            <a href="/reference.html">Reference</a>
+            <a href="/start.html">Get started</a>
+            <span>→</span>
+            <a href="/learn/tool.html">The tool</a>
+            <span>→</span>
+            <a href="/learn/elements.html">Elements</a>
+            <span>→</span>
+            <a href="/learn/patterns.html">Patterns</a>
+            <span>→</span>
+            <a href="/learn/language.html">Language</a>
+            <span>→</span>
+            <a href="/learn/scenarios.html">Scenarios</a>
+            <span>→</span>
+            <a href="/learn/facts.html">Facts</a>
+            <span>→</span>
+            <a href="/learn/quality.html">Quality</a>
           </div>
         </div>
       </div>
     </div>
   </section>
 
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>Which track is yours?</h2>
+      <ul>
+        <li>You are new to Event Modeling: do Track 1 first. Then do Track 2.</li>
+        <li>You know Event Modeling and want the language: start Track 2 at <a href="/start.html">Get started</a>.</li>
+        <li>You want to see the tool work first: open <a href="/start.html">Get started</a> or the <a href="/playground/">playground</a>, then return to Track 1.</li>
+      </ul>
+      <p>Both tracks use the same example: a pet clinic that schedules appointments and adds a weather forecast to each one. You meet the same Events, Commands, and Read Models in the method and in the code.</p>
+    </div>
+  </section>
+
   <section class="section">
     <div class="wrap prose">
-      <h2>Discover the business story first</h2>
-      <p>Describe how people do the work without software. Identify who acts, what starts each action, and what information they need.</p>
+      <h2>How to learn from these pages</h2>
+      <p>Reading is not enough. You remember more when you try to answer first. Each page follows the same rhythm:</p>
       <ol>
-        <li>Set the scope with a domain expert. List human roles, system actors, and permission boundaries.</li>
-        <li>Brainstorm past-tense business Events. Plot their causes, alternatives, and outcomes in business time.</li>
-        <li>Sketch Screens around user decisions and API calls. Add Commands and their issuers, then design automation todo lists and external translations.</li>
-        <li>Define Read Models from consumer questions. Trace their fields to Events and identify ownership boundaries.</li>
-        <li>Write scenarios for rules and failures. Review field completeness and business meaning separately from HCL validity.</li>
-        <li>Make each pattern-sized capability an explicit workflow. Record decisions, evidence, and unresolved questions as <code>decision</code>, <code>evidence</code>, and <code>hotspot</code> blocks.</li>
+        <li>Read the goals at the top. They tell you what you can do after the page.</li>
+        <li>Answer each "Try first" question in your head. Then open the answer.</li>
+        <li>Work through the "Check yourself" questions at the end. Do not scroll back while you answer.</li>
+        <li>Wait two or three days. Then take the <a href="/learn/review.html">mixed review</a>. A pause makes the memory stronger.</li>
+        <li>Apply the idea to your own work. Model one small process from your job, and type it in the <a href="/playground/">playground</a>.</li>
       </ol>
-      <p>These six groups summarize the process, not six mandatory canvas steps. Continue at the first incomplete step in an existing model.</p>
-      <p>The <a href="https://github.com/event-modeling-hcl/spec/blob/main/guides/EVENT_MODELING_METHODOLOGY.md">Event Modeling methodology</a> covers discovery, facilitation, review, and governance. The <a href="https://github.com/event-modeling-hcl/spec/blob/main/eventmodeling.hclspec.md">v0.8.0 specification</a> defines legal HCL.</p>
+      <p>If you cannot answer a question, that is useful. Go back to that page, read the part again, and try the question once more.</p>
     </div>
   </section>
 
   <section class="section section-alt">
     <div class="wrap">
       <div class="section-head center">
-        <h2>Map of the cheat sheet</h2>
-        <p>5 elements · 4 patterns · 6 workshop stages · 4 smells</p>
+        <h2>Map of the method</h2>
+        <p>The method has few parts. These numbers are worth remembering.</p>
       </div>
       <div class="stat-grid">
-        <a class="stat-tile" href="/learn/elements.html"><strong>5</strong><span>Elements</span><p>Event, Command, Read Model, Screen, Processor.</p></a>
-        <a class="stat-tile" href="/learn/patterns.html"><strong>4</strong><span>Patterns</span><p>State Change, State View, Automation, Translation.</p></a>
-        <div class="stat-tile"><strong>6</strong><span>Workshop stages</span><p>From Events to scenarios.</p></div>
-        <a class="stat-tile" href="/learn/quality.html"><strong>4</strong><span>Smells</span><p>Bed, left chair, right chair, shelf.</p></a>
+        <a class="stat-tile" href="/learn/method-blocks.html"><strong>5</strong><span>Building blocks</span><p>Event, Command, Read Model, Screen, Automation.</p></a>
+        <a class="stat-tile" href="/learn/method-patterns.html"><strong>4</strong><span>Patterns</span><p>State Change, State View, Automation, Translation.</p></a>
+        <a class="stat-tile" href="/learn/method-steps.html"><strong>6</strong><span>Stages</span><p>From scope and roles to slices.</p></a>
+        <a class="stat-tile" href="/learn/method-review.html"><strong>4</strong><span>Shapes to check</span><p>Bed, left chair, right chair, shelf.</p></a>
       </div>
     </div>
   </section>
 
   <section class="section">
     <div class="wrap">
-      <div class="section-head"><h2>The pages</h2></div>
+      <div class="section-head"><h2>All pages</h2></div>
+      <h3>Track 1: Event Modeling</h3>
       <div class="card-grid">
-        <a class="path-card" href="/learn/elements.html"><span class="path-step">01</span><h3>Elements</h3><p>The five things shown on an Event Model.</p><span class="path-go">Open →</span></a>
-        <a class="path-card" href="/learn/patterns.html"><span class="path-step">02</span><h3>Patterns</h3><p>Four shapes for organizing a workflow.</p><span class="path-go">Open →</span></a>
-        <a class="path-card" href="/learn/scenarios.html"><span class="path-step">03</span><h3>Scenarios</h3><p>Pattern-specific Given, When, and Then rules.</p><span class="path-go">Open →</span></a>
-        <a class="path-card" href="/learn/language.html"><span class="path-step">04</span><h3>Language</h3><p>Blocks, references, fields, and canonical flow.</p><span class="path-go">Open →</span></a>
-        <a class="path-card" href="/learn/facts.html"><span class="path-step">05</span><h3>Method facts</h3><p>Stream identity, lifecycles, field sources, evidence, and decisions.</p><span class="path-go">Open →</span></a>
-        <a class="path-card" href="/learn/quality.html"><span class="path-step">06</span><h3>Quality</h3><p>Errors, warnings, and four modeling smells.</p><span class="path-go">Open →</span></a>
-        <a class="path-card" href="https://github.com/event-modeling-hcl/spec/blob/main/guides/learning-event-modeling-hcl.md"><span class="path-step">More</span><h3>Full learning guide</h3><p>Exercises, facilitation notes, and a capstone.</p><span class="path-go">Open on GitHub →</span></a>
+        <a class="path-card" href="/learn/method-idea.html"><span class="path-step">01</span><h3>What Event Modeling is</h3><p>A story of facts on a timeline, and the basic flow.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="/learn/method-blocks.html"><span class="path-step">02</span><h3>The five building blocks</h3><p>Event, Command, Read Model, Screen, and Automation.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="/learn/method-patterns.html"><span class="path-step">03</span><h3>Patterns and slices</h3><p>Four patterns, the todo list, and how to read a canvas.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="/learn/method-steps.html"><span class="path-step">04</span><h3>The steps of a session</h3><p>Six stages from scope to slices.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="/learn/method-examples.html"><span class="path-step">05</span><h3>Examples that test the model</h3><p>Given, When, Then, and seven questions for every Command.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="/learn/method-review.html"><span class="path-step">06</span><h3>Review a model</h3><p>Shapes, complete data, one identity, and outside facts.</p><span class="path-go">Open →</span></a>
+      </div>
+      <h3 style="margin-top: 32px;">Track 2: emhcl and <code>.em.hcl</code></h3>
+      <div class="card-grid">
+        <a class="path-card" href="/start.html"><span class="path-step">00</span><h3>Get started</h3><p>Install the tool and validate your first model.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="/learn/tool.html"><span class="path-step">01</span><h3>Work with emhcl</h3><p>The edit loop, diagnostics, profiles, and folder models.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="/learn/elements.html"><span class="path-step">02</span><h3>The elements in HCL</h3><p>How each building block is written in a model.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="/learn/patterns.html"><span class="path-step">03</span><h3>The patterns in HCL</h3><p>State Change, State View, Automation, and Translation as code.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="/learn/language.html"><span class="path-step">04</span><h3>The language</h3><p>Blocks, references, fields, and the direction of edges.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="/learn/scenarios.html"><span class="path-step">05</span><h3>Scenarios</h3><p>Given, When, and Then as typed steps.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="/learn/facts.html"><span class="path-step">06</span><h3>Method facts</h3><p>Stream identity, lifecycles, field sources, evidence, and decisions.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="/learn/quality.html"><span class="path-step">07</span><h3>Quality</h3><p>Errors, warnings, and a drill.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="/learn/review.html"><span class="path-step">Review</span><h3>Mixed review</h3><p>Questions from both tracks, in mixed order.</p><span class="path-go">Open →</span></a>
+        <a class="path-card" href="https://github.com/event-modeling-hcl/spec/blob/main/guides/learning-event-modeling-hcl.md"><span class="path-step">More</span><h3>Full learning guide</h3><p>Exercises, facilitation notes, and a capstone.</p><span class="path-go">Open →</span></a>
       </div>
     </div>
   </section>
+
+
 </main>
 
 <site-footer></site-footer>

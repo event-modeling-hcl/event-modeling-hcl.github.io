@@ -57,6 +57,16 @@ for business discovery and model review. The guide describes concepts that HCL
 does not encode directly. Keep method advice separate from grammar rules.
 If they differ, the specification defines legal HCL.
 
+The Learn section has two tracks. Track 1 teaches Event Modeling without code
+(`learn/method-*.html`, six pages). It has no HCL blocks. Track 2 teaches the
+tool and the language (`start.html`, `learn/tool.html`, then `elements`,
+`patterns`, `language`, `scenarios`, `facts`, and `quality`). `learn/review.html`
+mixes questions from both tracks. Every Learn page follows one rhythm: goals at
+the top, "Try first" questions, "Check yourself" questions at the end, and a
+short "Remember" list. Keep that rhythm when you add a page. Both tracks use the
+pet clinic example, so a learner meets the same names in the method and in the
+code.
+
 Every `<code-block lang="hcl">` on a Learn page is a complete `.em.hcl` document
 or a deliberate invalid example with an expected `EMxxx` diagnostic.
 `scripts/validate-learn-snippets.py` runs `emhcl validate` on each block.

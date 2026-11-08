@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<title>Patterns and Slices</title>
+<meta name="description" content="State Change, State View, Automation, and Translation are the four patterns of Event Modeling. Learn what a slice is and how to read a canvas with its lanes and columns.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Patterns and Slices: Learn Event Modeling">
+<meta property="og:description" content="Four patterns, the todo list, slices, and how to read a canvas.">
+<meta property="og:image" content="/assets/img/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon-180.png">
+<link rel="canonical" href="https://event-modeling-hcl.github.io/learn/method-patterns.html">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<site-nav></site-nav>
+
+<main id="main">
+
+  <section class="hero" style="padding-bottom: 8px; text-align: left;">
+    <div class="wrap">
+      <div class="prose" style="margin: 0;">
+        <div class="eyebrow">Learn · Event Modeling · 3 of 6</div>
+        <h1>Patterns and slices</h1>
+        <p class="lede">Four patterns organize the story. A slice is the piece that a team builds.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="prose">
+      <callout kind="target">
+        <p>After this page, you can:</p>
+        <ul>
+        <li>name the four patterns and the question each one answers</li>
+        <li>say what a slice is and why slices talk only through Events</li>
+        <li>read a small canvas with its lanes and columns</li>
+        </ul>
+      </callout>
+      <h2>Four shapes that repeat</h2>
+      <p>Every model uses four patterns. A pattern is a small chain of building blocks. Each pattern answers one question.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Pattern</th><th>The question</th><th>The chain</th><th>Example in the clinic</th></tr></thead>
+          <tbody>
+            <tr><td>State Change</td><td>What does someone want to change?</td><td>Screen or Automation, Command, Event</td><td>Staff add an appointment.</td></tr>
+            <tr><td>State View</td><td>What does someone need to know?</td><td>Event, Read Model, Screen or Automation</td><td>Staff look at the calendar.</td></tr>
+            <tr><td>Automation</td><td>What must the system do next by itself?</td><td>Event, todo list, Automation, Command, Event</td><td>The system adds a weather forecast to each new appointment.</td></tr>
+            <tr><td>Translation</td><td>How does a fact from another system become a fact in our words?</td><td>External Event, todo list, Automation, Command, internal Event</td><td>The clinic turns a changed forecast of the weather provider into its own Event.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
+      <p>Try first: which pattern turns an intent into a fact? Which pattern turns facts into an answer?</p>
+      <details class="reveal">
+        <summary>Show the answer</summary>
+        <p>State Change turns an intent into a fact. State View turns facts into an answer.</p>
+      </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>Automation: the todo list</h2>
+      <p>An Automation keeps a todo list. The list is a Read Model. It is a queue of work that is still open. These rules describe it:</p>
+      <ul>
+        <li>An opening Event adds a row. A completion Event removes the row.</li>
+        <li>A row exists while the work is open. Do not add a status field that says "done".</li>
+        <li>Every Automation has a todo list, even a simple relay.</li>
+        <li>Plan the failures. A business failure records a failure Event. A technical error leaves the row in the list, so the Automation can try again.</li>
+      </ul>
+      <p>Example: the Event <span class="term term-event">Appointment Added</span> adds a row to <span class="term term-readmodel">Appointments without weather forecast</span>. The Automation <span class="term term-processor">Add Weather Forecast</span> sends the Command <span class="term term-command">Add Weather Forecast</span>. The Event <span class="term term-event">Weather Predicted for Appointment</span> removes the row.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Translation: facts from outside</h2>
+      <p>Another team or system uses its own words. You must not copy its facts into your model as they are. A Translation turns an outside fact into a fact of your own, in your own words.</p>
+      <ul>
+        <li>The outside Event opens a row in a todo list.</li>
+        <li>A translation Automation reads the row, sends a Command, and records an internal Event.</li>
+        <li>A translation list has no closing Event. It relays facts. It does not track finished work.</li>
+        <li>Add a worker after the translation only if it makes a new decision.</li>
+      </ul>
+      <p>Page 6 explains correlation, repeated delivery, and other risks of outside facts.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap prose">
+      <h2>Slices: the pieces you build</h2>
+      <p>A slice is the thinnest cut through the model that a team can build alone. A slice holds one of these:</p>
+      <ul>
+        <li>one Command, with the Screen that starts it and the Events it records</li>
+        <li>one Read Model, with the Screen that shows it</li>
+        <li>one Automation, with its todo list, its Command, and its Events</li>
+      </ul>
+      <p>If Place Order needs both a Command and an order detail view, you have two slices. Name each slice after its main element.</p>
+      <p>Slices do not share state. They talk only through Events. Slice B depends on slice A when B uses an Event that A produces. Write the dependency as "depends on Events from A", not "depends on slice A".</p>
+      <p>Try first: the slice Calendar reads the Event Appointment Added. Which slice does it depend on?</p>
+      <details class="reveal">
+        <summary>Show the answer</summary>
+        <p>It depends on the slice Add Appointment, because that slice produces Appointment Added.</p>
+      </details>
+      <p>Slices follow each other in a few allowed orders:</p>
+      <ul>
+        <li>State View, then State Change</li>
+        <li>State Change, then State View</li>
+        <li>State Change, then Automation</li>
+        <li>Automation, then State Change</li>
+        <li>Automation, then State View</li>
+      </ul>
+      <p>A State Change must not follow a State Change directly. A Screen or an Automation must sit between them to trigger the second one.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <div class="prose">
+
+      <h2>Reading a canvas</h2>
+      <p>A canvas draws a model on a grid. Time runs from left to right, so each column is one moment. Each row is a lane. The table shows a small canvas for the clinic.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Lane</th><th>Column 1</th><th>Column 2</th><th>Column 3</th><th>Column 4</th></tr></thead>
+          <tbody>
+            <tr><td>Clinic Staff (Screens)</td><td><span class="term term-screen">Schedule Appointment</span></td><td><span class="term term-screen">Calendar</span></td><td></td><td></td></tr>
+            <tr><td>Automations</td><td></td><td></td><td></td><td><span class="term term-processor">Add Weather Forecast</span></td></tr>
+            <tr><td>Commands and Read Models</td><td><span class="term term-command">Add Appointment</span></td><td><span class="term term-readmodel">Calendar</span></td><td><span class="term term-readmodel">Appointments without weather forecast</span></td><td><span class="term term-command">Add Weather Forecast</span></td></tr>
+            <tr><td>Events</td><td><span class="term term-event">Appointment Added</span></td><td></td><td></td><td><span class="term term-event">Weather Predicted for Appointment</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
+      <p>Follow the story from column 1. Staff use the Screen, and the Command records the Event. The Event feeds the calendar in column 2. It also opens a row in the todo list in column 3. The Automation in column 4 sends a Command. The Event in column 4 closes the row in column 3.</p>
+      <p>Six rules keep a canvas clear:</p>
+      <ul>
+        <li>A column is one moment. It holds at most one Event.</li>
+        <li>Every human role has its own lane. All Automations share one lane.</li>
+        <li>An arrow goes down inside a column, or forward to a later column. It does not go backward.</li>
+        <li>The one exception is an Event that closes a row in a todo list. It points back to the list, as column 4 does.</li>
+        <li>A todo list sits one column before its Automation.</li>
+        <li>Place elements in story order, not by type. Do not put all Events first and all Commands after them.</li>
+      </ul>
+      <p>A chapter is one story, such as one user journey. A canvas can hold many chapters, one below the other. Keep a chapter to about six to fifteen columns. Split it at a natural phase boundary if it grows longer.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Check yourself</h2>
+      <div class="quiz-item">
+        <span class="quiz-kicker">1</span>
+        <p>A slice holds the Command Place Order and the view Order Detail. What do you do?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>Split it into two slices. A slice holds one Command, one Read Model, or one Automation.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">2</span>
+        <p>A model shows Add Appointment and then Confirm Appointment. Nothing sits between them. What is missing?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>A trigger. A Screen where a person confirms, or an Automation that confirms, must issue the second Command.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">3</span>
+        <p>Where does the todo list of an Automation go on the canvas?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>In the same lane as other Read Models, one column before the Automation.</p>
+        </details>
+      </div>
+
+      <div class="quiz-item">
+        <span class="quiz-kicker">4</span>
+        <p>A translation list has a closing Event. Is this right?</p>
+        <details class="reveal">
+          <summary>Answer</summary>
+          <p>No. A translation relays facts and has no closing Event. Only an ordinary worker list removes rows with a completion Event.</p>
+        </details>
+      </div>
+
+      <callout kind="rule">
+        <p>Remember:</p>
+        <ul>
+        <li>Four patterns repeat: State Change, State View, Automation, and Translation.</li>
+        <li>Every Automation has a todo list. A row stays while the work is open.</li>
+        <li>A slice is one Command, one Read Model, or one Automation. Slices talk through Events.</li>
+        <li>A canvas reads from left to right. Arrows do not go back, except to close a todo list.</li>
+        </ul>
+      </callout>
+    </div>
+  </section>
+
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <nav class="page-path-nav">
+        <a href="/learn/method-blocks.html"><small>Previous</small>← The five building blocks</a>
+        <a class="next" href="/learn/method-steps.html"><small>Next</small>The steps of a session →</a>
+      </nav>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+<script src="/assets/hcl-highlight.js" defer></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>
